@@ -1,0 +1,14 @@
+JQL
+
+platform:Windos
+let:DRIVE=E:
+platform:Linux
+let:DRIVE=/media/$User$/Scyndi
+
+Author: Public Domain Vectors
+Notes: Public Domain
+RawDir:$DRIVE$/Projects/Applications/Scyndi/House Of Cards/SRC/Assets/Public Domain/GFX/FancySuits>Suits/Z
+Alias:Suits/Z/S0.png>Suits/Harten.png
+Alias:Suits/Z/S1.png>Suits/Klaver.png
+Alias:Suits/Z/S2.png>Suits/Ruiten.png
+Alias:Suits/Z/S3.png>Suits/Schoppen.png
