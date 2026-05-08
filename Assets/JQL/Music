@@ -1,0 +1,19 @@
+JQL
+
+
+# Make sure both Linux and Windows can read it.
+# Please sure, Windows always mounted the device I use automatically to E:, but there's no guarantee for this, so need for chance may be needed to keep in mind!
+# The '$User$' variable (case sensitive) will be transformed into your username, and please note that 'Scyndi' was the name of my work device!
+Platform:Linux
+Let:MUSIC=/media/$User$/Scyndi/Projects/3rd party assets/Music
+Platform:Windows
+Let:MUSIC=E:/Prijects/3rd party assets/Music
+Platform:All
+
+
+Author:Eric Matyas
+Notes:For license information please read: https://soundimage.org/attribution-info/
+Raw:$MUSIC$/Eric Matyas/The-Meadow-We-Call-Home.ogg>Puzzles/Main/Song1.ogg
+Raw:$MUSIC$/Eric Matyas/Dreaming-Of-Faraway-Places.ogg>Puzzles/Main/Song2.ogg
+Raw:$MUSIC$/Eric Matyas/80s-Princess.ogg>Puzzles/Main/Song3.ogg
+Raw:$MUSIC$/Eric Matyas/Of-Legends-And-Fables.ogg>Title/Title.ogg
