@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.08 XIV
+// Version: 26.05.08 XVIII
 // End License
 
 Script
@@ -33,7 +33,7 @@ Script
 
 #use "Libs/LinkedList"
 
-#macro HotCenter 1
+#macro _HotCenter 1
 
 Group Loaders
 	Void None(String F, String T)
@@ -42,7 +42,7 @@ Group Loaders
 	Void LoadImage(String F, String T,Int Flag)
 		Img:=Lua.Scyndi.Globals.LoadImage(F,T)
 		switch Flag
-			Case HotCenter
+			Case _HotCenter
 				Img.HotCenter()
 				CSayF("\t\t=> Hot Center")
 			Default
@@ -73,8 +73,8 @@ Class LASS
 				Loaders.None(F,T)
 		End
 	End
-	Static Void Add(String _F, String _T,_L)		
-		List.AddLast(new LASS(_F,_T,_L))
+	Static Void Add(String _F, String _T,_L,int _FL=0)		
+		List.AddLast(new LASS(_F,_T,_L,_FL))
 		Cnt++
 	End
 End
@@ -90,7 +90,7 @@ End
 
 
 Init
-	LI("GFX/Algemeen/Logo.png","LOGO",HotCenter) // MUST ALWAYS BE FIRST!!!
+	LI("GFX/Algemeen/Logo.png","LOGO",_HotCenter) // MUST ALWAYS BE FIRST!!!
 	for a in Each{[0]="Up","Down","Left","Right"}; LI(sprintf("GFX/Arrows/%s.png",a),sprintf("ARROW_%s",a)); End
 End
 
@@ -110,6 +110,7 @@ Global Void MainFlow()
 			Graphics.Rect(Graphics.Width - A,0,1,Graphics.Height)
 		End
 		Logo = ObtainImage("LOGO")
+		Graphics.Color(255,255,255)
 		If Logo; Logo.Draw(Graphics.W div 2, Graphics.H div 2); End
 		Flip()		
 	End
