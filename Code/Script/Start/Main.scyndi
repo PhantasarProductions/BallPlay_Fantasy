@@ -22,18 +22,21 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.08 XXIV
+// Version: 26.05.08 XXV
 // End License
 
 Script
 
 #use "Libs/SCI/Sys"
+#use "Libs/SCI/GINIE"
 #use "Libs/SCI/Events"
 #use "Libs/SCI/Graphics"
 
 #use "Libs/LinkedList"
 
 #macro _HotCenter 1
+
+plua GC
 
 Group Loaders
 	Void None(String F, String T)
@@ -48,6 +51,11 @@ Group Loaders
 			Default
 				CSayF("\t\t=> No special flags")
 		End
+	End
+	Void GlobConfig(String F, String I)
+		GC = GINIE.LoadHome("GlobalConfig.ini","GlobConfig","GlobalConfig.ini","BallPlay Genius\nGlobal configuration")
+		GC.NewValue("Meta","Created",os.date())
+		GC.NewValue("GlobConfig","Language","English")
 	End
 End	
 
@@ -97,7 +105,8 @@ Init
 	for k in Each{[0]="Harten","Klaver","Ruiten","Schoppen"}; LI(sprintf("GFX/Suits/%s.png",k),sprintf("KLEUR_%s",k)); End
 	LI("GFX/Plates/Barrier.png","BARRIER")
 	LF("Fonts/Ryanna.jfbf","RYANNA")
-	LF("Fonts/Mini.jfbf","MINI")	
+	LF("Fonts/Mini.jfbf","MINI")
+	LASS.Add("Global","Config","GlobConfig")
 End
 
 Global Void MainFlow()
