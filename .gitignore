@@ -1,0 +1,13 @@
+# Syldeyn
+MKL_*
+
+# Scyndi Compiled Code
+*.[Ss][Tt][Bb]
+
+# Assets Directory
+# Please note, due to issues such a copyrights no 3rd party stuff was included in this repository!
+Assets/*
+!Assets/Tricky
+!Assets/JQL
+
+
