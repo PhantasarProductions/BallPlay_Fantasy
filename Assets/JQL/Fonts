@@ -1,0 +1,10 @@
+JQL
+
+Platform:Linux
+LET:JFBF=/media/$User$/Scyndi/Projects/Fonts/JFBF
+platform:All
+
+Author:Jeroen P. Broks
+Notes:Creative Commons - By Attribute - Non-Commercial - Share-Alike
+RawDir:$JFBF$/Ryanna>Ryanna.jfbf
+RawDir:$JFBF$/Mini>Mini.jfbf
