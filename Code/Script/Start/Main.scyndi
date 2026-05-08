@@ -22,20 +22,96 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.08 III
+// Version: 26.05.08 XIV
 // End License
 
 Script
 
 #use "Libs/SCI/Sys"
 #use "Libs/SCI/Events"
+#use "Libs/SCI/Graphics"
+
+#use "Libs/LinkedList"
+
+#macro HotCenter 1
+
+Group Loaders
+	Void None(String F, String T)
+		Lua.error(sprintf("How nice I need to load %s into %s! But with which fucking loader?"))
+	End
+	Void LoadImage(String F, String T,Int Flag)
+		Img:=Lua.Scyndi.Globals.LoadImage(F,T)
+		switch Flag
+			Case HotCenter
+				Img.HotCenter()
+				CSayF("\t\t=> Hot Center")
+			Default
+				CSayF("\t\t=> No special flags")
+		End
+	End
+End	
+
+Class LASS
+	Static Var List = New TLinkedList()
+	Static Int Cnt = 0
+	ReadOnly String File
+	ReadOnly String Tag
+	ReadOnly Delegate Loader
+	ReadOnly Int Flag = 0
+	Constructor(String F,String T,L,Int FL=0)
+		Lua.assert(L,"No Loader?")
+		File = F
+		Tag  = T
+		Flag = FL
+		Switch Lua.type(L)
+			case "function"
+				Loader = L
+			case "string"
+				Loader = Loaders[L]
+			default
+				printf("I really can't do anything with type %s(%s) for a loader!\n",Lua.type(L),L)
+				Loaders.None(F,T)
+		End
+	End
+	Static Void Add(String _F, String _T,_L)		
+		List.AddLast(new LASS(_F,_T,_L))
+		Cnt++
+	End
+End
+
+void LI(String F,String T,Int Flag=0); LASS.Add(F,T,"LoadImage",Flag); End
+
 
 // Placeholder function. Should not be used in actual development/release
 Void InitialCrashOut()
 	Events.Annoy("Test!")
 	Sys.Quit(1)
-End	
+End
+
+
+Init
+	LI("GFX/Algemeen/Logo.png","LOGO",HotCenter) // MUST ALWAYS BE FIRST!!!
+	for a in Each{[0]="Up","Down","Left","Right"}; LI(sprintf("GFX/Arrows/%s.png",a),sprintf("ARROW_%s",a)); End
+End
 
 Global Void MainFlow()
+	Int Idx=0
+	LocExtern KaderMax "500"
+	plua Logo
+	For L in LASS.List.Each
+		Cls()
+		Events.Poll()
+		Idx++
+		CSayF("%9d/%d: %s -> %s",Idx,L.Cnt,L.File,L.Tag)
+		L.Loader(L.File,L.Tag,L.Flag)
+		For A=0,KaderMax
+			Graphics.ColorHSV( (Idx/LASS.Cnt)*120 , 1 , 1 - (A/KaderMax) )
+			Graphics.Rect(                 A,0,1,Graphics.Height)
+			Graphics.Rect(Graphics.Width - A,0,1,Graphics.Height)
+		End
+		Logo = ObtainImage("LOGO")
+		If Logo; Logo.Draw(Graphics.W div 2, Graphics.H div 2); End
+		Flip()		
+	End
 	InitialCrashOut()
 End

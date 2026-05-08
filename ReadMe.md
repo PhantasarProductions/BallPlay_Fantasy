@@ -19,3 +19,4 @@ Please keep your pull requests on Codeberg and not on Github, thank you!
 If you see this game on any other site, it could be either a backup site, or an unofficial clone/fork. I recommend to ignore those. (I'll mostly update this ReadMe file when another git repo site is added).
 
 
+If you wanna follow what I'm doing live, well, perhaps you'll like my silly [live devlog](https://tricky1975.github.io/DevLogs/BallPlayFantasy/BallPlay_Fantasy_DevLog_Page_1.html), then?
