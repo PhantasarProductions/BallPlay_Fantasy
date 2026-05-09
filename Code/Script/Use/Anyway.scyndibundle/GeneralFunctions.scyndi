@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.09
+// Version: 26.05.09 II
 // End License
 Module
 
@@ -59,5 +59,8 @@ Global Void MainFlow()
 	If Dbg
 		Fnt = Fnt || ObtainFont("MINI")
 		Fnt.Dark(sprintf("FPS: %5.2f",FPS),5,100)
+	End
+	If Events.AppTerminate() && Events.Yes("Do you really want to quit?\n\n(Please note that progress data may be lost)")
+		Sys.Exit(0)
 	End
 End
