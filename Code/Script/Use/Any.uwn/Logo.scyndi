@@ -26,10 +26,24 @@
 // End License
 Module LogoShower
 
+
 #use "Libs/SCI/Graphics"
+#use "Libs/SCI/InterVar"
 
 plua _L = ObtainImage("Logo")
-int y=Graphics.H div 2
+//int y=Graphics.H div 2
+
+Get Int y
+	If !gbool.SetLogoy
+		gint.logoy=Graphics.H div 2
+	end
+	return gint.logoy
+End
+
+Set Int y
+	gint.logoy = Value
+End
+
 int miny
 
 
