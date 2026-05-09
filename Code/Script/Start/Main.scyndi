@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.08 XXV
+// Version: 26.05.09 III
 // End License
 
 Script
@@ -56,6 +56,10 @@ Group Loaders
 		GC = GINIE.LoadHome("GlobalConfig.ini","GlobConfig","GlobalConfig.ini","BallPlay Genius\nGlobal configuration")
 		GC.NewValue("Meta","Created",os.date())
 		GC.NewValue("GlobConfig","Language","English")
+	End
+	Void ToMainMenu(String F, String I)
+		Sys.LoadState("FLOW_MAINMENU","Script/Flow/FlowMainMenu.lbc")
+		Sys.CurrentFlow="MAINMENU"
 	End
 End	
 
@@ -100,6 +104,7 @@ End
 
 Init
 	LI("GFX/Algemeen/Logo.png","LOGO",_HotCenter) // MUST ALWAYS BE FIRST!!!
+	LI("GFX/Algemeen/MousePointer.png","MOUSE")
 	for a in Each{[0]="Up","Down","Left","Right"}; LI(sprintf("GFX/Arrows/%s.png",a),sprintf("ARROW_%s",a)); End
 	for i=1,2; LI(sprintf("GFX/Plates/Plate%d.png",i),sprintf("PLATE%d",i)); End
 	for k in Each{[0]="Harten","Klaver","Ruiten","Schoppen"}; LI(sprintf("GFX/Suits/%s.png",k),sprintf("KLEUR_%s",k)); End
@@ -107,6 +112,7 @@ Init
 	LF("Fonts/Ryanna.jfbf","RYANNA")
 	LF("Fonts/Mini.jfbf","MINI")
 	LASS.Add("Global","Config","GlobConfig")
+	Lass.Add("Main Menu","Flow","ToMainMenu")
 End
 
 Global Void MainFlow()
@@ -129,5 +135,5 @@ Global Void MainFlow()
 		If Logo; Logo.Draw(Graphics.W div 2, Graphics.H div 2); End
 		Flip()		
 	End
-	InitialCrashOut()
+	//InitialCrashOut()
 End
