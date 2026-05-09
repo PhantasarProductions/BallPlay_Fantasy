@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.09 II
+// Version: 26.05.09 IV
 // End License
 Script
 
@@ -30,6 +30,7 @@ Script
 
 Void GoUserScreen()
 	Sys.LoadNewState("FLOW_PICKUSER","Script/Flow/FlowPickUser.lbc")
+	Sys.CurrentFlow="PICKUSER"
 End
 
 
