@@ -1,0 +1,73 @@
+// License:
+// 
+// BallPlay Fantasy
+// User Data
+// 
+// 
+// 
+// 	(c) Jeroen P. Broks, 2026
+// 
+// 		This program is free software: you can redistribute it and/or modify
+// 		it under the terms of the GNU General Public License as published by
+// 		the Free Software Foundation, either version 3 of the License, or
+// 		(at your option) any later version.
+// 
+// 		This program is distributed in the hope that it will be useful,
+// 		but WITHOUT ANY WARRANTY; without even the implied warranty of
+// 		MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// 		GNU General Public License for more details.
+// 		You should have received a copy of the GNU General Public License
+// 		along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// 
+// 	Please note that some references to data like pictures or audio, do not automatically
+// 	fall under this licenses. Mostly this is noted in the respective files.
+// 
+// Version: 26.05.09 IV
+// End License
+Module
+
+#use "Script/Use/Anyway"
+
+plua __Data
+
+// Made 'plua' to make 100% sure no other module can access it!
+plua __UserSlot
+
+String SlotFile(Int i)
+	return sprintf("Users/User_%03d",i)
+End
+
+
+Get Int Slot
+	return __UserSlot || -1
+End
+
+Set Int Slot
+	V:=Value
+	If V>=0
+		
+	End
+	// There's a reason for this!
+	If V<0
+		__Data=nil
+	End
+	__UserSlot = V
+	Any.Config.Users.Slot = V
+End
+
+Get String File
+	return Ternary(Slot>=0,SlotFile(Slot),"NONE")
+End
+
+
+Get Bool HasUser
+	return Slot>=0
+End
+
+
+
+Init
+	__UserSlot = Lua.tonumber(Any.Config.NewValue("Users","Slot","-1")) || -1
+	CSayF("User Slot: %d",__UserSlot)
+End
+
