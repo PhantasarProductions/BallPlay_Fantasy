@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.09
+// Version: 26.05.09 I
 // End License
 Module
 
@@ -32,6 +32,10 @@ Extern GFX "Scyndi.Class.Graphics"
 Extern GINIE "Scyndi.Class.GINIE"
 Extern Events "Scyndi.Class.Events"
 Extern Graphics "Scyndi.Class.Graphics"
+
+// Global Sys
+Extern CSay "Scyndi.Globals.CSay"
+Extern CSayF "Scyndi.Globals.CSayF"
 
 
 // Libs
