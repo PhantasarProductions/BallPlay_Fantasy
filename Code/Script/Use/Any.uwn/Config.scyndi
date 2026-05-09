@@ -1,0 +1,62 @@
+// License:
+// 
+// BallPlay Fantasy
+// Global Configuration Manager
+// 
+// 
+// 
+// 	(c) Jeroen P. Broks, 2026
+// 
+// 		This program is free software: you can redistribute it and/or modify
+// 		it under the terms of the GNU General Public License as published by
+// 		the Free Software Foundation, either version 3 of the License, or
+// 		(at your option) any later version.
+// 
+// 		This program is distributed in the hope that it will be useful,
+// 		but WITHOUT ANY WARRANTY; without even the implied warranty of
+// 		MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// 		GNU General Public License for more details.
+// 		You should have received a copy of the GNU General Public License
+// 		along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// 
+// 	Please note that some references to data like pictures or audio, do not automatically
+// 	fall under this licenses. Mostly this is noted in the respective files.
+// 
+// Version: 26.05.09 IV
+// End License
+
+Module Config_123
+
+#use "Libs/SCI/GINIE"
+
+plua _Config = GINIE.Obtain("GlobConfig")
+
+plua CKIndex(s,string K)
+	return Config.Value(s.___tk,K)
+end
+
+plua CKNewIndex(s,string K,V)
+	Config.Value(s.___tk,K,V)
+end	
+
+plua CK = {}
+
+
+
+QuickMeta Config
+	NewIndex
+		Lua.error("Illegal use of config")
+	End
+	Index
+		Key=Upper(Key)
+		Switch Key
+			case "G"
+				return _Config
+			Case "VALUE" "NEWVALUE" "INTVALUE"
+				return _Config[Key]
+			default
+				CK[Key]=CK[Key] || SetMetaTable({["___tk"]=Key},{["__index"]=CKIndex,["__newindex"]=CKNewIndex})
+				return CK[Key]
+		End		
+	End
+End
