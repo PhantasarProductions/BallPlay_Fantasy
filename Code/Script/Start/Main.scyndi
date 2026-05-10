@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.09 III
+// Version: 26.05.11
 // End License
 
 Script
@@ -105,6 +105,7 @@ End
 Init
 	LI("GFX/Algemeen/Logo.png","LOGO",_HotCenter) // MUST ALWAYS BE FIRST!!!
 	LI("GFX/Algemeen/MousePointer.png","MOUSE")
+	LI("GFX/MainMenu/Background.png","MAINBACK")
 	for a in Each{[0]="Up","Down","Left","Right"}; LI(sprintf("GFX/Arrows/%s.png",a),sprintf("ARROW_%s",a)); End
 	for i=1,2; LI(sprintf("GFX/Plates/Plate%d.png",i),sprintf("PLATE%d",i)); End
 	for k in Each{[0]="Harten","Klaver","Ruiten","Schoppen"}; LI(sprintf("GFX/Suits/%s.png",k),sprintf("KLEUR_%s",k)); End
