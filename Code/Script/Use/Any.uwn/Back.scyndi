@@ -1,0 +1,43 @@
+// License:
+// 
+// BallPlay Fantasy
+// Background
+// 
+// 
+// 
+// 	(c) Jeroen P. Broks, 2026
+// 
+// 		This program is free software: you can redistribute it and/or modify
+// 		it under the terms of the GNU General Public License as published by
+// 		the Free Software Foundation, either version 3 of the License, or
+// 		(at your option) any later version.
+// 
+// 		This program is distributed in the hope that it will be useful,
+// 		but WITHOUT ANY WARRANTY; without even the implied warranty of
+// 		MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// 		GNU General Public License for more details.
+// 		You should have received a copy of the GNU General Public License
+// 		along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// 
+// 	Please note that some references to data like pictures or audio, do not automatically
+// 	fall under this licenses. Mostly this is noted in the respective files.
+// 
+// Version: 26.05.11 I
+// End License
+Module BackModule
+
+#use "Libs/SCI/Graphics"
+#use "Libs/SCI/InterVar"
+
+LocExtern CVal "Scyndi.Globals.Gint.Value"
+LocExtern Deler "1000"
+
+pLua BImg = ObtainImage("MAINBACK")
+
+Global Void Back()
+	CVal = math.min(CVal+1,Deler div 2)
+	Graphics.ColorHSV(0,0,CVal/Deler)
+	BImg.Stretch(0,0,Graphics.Width,Graphics.Height)
+	Graphics.Color(255,255,255)
+End
+
