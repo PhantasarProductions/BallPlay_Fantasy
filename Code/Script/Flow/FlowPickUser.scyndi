@@ -22,14 +22,24 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.09 II
+// Version: 26.05.11 I
 // End License
 Script
 
 #use "Script/Use/Anyway"
 
+LocExtern Rows "10"
+LocExtern Cols "3"
+LocExtern MinY "120"
+LocExtern EntH "60"
+Get Int EntW
+	return Graphics.Width div Cols
+End
+plua Fnt = ObtainFont("RYANNA")
+
 Global Void FMain()
+	Any.Back()
 	If !Any.Logo()
 		Return
-	End
+	End	
 End
