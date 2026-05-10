@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.09 II
+// Version: 26.05.11
 // End License
 Module LogoShower
 
@@ -36,6 +36,7 @@ plua _L = ObtainImage("Logo")
 Get Int y
 	If !gbool.SetLogoy
 		gint.logoy=Graphics.H div 2
+		gbool.SetLogoy=true
 	end
 	return gint.logoy
 End
