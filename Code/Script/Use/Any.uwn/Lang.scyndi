@@ -1,0 +1,44 @@
+Module
+
+#use "Script/Use/Anyway"
+
+plua Langs = {}
+
+Get String Chosen
+	Return CFG.GlobConfig.Language
+End
+
+Get String UChosen
+	Return Upper(Chosen)
+End
+
+Get String LangEntry
+	Return SPrintF("Localisation/%s.ini",Chosen)
+End
+
+Get String LangTag
+	Return SPrintF("GINIE_LANGUAGE_%s",UChosen)
+End
+	
+
+Get Var LData
+	if !JCR6.HasEntry(LangEntry)
+		Events.Annoy(sprintf("ERROR!\n\nNo localisation data was found for language \"%s\"!\n\nReverting to English in stead!",Chosen))
+		CFG.GlobConfig.Language = "English"
+	End
+	Langs[UChosen] = Langs[UChosen] || GINIE.LoadNew(LangEntry,LangTag)
+	Return Langs[UChosen]
+End
+
+String Str(String Cat,String Key)
+	Langs.ENGLISH = Langs.ENGLISH || GINIE.LoadNew("Localisation/English.ini","GINIE_LANGUAGE_ENGLISH")
+	Return Ternary(LData.Value(Cat,Key)=="",Langs.ENGLISH.Value(Cat,Key),LData.Value(Cat,Key))
+End
+
+Void Text(Fnt,String Cat,String Key,int X,int y,int AX=0,int AY=0)
+	Fnt.Text(Str(Cat,Key),X,Y,AX,AY)
+End
+
+Void Dark(Fnt,String Cat,String Key,int X,int y,int AX=0,int AY=0)
+	Fnt.Dark(Str(Cat,Key),X,Y,AX,AY)
+End
