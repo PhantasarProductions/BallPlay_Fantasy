@@ -22,13 +22,13 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.11 III
+// Version: 26.05.11 XXIII
 // End License
 Script
 
 #use "Script/Use/Anyway"
 
-LocExtern Rows "10"
+LocExtern Rows "12"
 LocExtern Cols "3"
 LocExtern MinY "200"
 LocExtern EntH "60"
@@ -36,6 +36,16 @@ Get Int EntW
 	return Graphics.Width div Cols
 End
 plua Fnt = ObtainFont("RYANNA")
+plua MFN = ObtainFont("MINI")
+plua Bal = ObtainImage("BALL")
+plua UserNames
+Int Hue = os.time()
+
+Init
+	CSayF("Num of boxes: %dx%d.  BoxSize: %dx%d",Rows,Cols,EntW,EntH)
+	CSayF("Indexing Users (%d slots)",Cols*Rows)
+	UserNames = User.Index(Cols*Rows)
+End
 
 Global Void FMain()
 	Any.Back()
@@ -43,4 +53,46 @@ Global Void FMain()
 		Return
 	End	
 	Lang.Dark(Fnt,"USERS","PICKSPOT",Graphics.Width div 2,MinY,2,1)
+	HIdx:=nil
+	For R=0,Rows-1
+		For C=0,Cols-1
+			Int X:=C*EntW
+			Int Y:=(R*EntH)+MinY
+			Int Index = (C*Rows)+R
+			// MFN.Dark(sprintf("Index %02d -> (%4d,%4d)",Index,X,Y),4,100+(Index*10)) // Debug
+			SetColor(0,0,0,127)
+			Rect(X+3,Y+3,EntW-6,EntH-6)
+			SetAlpha(255)
+			Hover:=Events.MouseX>X && Events.MouseY>Y && Events.MouseY<Y+EntH && Events.MouseX<X+EntW
+			If Hover				
+				SetColorHSV(Hue div 100,1,1)
+				Rect(X+2,Y+2,EntW-4,EntH-4,1)
+				HIdx=Index
+			Else
+				SetColor(255,255,255)
+			End
+			if !UserNames[Index]
+				SetColorHSV(Hue div 100,1,0.5)
+			End
+			Bal.Stretch(X+3,Y+3,EntH-6,EntH-6)
+			If UserNames[Index]
+				SetColor(255,255,255)
+				Fnt.Dark(UserNames[Index],X+EntH,Y+(EntH div 2),0,2)
+			Else
+				SetColor(127,127,127)
+				Fnt.Dark(sprintf("< %s >",Lang.Str("Users","Empty")),X+EntH,Y+(EntH div 2),0,2)
+			End
+		End
+	End
+	Hue=(Hue+1)%36000
+	//CSayF("HIdx: %s; Mouse: %s",Hidx,Events.MouseHitLeft)	
+	If HIdx!=nil && Events.MouseHitLeft
+		//CSayF("HIdx: %s; Mouse: %s;",Hidx,Events.MouseHitLeft)
+		If !User.Exists(HIdx)
+			If User.CheckUser(HIdx)
+				CSayF("Link to user creation")
+				NName:=Any.TextInput("Users","EnterName",EntW-EntH)
+			End
+		ENd
+	End
 End
