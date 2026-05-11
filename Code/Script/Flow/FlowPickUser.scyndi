@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.12 II
+// Version: 26.05.12 III
 // End License
 Script
 
@@ -72,7 +72,7 @@ Global Void FMain()
 				SetColor(255,255,255)
 			End
 			if !UserNames[Index]
-				SetColorHSV(Hue div 100,1,0.5)
+				SetColorHSV(Hue div 100,Ternary(Hover,1,0),0.5)
 			End
 			Bal.Stretch(X+3,Y+3,EntH-6,EntH-6)
 			If UserNames[Index]
