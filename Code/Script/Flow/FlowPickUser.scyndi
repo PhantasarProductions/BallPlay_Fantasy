@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.11 XXIII
+// Version: 26.05.12 II
 // End License
 Script
 
@@ -92,7 +92,13 @@ Global Void FMain()
 			If User.CheckUser(HIdx)
 				CSayF("Link to user creation")
 				NName:=Any.TextInput("Users","EnterName",EntW-EntH)
+				User.Create(HIdx,NName)
+				CSayF("User %d created! Indexing!",HIDX)
+				UserNames = User.Index(Cols*Rows)
 			End
-		ENd
+		Else
+			User.Slot=HIdx
+			Sys.CurrentFlow="MAINMENU"
+		End
 	End
 End
