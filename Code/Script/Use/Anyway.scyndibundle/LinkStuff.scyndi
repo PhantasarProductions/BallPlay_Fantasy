@@ -45,3 +45,5 @@ Extern Music "Scyndi.Class.Music"
 
 // ShortCut
 Extern User "Scyndi.Globals.Any.User"
+Extern CFG "Scyndi.Globals.Any.Config"
+Extern Lang "Scyndi.Globals.Any.Lang"
