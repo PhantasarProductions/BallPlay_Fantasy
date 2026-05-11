@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.11
+// Version: 26.05.12
 // End License
 Module
 
@@ -30,8 +30,13 @@ Module
 #use "Libs/SCI/JCR6"
 #use "Libs/SCI/Events"
 #use "Libs/SCI/Graphics"
+#use "Libs/SCI/SString"
+
+#use "Libs/LinkedList"
 
 Global Bool ShowMouse = True
+
+LocExtern ShowFPS "false"
 
 ReadOnly Int TickStart = Sys.Ticks
 ReadOnly Int TimeStart = os.time()
@@ -49,7 +54,7 @@ plua MPTR = ObtainImage("Mouse")
 
 
 Global Void MainFlow()
-	Frames++
+	If ShowFPS;Frames++;End
 	// Allows some base features to be present in all flows, without much 
 	// further issues. Well, that's the idea. This is experimental, you know! 
 	Lua.Scyndi.Globals.FMain()
@@ -57,7 +62,7 @@ Global Void MainFlow()
 		Graphics.Color(255,255,255)
 		MPTR.Stretch(Events.MouseX,Events.MouseY,36,36)
 	End
-	If Dbg
+	If ShowFPS && Dbg
 		Fnt = Fnt || ObtainFont("MINI")
 		Fnt.Dark(sprintf("FPS: %5.2f",FPS),5,100)
 	End
