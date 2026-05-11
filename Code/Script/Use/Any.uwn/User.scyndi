@@ -22,9 +22,11 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.09 IV
+// Version: 26.05.12 VIII
 // End License
 Module
+
+#use "Libs/SCI/SGFile"
 
 #use "Script/Use/Anyway"
 
@@ -34,18 +36,18 @@ plua __Data
 plua __UserSlot
 
 String SlotFile(Int i)
-	return sprintf("Users/User_%03d",i)
+	return sprintf("Users/User_%03d.ini",i)
 End
 
 
 Get Int Slot
-	return __UserSlot || -1
+	return __UserSlot || Any.Config.Users.Slot
 End
 
 Set Int Slot
 	V:=Value
 	If V>=0
-		
+		__Data = GINIE.LoadHomeNew(File,"CurrentUser",File,"# BallPlay Fantasy")
 	End
 	// There's a reason for this!
 	If V<0
@@ -64,7 +66,57 @@ Get Bool HasUser
 	return Slot>=0
 End
 
+Get Var Data
+	__Data = __Data || GINIE.LoadHomeHome(File,"CurrentUser",File,"# BallPlay Fantasy")
+	__Data.NewValue("General","Created",os.date())
+	__Data.NewValue("General","Name","*Nameless::"..md5(os.time()))
+	Return __Data
+End
 
+Var Index(int max)
+	Ret:={}
+	For i=0,max
+		If SGFile.FileExists(SlotFile(i))
+			TG:=GINIE.LoadHome(SlotFile(i),"IndexUser")
+			Ret[i]=TG.Value("General","Name")
+		End
+	End
+	Return Ret
+End
+
+Bool CheckUser(int i)
+	Return SGFile.FileExists(SlotFile(i)) || Events.Yes(sprintf("%s\n\n%s",sprintf(Lang.Str("USERS","NoUserSlot"),i),Lang.Str("Users","NoUserCreate")))
+End
+
+Bool Exists(int i)
+	Return SGFile.FileExists(SlotFile(i))
+End
+
+Void Create(int i,String _Name)
+	_Name=Trim(_Name)
+	If _Name=="";
+		CSayF("No name for slot #%d! Ignoring!",i)
+		Return; 
+	End
+	If SGFile.FileExists(SlotFile(i))
+		Events.Annoy(Lang.Str("Users","AlreadyExists"))
+		Return
+	End
+	//Slot = i
+	SGFile.NewDir("Users")
+	TG:=GINIE.LoadHomeNew(SlotFile(i),"CreateUser",SlotFile(i),"# User Creation")
+	//TG.AutoSave=SlotFile(i)
+	TG.Value("General","Created",os.date())
+	TG.Value("General","Name",_Name)
+	CSayF("User %d created as %s -> %s",i,_Name,SlotFile(i))
+End
+
+Get String Name
+	Return Data.Value("General","Name")
+End
+
+
+		
 
 Init
 	__UserSlot = Lua.tonumber(Any.Config.NewValue("Users","Slot","-1")) || -1
