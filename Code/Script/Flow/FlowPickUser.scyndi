@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.11 I
+// Version: 26.05.11 III
 // End License
 Script
 
@@ -30,7 +30,7 @@ Script
 
 LocExtern Rows "10"
 LocExtern Cols "3"
-LocExtern MinY "120"
+LocExtern MinY "200"
 LocExtern EntH "60"
 Get Int EntW
 	return Graphics.Width div Cols
