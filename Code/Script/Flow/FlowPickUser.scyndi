@@ -42,4 +42,5 @@ Global Void FMain()
 	If !Any.Logo()
 		Return
 	End	
+	Lang.Dark(Fnt,"USERS","PICKSPOT",Graphics.Width div 2,MinY,2,1)
 End
