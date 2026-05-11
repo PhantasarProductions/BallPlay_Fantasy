@@ -22,13 +22,14 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.09 I
+// Version: 26.05.11 II
 // End License
 Module
 
 // SCI crap
 Extern Sys "Scyndi.Class.Sys"
 Extern GFX "Scyndi.Class.Graphics"
+Extern JCR6 "Scyndi.Class.JCR6"
 Extern GINIE "Scyndi.Class.GINIE"
 Extern Events "Scyndi.Class.Events"
 Extern Graphics "Scyndi.Class.Graphics"
@@ -36,6 +37,11 @@ Extern Graphics "Scyndi.Class.Graphics"
 // Global Sys
 Extern CSay "Scyndi.Globals.CSay"
 Extern CSayF "Scyndi.Globals.CSayF"
+
+// Obtain
+Extern ObtainFont "Scyndi.Globals.ObtainFont"
+Extern ObtainImage "Scyndi.Globals.ObtainImage"
+
 
 
 // Libs
