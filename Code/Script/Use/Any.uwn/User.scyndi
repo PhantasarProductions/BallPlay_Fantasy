@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.12 VIII
+// Version: 26.05.12 XIII
 // End License
 Module
 
@@ -67,7 +67,7 @@ Get Bool HasUser
 End
 
 Get Var Data
-	__Data = __Data || GINIE.LoadHomeHome(File,"CurrentUser",File,"# BallPlay Fantasy")
+	__Data = __Data || GINIE.LoadHomeNew(File,"CurrentUser",File,"# BallPlay Fantasy")
 	__Data.NewValue("General","Created",os.date())
 	__Data.NewValue("General","Name","*Nameless::"..md5(os.time()))
 	Return __Data
@@ -115,11 +115,21 @@ Get String Name
 	Return Data.Value("General","Name")
 End
 
+ReadOnly Var CFG
+plua cfg_idx(s,String k); Return Data.Value("Config",k); End
+plua cfg_nid(s,String K,v); Return Data.Value("Config",k,v); End
 
-		
+Get Bool CMus;
+	Data.NewValue("Config","Music","TRUE")
+	return Upper(CFG.Music)=="TRUE" 
+End
+Set Bool CMus;
+	CFG.MUSIC=Upper(lua.tostring(Value)); 
+End
 
 Init
 	__UserSlot = Lua.tonumber(Any.Config.NewValue("Users","Slot","-1")) || -1
 	CSayF("User Slot: %d",__UserSlot)
+	CFG = SetMetaTable({}, {["__index"]=cfg_idx,["__newindex"]=cfg_nid})
 End
 
