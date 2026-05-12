@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.12 XXII
+// Version: 26.05.13 I
 // End License
 Script
 
@@ -87,10 +87,16 @@ Void MMI_Bugs()
 	Sys.OpenURL("https://codeberg.org/PhantasarProductions/BallPlay_Fantasy/issues")
 End
 
+Void MMI_Config()
+	Sys.LoadNewState("FLOW_CONFIG","Script/Flow/FlowConfig.lbc")
+	Sys.CurrentFlow="CONFIG"
+End
+
 Init
 	NewItem("PLAYGAME") // Play The Game
 	NewItem("LEVELEDITOR") // Puzzle Editor
-	NewItem("CONFIGURATION") // Configuration
+	NewItem("ACHIEVEMENTS") // Achievements
+	NewItem("CONFIGURATION",MMI_Config) // Configuration
 	NewItem("BUGS",MMI_Bugs) // Report Bugs
 	NewItem("CREDITS") // Credits
 	NewItem("JUKEBOX") // Jukebox
