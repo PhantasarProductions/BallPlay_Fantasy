@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.11 II
+// Version: 26.05.12
 // End License
 Module
 
@@ -59,7 +59,7 @@ End
 String Str(String Cat,String Key)
 	Langs.ENGLISH = Langs.ENGLISH || GINIE.LoadNew("Localisation/English.ini","GINIE_LANGUAGE_ENGLISH")
 	Ret := Ternary(LData.Value(Cat,Key)=="",Langs.ENGLISH.Value(Cat,Key),LData.Value(Cat,Key))
-	Lua.assert(Ret && Ret!="",sprintf("No localisation string found for %s::%s (%s)",Cat,Key,Ternary(LData.Value(Cat,Key)=="","English rediction for no key in"..Chosen,Chosen)))
+	Lua.assert(Ret && Ret!="",sprintf("No localisation string found for %s::%s (%s)",Cat,Key,Ternary(LData.Value(Cat,Key)=="","English rediction for no key in "..Chosen,Chosen)))
 	Return Ret
 End
 
