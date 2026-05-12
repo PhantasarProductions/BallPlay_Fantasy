@@ -22,15 +22,91 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.12
+// Version: 26.05.12 XXII
 // End License
 Script
 
 #use "Script/Use/Anyway"
 
+Plua Fnt = ObtainFont("Ryanna")
+
+Bool Always(); Return True; End
+Void NYI(); Events.Annoy("Feature not yet implemented!\nPlease come back later!"); End
+
+Class MMItem
+	Static Int Cnt=0
+	Static ReadOnly Var Lijst = New TLinkedList()
+	ReadOnly Int ID
+	ReadOnly Delegate Act
+	ReadOnly Delegate Allow
+	ReadOnly String LangTag
+	Static Int X = Graphics.Width Div 2
+	Int Y
+	Get Int ToY
+		Return 200+(ID*50)
+	End
+	Constructor(String LT,_Act,_Allow)
+		ID=Cnt
+		Cnt++
+		LangTag=LT
+		Y = (100*(ID+1))^2
+		Act=_Act
+		Allow = _Allow || Always
+		Act = _Act || NYI
+		CSayF("Item %2d: %s created",ID,LT)
+	End
+	Destructor
+		CSayF("Item %2d: %s destroyed",ID,LangTag)
+	End
+	
+	Void Draw()
+		SetColor(255,255,255,255)
+		If !Allow()
+			SetColorHSV(0,0.5,0)
+		ElIf Events.MouseY>Y && Events.MouseY<Y+45
+			SetColorHSV(os.time() % 360,1,1)
+			If Events.MouseHitLeft
+				Act()
+			End
+		End
+		Lang.Dark(Fnt,"MAINMENU",LangTag,X,Y,2,0)
+		If Y>ToY
+			Y-=math.max(1,(Y-ToY) div 20)
+		End
+		// CSayF("%d -> (%4d,%4d) <- %s (To %4d)",ID,X,Y,LangTag,ToY) // Debug Only!
+	End
+End
+
+
+Void NewItem(String LT,_Act,_Allow)
+	MMItem.Lijst.AddLast(new MMItem(LT,_Act,_allow))
+End
+
+
+Void MMI_Bugs()
+	Sys.OpenURL("https://codeberg.org/PhantasarProductions/BallPlay_Fantasy/issues")
+End
+
+Init
+	NewItem("PLAYGAME") // Play The Game
+	NewItem("LEVELEDITOR") // Puzzle Editor
+	NewItem("CONFIGURATION") // Configuration
+	NewItem("BUGS",MMI_Bugs) // Report Bugs
+	NewItem("CREDITS") // Credits
+	NewItem("JUKEBOX") // Jukebox
+	NewItem("PICKUSER") // Other User
+	NewItem("QUIT",Sys.Exit) // Quit
+End
+
+plua FNT = ObtainFont("RYANNA")
+
 Void GoUserScreen()
 	Sys.LoadNewState("FLOW_PICKUSER","Script/Flow/FlowPickUser.lbc")
 	Sys.CurrentFlow="PICKUSER"
+End
+
+Init
+	Any.Play("Music/Title/Title.ogg")
 End
 
 
@@ -38,5 +114,9 @@ Global Void FMain()
 	Any.Back()
 	if !User.HasUser; GoUserScreen(); End
 	if !Any.Logo(); Return; End
-		
+	For MI in MMItem.Lijst.Each
+		MI.Draw()
+	End
+	SetColor(255,255,255)
+	Fnt.Dark("|cc Jeroen P. Broks, 2026",Graphics.Width div 2, Graphics.Height,2,1)
 End
