@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.14
+// Version: 26.05.14 I
 // End License
 Module
 
@@ -51,6 +51,12 @@ Extern MD5 "Scyndi.Globals.MD5"
 Extern Prefixed "Scyndi.Globals.Prefixed"
 Extern StripAll "Scyndi.Globals.StripAll"
 
+// Interstate Variabales
+Extern gstr "Scyndi.Globals.gStr"
+Extern gint "Scyndi.Globals.gint"
+Extern Situation "Scyndi.Globals.gStr.Situation"
+
+
 
 
 // Libs
@@ -62,3 +68,4 @@ Extern Music "Scyndi.Class.Music"
 Extern User "Scyndi.Globals.Any.User"
 Extern CFG "Scyndi.Globals.Any.Config"
 Extern Lang "Scyndi.Globals.Any.Lang"
+
