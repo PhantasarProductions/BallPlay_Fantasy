@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.12 I
+// Version: 26.05.14 IV
 // End License
 Module PlayPlayPlay
 
@@ -31,6 +31,7 @@ Module PlayPlayPlay
 
 plua Last
 Global Void Play(string A)
+	CSayF("Music play request: %s -- %s",A,Any.User.CMus)
 	String F
 	switch Upper(A)
 		Case "*SILENCE"
@@ -41,7 +42,8 @@ Global Void Play(string A)
 			If Prefixed(A,"*"); Lua.error("Invalid music: "..A); End
 			F = A
 	End
-	If !User.CFG.CMus || F == ""
+	CSayF("!User.CFG.CMus(%s) || F == \"\"(%s) -> %s",(!Any.User.CMus), F == "",(!Any.User.CMus) || F == "")
+	If (!Any.User.CMus) || F == ""
 		Music.Play("Music/Sys/Silence.ogg")
 	Else
 		Last = F
