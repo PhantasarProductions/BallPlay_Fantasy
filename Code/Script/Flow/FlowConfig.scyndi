@@ -1,0 +1,153 @@
+// License:
+// 
+// BallPlay Fantasy
+// Configuration Screen
+// 
+// 
+// 
+// 	(c) Jeroen P. Broks, 2026
+// 
+// 		This program is free software: you can redistribute it and/or modify
+// 		it under the terms of the GNU General Public License as published by
+// 		the Free Software Foundation, either version 3 of the License, or
+// 		(at your option) any later version.
+// 
+// 		This program is distributed in the hope that it will be useful,
+// 		but WITHOUT ANY WARRANTY; without even the implied warranty of
+// 		MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// 		GNU General Public License for more details.
+// 		You should have received a copy of the GNU General Public License
+// 		along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// 
+// 	Please note that some references to data like pictures or audio, do not automatically
+// 	fall under this licenses. Mostly this is noted in the respective files.
+// 
+// Version: 26.05.14 IX
+// End License
+Script
+
+#use "Script/Use/Anyway"
+
+#use "libs/xmath"
+
+
+
+plua fnt = ObtainFont("Ryanna")
+
+plua dunno(); Events.Annoy("I don't know what to do"); end
+plua always(); Return True; End
+plua nothing(); Return ""; End
+
+pLua XPand(tab,int idx=0)
+	If tab==nil || tab[idx]==nil; return nil; end
+	Return tab[idx],XPand(tab,idx+1)
+End
+
+String YN(Bool N)
+	Return Lang.Str("ALGEMEEN",Ternary(N,"ON","OFF"))
+End
+
+Class ConfigItem
+	Static Int Cnt = 0
+	Static ReadOnly Var Lst = New TLinkedList()
+	ReadOnly Int ID
+	ReadOnly String IPrefix
+	ReadOnly String CaptionKey
+	ReadOnly String CaptionCat = "CONFIG"
+	ReadOnly Delegate ShowValue
+	ReadOnly Delegate Act
+	ReadOnly Delegate Allow
+	ReadOnly Table Parameters
+	Get Int Y
+		Return 250+(ID*50)
+	End
+	Constructor(String Pref,String _Cat, String _Key,_SV, _Act,_Allow,Infinity)
+		P:={[0]=Infinity}
+		Parameters = Ternary(Len(P)>=1,P,nil)
+		CaptionCat = _Cat
+		CaptionKey = _Key
+		Act = _Act || dunno
+		Allow = _Allow || always
+		ShowValue = _SV || nothing
+		IPrefix=Pref
+		ID = Cnt
+		Cnt++
+	End	
+	
+	Void Draw()
+		If !Allow()
+			SetColor(127,126,125)
+		ElIf Events.MouseY>Y && Events.MouseY<Y+45
+			SetColorHSV(os.time()%360,1,math.abs(0.2+(xmath.sin(Sys.Ticks div 25) / 2)))
+			Rect(5,Y,Graphics.Width-10,45)
+			SetColor(255,255,255)
+			If Events.MouseHitLeft
+				Act(XPand(Parameters))
+			End
+		Else
+			SetColor(255,255,255)
+		End		
+		Fnt.Dark(IPrefix..Lang.Str(CaptionCat,CaptionKey),(Graphics.Width /2)-5,Y,1,0)
+		If Allow()
+			SetColor(255,180,0)
+		Else
+			SetColor(127,18,0)
+		End
+		Fnt.Dark(ShowValue(xpand(Parameters)),(Graphics.Width /2)+5,Y)
+	End
+	
+	Static Void DrawAll()
+		For ITM in Lst.Each
+			ITM.Draw()
+		End
+	End
+End
+
+Void NewItem(String _Cat, String _Key,_SV,_Act,_Allow,Infinity)
+	ConfigItem.Lst.AddLast(New ConfigItem("",_Cat, _Key,_SV,_Act,_Allow,Infinity))
+End
+
+Void XNewItem(String P,String _Cat, String _Key,_SV,_Act,_Allow,Infinity)
+	ConfigItem.Lst.AddLast(New ConfigItem(P,_Cat, _Key,_SV,_Act,_Allow,Infinity))
+End
+
+String ValLang()
+	Return Lang.Str("AAA","Language")
+End
+
+Plua LangList = Lang.LangList
+Void ActLang()
+	A:=LangList.Array
+	N:=LangList.Next
+	Lang.Chosen = A[N[Lang.UChosen] || 0]
+End
+
+Void ActBack()
+	Sys.CurrentFlow="MAINMENU"
+ENd
+
+Void ActMusic()
+	User.CMus = !User.CMus
+	Any.Play("Music/Title/Title.ogg") // Should automatically go silent if music goes off and play when it goes on.
+End
+
+String ValMusic()
+	Return YN(User.CMus)
+End
+
+
+Init
+	NewItem("CONFIGURATION","LANGUAGE",ValLang,ActLang)
+	NewItem("CONFIGURATION","Music",ValMusic,ActMusic)
+	NewItem("CONFIGURATION","SoundEffects")
+	NewItem("CONFIGURATION","COLORBLIND")
+	NewItem("CONFIGURATION","Tutorials")
+	XNewItem("|$b","ALGEMEEN","BACK",nil,ActBack)
+End
+
+
+Global Void FMain()
+	Any.Back()	
+	Any.Logo()
+	ConfigItem.DrawAll()
+End
