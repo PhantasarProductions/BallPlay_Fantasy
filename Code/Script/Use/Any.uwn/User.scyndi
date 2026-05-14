@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.14 II
+// Version: 26.05.14 XVIII
 // End License
 Module
 
@@ -30,10 +30,15 @@ Module
 
 #use "Script/Use/Anyway"
 
-plua __Data
+plua uFnt = ObtainFont("DOS") 
+
+plua __TrueData = {}
+LocExtern __Data "__TrueData[Scyndi.Globals.Any.Config.Value('Users','Slot')]"
 
 // Made 'plua' to make 100% sure no other module can access it!
 plua __UserSlot
+
+	
 
 String SlotFile(Int i)
 	return sprintf("Users/User_%03d.ini",i)
@@ -41,13 +46,14 @@ End
 
 
 Get Int Slot
-	return __UserSlot || Any.Config.Users.Slot
+	//return __UserSlot || Lua.tonumer(Any.Config.Users.Slot)
+	return Lua.tonumber(Any.Config.Users.Slot) || -1
 End
 
 Set Int Slot
 	V:=Value
 	If V>=0
-		__Data = GINIE.LoadHomeNew(File,"CurrentUser",File,"# BallPlay Fantasy")
+		__Data = GINIE.LoadHome(File,sprintf("User_%d",V),File,"# BallPlay Fantasy")
 	End
 	// There's a reason for this!
 	If V<0
@@ -67,7 +73,14 @@ Get Bool HasUser
 End
 
 Get Var Data
-	__Data = __Data || GINIE.LoadHomeNew(File,"CurrentUser",File,"# BallPlay Fantasy")
+	If __UserSlot != lua.tonumber(Any.Config.Users.Slot) 
+	//	__Data = nil
+		__UserSlot = lua.tonumber(Any.Config.Users.Slot)
+	End
+	if !__Data
+		CSayF("\x07No data for user %s",Any.Config.Users.Slot)
+	End
+	__Data = __Data || GINIE.LoadHome(File,sprintf("User_%s",Any.Config.Users.Slot),File,"# BallPlay Fantasy")
 	__Data.NewValue("General","Created",os.date())
 	__Data.NewValue("General","Name","*Nameless::"..md5(os.time()))
 	Return __Data
@@ -104,7 +117,7 @@ Void Create(int i,String _Name)
 	End
 	//Slot = i
 	SGFile.NewDir("Users")
-	TG:=GINIE.LoadHomeNew(SlotFile(i),"CreateUser",SlotFile(i),"# User Creation")
+	TG:=GINIE.LoadHome(SlotFile(i),"CreateUser",SlotFile(i),"# User Creation")
 	//TG.AutoSave=SlotFile(i)
 	TG.Value("General","Created",os.date())
 	TG.Value("General","Name",_Name)
@@ -129,9 +142,20 @@ Set Bool CMus;
 	CFG.MUSIC=Upper(lua.tostring(Value)); 
 End
 
+Void ShowCurrentUser()	
+	If __UserSlot>=0
+		SetColorHSV(0,0,0.6)
+		SetAlpha(180)
+		uFnt.Text(Data.Value("General","Name"),5,5)
+		SetColor(255,255,255,255)
+	End
+End
+
 Init
 	__UserSlot = Lua.tonumber(Any.Config.NewValue("Users","Slot","-1")) || -1
+	//Any.Config.NewValue("Users","Slot","-1")
 	CSayF("User Slot: %d",__UserSlot)
 	CFG = SetMetaTable({}, {["__index"]=cfg_idx,["__newindex"]=cfg_nid})
+	CSay("Meta set")
 End
 
