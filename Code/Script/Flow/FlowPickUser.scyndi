@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.12 IV
+// Version: 26.05.14 IV
 // End License
 Script
 
@@ -97,9 +97,18 @@ Global Void FMain()
 				UserNames = User.Index(Cols*Rows)
 			End
 		Else
+			CSayF("Kill all states but %s",Sys.StateName)
+			Sys.KillOthers()
 			User.Slot=HIdx
+			CSay("Reload Main Menu")
+			Sys.LoadState("FLOW_MAINMENU","Script/Flow/FlowMainMenu.lbc")
+			CSay("Plan to comit suicide")
+			Sys.PlanToKillState("FLOW_PICKUSER")
+			CSay("Back to main menu!")
 			Sys.CurrentFlow="MAINMENU"
+			CSay("Music")
 			Any.Play("Music/Title/Title.ogg")
+			CSay("All done with user change")
 		End
 	End
 End
