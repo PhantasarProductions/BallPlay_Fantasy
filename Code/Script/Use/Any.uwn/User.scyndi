@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.12 XIII
+// Version: 26.05.14 II
 // End License
 Module
 
@@ -121,7 +121,9 @@ plua cfg_nid(s,String K,v); Return Data.Value("Config",k,v); End
 
 Get Bool CMus;
 	Data.NewValue("Config","Music","TRUE")
-	return Upper(CFG.Music)=="TRUE" 
+	r:=Upper(Data.Value("Config","Music"))=="TRUE"
+	//CSayF("DEBUG! CMus> CONFIG::MUSIC=\"%s; r=%s",Data.Value("Config","Music"),r)
+	return r
 End
 Set Bool CMus;
 	CFG.MUSIC=Upper(lua.tostring(Value)); 
