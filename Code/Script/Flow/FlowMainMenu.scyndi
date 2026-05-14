@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.13 I
+// Version: 26.05.14 II
 // End License
 Script
 
@@ -92,7 +92,16 @@ Void MMI_Config()
 	Sys.CurrentFlow="CONFIG"
 End
 
+plua FNT = ObtainFont("RYANNA")
+
+Void GoUserScreen()
+	Sys.LoadNewState("FLOW_PICKUSER","Script/Flow/FlowPickUser.lbc")
+	Sys.CurrentFlow="PICKUSER"
+End
+
+
 Init
+	CSay("Init Menu Items")
 	NewItem("PLAYGAME") // Play The Game
 	NewItem("LEVELEDITOR") // Puzzle Editor
 	NewItem("ACHIEVEMENTS") // Achievements
@@ -100,16 +109,10 @@ Init
 	NewItem("BUGS",MMI_Bugs) // Report Bugs
 	NewItem("CREDITS") // Credits
 	NewItem("JUKEBOX") // Jukebox
-	NewItem("PICKUSER") // Other User
+	NewItem("PICKUSER",GoUserScreen) // Other User
 	NewItem("QUIT",Sys.Exit) // Quit
 End
 
-plua FNT = ObtainFont("RYANNA")
-
-Void GoUserScreen()
-	Sys.LoadNewState("FLOW_PICKUSER","Script/Flow/FlowPickUser.lbc")
-	Sys.CurrentFlow="PICKUSER"
-End
 
 Init
 	Any.Play("Music/Title/Title.ogg")
@@ -120,6 +123,7 @@ Global Void FMain()
 	Any.Back()
 	if !User.HasUser; GoUserScreen(); End
 	if !Any.Logo(); Return; End
+	User.ShowCurrentUser()
 	For MI in MMItem.Lijst.Each
 		MI.Draw()
 	End
