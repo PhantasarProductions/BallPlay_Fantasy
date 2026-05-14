@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.14 IX
+// Version: 26.05.14 XXIII
 // End License
 Script
 
@@ -38,7 +38,8 @@ plua dunno(); Events.Annoy("I don't know what to do"); end
 plua always(); Return True; End
 plua nothing(); Return ""; End
 
-pLua XPand(tab,int idx=0)
+// A bug in Lua itself is to blame here!
+pLua XPand(tab,int idx=1)
 	If tab==nil || tab[idx]==nil; return nil; end
 	Return tab[idx],XPand(tab,idx+1)
 End
@@ -62,8 +63,9 @@ Class ConfigItem
 		Return 250+(ID*50)
 	End
 	Constructor(String Pref,String _Cat, String _Key,_SV, _Act,_Allow,Infinity)
-		P:={[0]=Infinity}
-		Parameters = Ternary(Len(P)>=1,P,nil)
+		LocExtern LL "#"
+		P:={Infinity}
+		Parameters = Ternary(LL P >=1,P,nil)
 		CaptionCat = _Cat
 		CaptionKey = _Key
 		Act = _Act || dunno
@@ -72,6 +74,12 @@ Class ConfigItem
 		IPrefix=Pref
 		ID = Cnt
 		Cnt++
+		CSayF("Config item '%s' created!",_Cat)
+		//CSayF("= Params: %d",len({[0]=Infinity}))
+		CSay(Infinity)
+		For i,k in Lua.ipairs{Infinity}
+			CSayF("= %d -> %s (%s)",i,k,Lua.type(k))
+		End
 	End	
 	
 	Void Draw()
@@ -79,7 +87,7 @@ Class ConfigItem
 			SetColor(127,126,125)
 		ElIf Events.MouseY>Y && Events.MouseY<Y+45
 			SetColorHSV(os.time()%360,1,math.abs(0.2+(xmath.sin(Sys.Ticks div 25) / 2)))
-			Rect(5,Y,Graphics.Width-10,45)
+			Rect(5,Y-5,Graphics.Width-10,45)
 			SetColor(255,255,255)
 			If Events.MouseHitLeft
 				Act(XPand(Parameters))
@@ -93,6 +101,7 @@ Class ConfigItem
 		Else
 			SetColor(127,18,0)
 		End
+		//print("Debug:ShowValue:",xpand(Parameters))
 		Fnt.Dark(ShowValue(xpand(Parameters)),(Graphics.Width /2)+5,Y)
 	End
 	
@@ -135,13 +144,23 @@ String ValMusic()
 	Return YN(User.CMus)
 End
 
+void ActBool(String K)
+	V:=Upper(User.CFG[K])!="TRUE"
+	User.CFG[K]=Upper(Lua.tostring(V))
+End
+
+String ValBool(String K,String DefaultValue)
+	V:=Upper(User.Data.NewValue("Config",K,DefaultValue))=="TRUE"
+	return YN(V)
+End
+
 
 Init
 	NewItem("CONFIGURATION","LANGUAGE",ValLang,ActLang)
 	NewItem("CONFIGURATION","Music",ValMusic,ActMusic)
-	NewItem("CONFIGURATION","SoundEffects")
-	NewItem("CONFIGURATION","COLORBLIND")
-	NewItem("CONFIGURATION","Tutorials")
+	NewItem("CONFIGURATION","SoundEffects",ValBool,ActBool,nil,"SFX","true")
+	NewItem("CONFIGURATION","COLORBLIND",ValBool,ActBool,nil,"ColorBlind","false")
+	NewItem("CONFIGURATION","Tutorials",ValBool,ActBool,nil,"Tutorials","false")
 	XNewItem("|$b","ALGEMEEN","BACK",nil,ActBack)
 End
 
@@ -149,5 +168,6 @@ End
 Global Void FMain()
 	Any.Back()	
 	Any.Logo()
+	User.ShowCurrentUser()
 	ConfigItem.DrawAll()
 End
