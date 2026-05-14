@@ -22,11 +22,13 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.14 II
+// Version: 26.05.14 III
 // End License
 Script
 
 #use "Script/Use/Anyway"
+
+
 
 Plua Fnt = ObtainFont("Ryanna")
 
@@ -99,11 +101,16 @@ Void GoUserScreen()
 	Sys.CurrentFlow="PICKUSER"
 End
 
+Void GoEditor()
+	Situation="Editor"
+	Sys.LoadNewState("FLOW_PACKSELECTOR","Script/Flow/FlowPackSelector.lbc")
+End
+
 
 Init
 	CSay("Init Menu Items")
 	NewItem("PLAYGAME") // Play The Game
-	NewItem("LEVELEDITOR") // Puzzle Editor
+	NewItem("LEVELEDITOR",GoEditor) // Puzzle Editor
 	NewItem("ACHIEVEMENTS") // Achievements
 	NewItem("CONFIGURATION",MMI_Config) // Configuration
 	NewItem("BUGS",MMI_Bugs) // Report Bugs
