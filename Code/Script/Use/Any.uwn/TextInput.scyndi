@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.15 I
+// Version: 26.05.15 IV
 // End License
 
 Module TextInput_Module_ABC
@@ -77,9 +77,15 @@ End
 
 Init
 	Toetsen = New TLinkedList()
-	For i='AZ';Toetsen.AddLast(New Toets(i)); end; Toets.CX=5; ToetsCY++
-	For i='az';Toetsen.AddLast(New Toets(i)); end; Toets.CX=5; ToetsCY++
-	For i='09';Toetsen.AddLast(New Toets(i)); end; Toets.CX=5; ToetsCY++
+	For i='AZ';Toetsen.AddLast(New Toets(i)); end; 
+	Toets.CX=5; 
+	Toets.CY++
+	For i='az';Toetsen.AddLast(New Toets(i)); end; 
+	Toets.CX=5; 
+	Toets.CY++
+	For i='09';Toetsen.AddLast(New Toets(i)); end; 
+	Toets.CX=5; 
+	Toets.CY++
 	For spc in Each{[0]="|ua","|ue","|ui","|uo","|uu","|sz"}; Toetsen.AddLast(New Toets(spc)); End
 	// This must be last!!!
 	Toets.CX=5
