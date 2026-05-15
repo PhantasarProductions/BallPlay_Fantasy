@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.15 XII
+// Version: 26.05.15 XV
 // End License
 Script
 
@@ -59,8 +59,8 @@ Void Renew()
 	_Files:=SGF.GetDir()
 	For _F in Each(_Files)
 		CSayF("File Found: %s",_F) // Debug
-		_SF:=XSplit(_F)
-		if Len(_SF)==3 && Upper(_SF[0])=="PACKS" && Upper(_SF[2])=="Index.ini"
+		_SF:=XSplit(_F,"/")		
+		if Len(_SF)==3 && Upper(_SF[0])=="PACKS" && Upper(_SF[2])=="INDEX.INI"
 			PackList+=New TPack(_SF[1])
 		End	
 	End
