@@ -22,15 +22,16 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.12
+// Version: 26.05.15
 // End License
 Module
 
 #use "Libs/SCI/Sys"
 #use "Libs/SCI/JCR6"
 #use "Libs/SCI/Events"
-#use "Libs/SCI/Graphics"
+#use "Libs/SCI/SGFile"
 #use "Libs/SCI/SString"
+#use "Libs/SCI/Graphics"
 
 #use "Libs/LinkedList"
 
