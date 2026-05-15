@@ -1,0 +1,125 @@
+// License:
+// 
+// BallPlay Fantasy
+// Pack Selector
+// 
+// 
+// 
+// 	(c) Jeroen P. Broks, 2026
+// 
+// 		This program is free software: you can redistribute it and/or modify
+// 		it under the terms of the GNU General Public License as published by
+// 		the Free Software Foundation, either version 3 of the License, or
+// 		(at your option) any later version.
+// 
+// 		This program is distributed in the hope that it will be useful,
+// 		but WITHOUT ANY WARRANTY; without even the implied warranty of
+// 		MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// 		GNU General Public License for more details.
+// 		You should have received a copy of the GNU General Public License
+// 		along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// 
+// 	Please note that some references to data like pictures or audio, do not automatically
+// 	fall under this licenses. Mostly this is noted in the respective files.
+// 
+// Version: 26.05.15 XII
+// End License
+Script
+
+#use "Script/Use/Anyway"
+
+#macro P_Pack 0
+#macro P_NewPack 1
+#macro P_Default 2
+
+Class TPack
+	ReadOnly String Name
+	ReadOnly Int Type
+	ReadOnly Bool LangChange
+	Constructor(String N,Int T=P_Pack)
+		Name = N
+		Type = T
+		LangChange = T != 0
+	End
+End
+
+plua Fnt = ObtainFont("Ryanna")
+plua PackList
+Int Scroll = 0
+const Int WH = Graphics.Height-300
+
+Void Renew()
+	PackList = {}
+	Switch Upper(Situation)
+		case "EDITOR"
+			PackList+=new TPack("NEWPACK",P_NewPack)
+		case "GAME"
+			PackList+=new TPack("STANDARDPACK",P_Default)
+	End	
+	_Files:=SGF.GetDir()
+	For _F in Each(_Files)
+		CSayF("File Found: %s",_F) // Debug
+		_SF:=XSplit(_F)
+		if Len(_SF)==3 && Upper(_SF[0])=="PACKS" && Upper(_SF[2])=="Index.ini"
+			PackList+=New TPack(_SF[1])
+		End	
+	End
+End
+
+Void Action(P)
+	Switch P.Type
+		Case P_NewPack
+			String Name = Any.TextInput("Pack","NamePack",Graphics.Width-20,Fnt,True)
+			if SGF.FileExists(sprintf("Packs/%s/Index.ini",Name))
+				Events.Annoy(sprintf(Lang.Str("PACK","ALREADYEXISTS")))
+				Return
+			End
+			String OutP = "# Start file: "
+			OutP+=Name
+			OutP+="\n\n[Meta]\n"
+			OutP+=sprintf("Created=%s\n",os.date())
+			OutP+=sprintf("Admin=%s\n",User.Name)
+			SGF.NewDir("Packs/%s",Name)
+			SGF.SaveString(sprintf("Packs/%s/Index.ini",Name),OutP)
+			Renew()
+		Default
+			Sys.Annoy(sprintf("ERROR: Unknown entry type: %d",P.Type))
+	End
+End
+
+
+Init
+	SGF.NewDir("Packs")
+	Renew()
+End
+
+
+Global Void FMain()
+	Any.Back()	
+	Any.Logo()
+	User.ShowCurrentUser()
+	SetColor(27,27,27,127)
+	Rect(5,250,Graphics.Width-10,WH)
+	SetAlpha(255)
+	For I,P in iPairs(PackList)
+		Int PY:=(I-Scroll)*45
+		Int Y := PY+250
+		If PY>=0 && PY<=WH+45
+			SetColor(255,255,255)
+			If Events.MouseX>5 && Events.MouseY>Y && Events.MouseX<Graphics.Width-10 && Events.MouseY<Y+45
+				SetColorHSV(os.time()%360,1,1)
+				If Events.MouseHitLeft
+					CSayF("Chosen: %s",P.Name)
+					Action(P)
+				End
+			ElseIf P.Type!=P_Pack
+				SetColor(180,255,0)
+			End
+			If P.LangChange
+				Lang.Dark(Fnt,"PACK",P.Name,5,Y)
+			Else
+				Fnt.Dark(P.Name,5,Y)
+			End
+		End
+	End
+End
