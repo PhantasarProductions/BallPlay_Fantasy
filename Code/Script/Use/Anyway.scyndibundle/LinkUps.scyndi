@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.09
+// Version: 26.05.15
 // End License
 Module
 
@@ -30,3 +30,4 @@ Module
 
 ReadOnly Global Var Any = uwn("Script/Use/Any.uwn")
 ReadOnly Global Var Lnk = uwn("Script/Use/Lnk.uwn")
+ReadOnly Global Var Puz = uwn("Script/Use/Puz.uwn")
