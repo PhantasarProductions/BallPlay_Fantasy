@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.14 I
+// Version: 26.05.15 II
 // End License
 Module
 
@@ -48,6 +48,7 @@ Extern SetColorHSV "Scyndi.Globals.SetColorHSV"
 
 // Scyndi Strings
 Extern MD5 "Scyndi.Globals.MD5"
+Extern XSplit "Scyndi.Globals.XSplit"
 Extern Prefixed "Scyndi.Globals.Prefixed"
 Extern StripAll "Scyndi.Globals.StripAll"
 
@@ -56,7 +57,8 @@ Extern gstr "Scyndi.Globals.gStr"
 Extern gint "Scyndi.Globals.gint"
 Extern Situation "Scyndi.Globals.gStr.Situation"
 
-
+// Savegame File
+Extern SGF "Scyndi.Class.SGFile"
 
 
 // Libs
