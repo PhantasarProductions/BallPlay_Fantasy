@@ -1,0 +1,67 @@
+// License:
+// 
+// BallPlay Fantasy
+// Puzzle Data
+// 
+// 
+// 
+// 	(c) Jeroen P. Broks, 2026
+// 
+// 		This program is free software: you can redistribute it and/or modify
+// 		it under the terms of the GNU General Public License as published by
+// 		the Free Software Foundation, either version 3 of the License, or
+// 		(at your option) any later version.
+// 
+// 		This program is distributed in the hope that it will be useful,
+// 		but WITHOUT ANY WARRANTY; without even the implied warranty of
+// 		MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// 		GNU General Public License for more details.
+// 		You should have received a copy of the GNU General Public License
+// 		along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// 
+// 	Please note that some references to data like pictures or audio, do not automatically
+// 	fall under this licenses. Mostly this is noted in the respective files.
+// 
+// Version: 26.05.15 I
+// End License
+Module
+
+#use "Libs/SCI/Bank"
+
+#use "Script/Use/Anyway"
+
+ReadOnly Var lays = {[0]="Floor", "Wall", "Decoration", "Object"}
+
+Var PuzBank
+Var PuzData
+
+Get Int W; Return PuzData.IntData("SIZE","WIDTH");   End
+Get Int H; Return PuzData.IntData("SIZE","HEIGHT");  End
+
+Void Create(int _W=0,Int _H=0)
+	__W:=Ternary(_W>0,_W,Puz.Max.W)
+	__H:=Ternary(_H>0,_H,Puz.Max.H)
+	PuzData = GINIE.Create("PUZZLEDATA")
+	PuzBank = {}
+	PuzData.Value("META","Created",os.data())
+	PuzData.Value("SIZE","WIDTH", __W)
+	PuzData.Value("SIZE","HEIGHT",__H)
+	For l in Each(Lays)
+		PuzData[Upper(l)]=New TBank(__W*__H,"PUZZLELAYER_"..l)
+		for i=0,(W*H)-1
+			PuzData[Upper(l)].Poke(i,0)
+		End
+	End
+End
+
+Byte Val(String Lay,Int X,Int Y,V)
+	Lay=Upper(Lay)
+	lua.assert(PuzData[Lay],"Layer "..Lay.." does not exist!")
+	lua.assert(X>=0 && Y>=0 && X<W && Y<H,sprintf("Puzzle value out of bounds (%d,%d) %dx%d",X,Y,W,H))
+	Int A:=A+(Y*H)
+	if V
+		lua.assert(Lua.type(V)=="number" && V>=0 && V<=255,"Illegal value for puzzle!")
+		PuzData[Lay].Poke(A,V)
+	End
+	Return PuzData[Lay].Peek(A)
+End
