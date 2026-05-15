@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.11 XX
+// Version: 26.05.15 I
 // End License
 
 Module TextInput_Module_ABC
@@ -77,10 +77,10 @@ End
 
 Init
 	Toetsen = New TLinkedList()
-	For i='AZ';Toetsen.AddLast(New Toets(i)); end
-	For i='az';Toetsen.AddLast(New Toets(i)); end
-	For i='09';Toetsen.AddLast(New Toets(i)); end
-	For spc in Each{[0]="|ua","|ue","|ui","|ui","|uu","|sz"}; Toetsen.AddLast(New Toets(spc)); End
+	For i='AZ';Toetsen.AddLast(New Toets(i)); end; Toets.CX=5; ToetsCY++
+	For i='az';Toetsen.AddLast(New Toets(i)); end; Toets.CX=5; ToetsCY++
+	For i='09';Toetsen.AddLast(New Toets(i)); end; Toets.CX=5; ToetsCY++
+	For spc in Each{[0]="|ua","|ue","|ui","|uo","|uu","|sz"}; Toetsen.AddLast(New Toets(spc)); End
 	// This must be last!!!
 	Toets.CX=5
 	Toets.CY++
@@ -93,7 +93,7 @@ Init
 	Toetsen.AddLast(New Toets("*e",Lang.Str("Algemeen","Cancel")))
 End
 
-Global String TextInput(String LangCat,String LangKey,int MaxSiz=0,Fnt)
+Global String TextInput(String LangCat,String LangKey,int MaxSiz=0,Fnt,NoPipe)
 	String Ret=""	
 	MaxSiz=Ternary(MaxSiz==0,Graphics.Width-10,MaxSiz)
 	Fnt = Fnt || HFNT
@@ -112,7 +112,9 @@ Global String TextInput(String LangCat,String LangKey,int MaxSiz=0,Fnt)
 		Fnt.Text(sprintf("%s%s",Ret,Ternary(os.time()%2==0,"_","")),TBX,TBY)
 		Hover:=nil
 		For T in Toetsen.Each
-			If Events.MouseX>T.X && Events.MouseY>T.Y && Events.MouseX<T.X+T.W && Events.MouseY<T.Y+T.H
+			If NoPipe && Prefixed(T.Add,"|")
+				SetColor(100,100,100)
+			ElIf Events.MouseX>T.X && Events.MouseY>T.Y && Events.MouseX<T.X+T.W && Events.MouseY<T.Y+T.H
 				Hover=T
 				Graphics.Color(255,180,0) 
 				Rect(T.X,T.Y,T.W,T.H)
