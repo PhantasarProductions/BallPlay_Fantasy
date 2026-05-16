@@ -52,7 +52,10 @@ Class EPuz
 	ReadOnly String Tag
 	Constructor(_ID,bool obtain, bool _Available,String _Name="",String _Author="",String _Mission="",String _Signature="")
 		ID=_ID
-		if !obtain
+		if obtain
+			CSayF("Obtained entry: %d",ID)
+		else
+			CSayF("Defining entry: %d",ID)
 			LocExtern V "Indexed.Value"
 			Tag=sprintf("Puz%03d",_ID)
 			V(Tag,"Available",Upper(sprintf("%s",_Available)))
