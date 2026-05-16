@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.16 I
+// Version: 26.05.16 III
 // End License
 Script
 
@@ -72,7 +72,7 @@ Void Action(P)
 		Case P_Pack
 			gstr.PackType="Homemade"
 			gstr.PackChosen=P.Name
-			Sys.LoadNewState("FLOW_SelectPuzzle","Script/FlowSelectPuzzle.lbc")
+			Sys.LoadNewState("FLOW_SelectPuzzle","Script/Flow/FlowSelectPuzzle.lbc")
 			Sys.Call("FLOW_SELECTPUZZLE","Reload")
 			Sys.CurrentFlow="SELECTPUZZLE"
 		Case P_NewPack
