@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.16
+// Version: 26.05.16 III
 // End License
 Module LoadThePuzzle
 
@@ -36,8 +36,8 @@ Global Void Load(String Pack,Int i)
 	BO.Assign(sprintf("Packs/%s/Puzzle_%03d.jcr",Pack,i))
 	BO.Load()
 	Puz.Data.PuzData = GINIE.Create("PuzzleData")
-	Puz.Data.PuzData.Source=BO.Text["Data"]
+	Puz.Data.PuzData.Source=BO.Text["Data.ini"]
 	For L in Each(Puz.Data.Lays)
-		Puz.Data.PuzBank[L]=BO.GetBank(L,"PUZZLELAYER_"..l)
+		Puz.Data.PuzBank[L]=BO.GetBank(L,"PUZZLELAYER_"..L)
 	End	
 End
