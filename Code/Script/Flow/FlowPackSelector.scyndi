@@ -73,6 +73,7 @@ Void Action(P)
 			gstr.PackType="Homemade"
 			gstr.PackChosen=P.Name
 			Sys.LoadNewState("FLOW_SelectPuzzle","Script/FlowSelectPuzzle.lbc")
+			Sys.Call("FLOW_SELECTPUZZLE","Reload")
 			Sys.CurrentFlow="SELECTPUZZLE"
 		Case P_NewPack
 			String Name = Any.TextInput("Pack","NamePack",Graphics.Width-20,Fnt,True)
