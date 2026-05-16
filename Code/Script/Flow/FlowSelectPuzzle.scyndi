@@ -1,0 +1,224 @@
+// License:
+// 
+// BallPlay Fantasy
+// Puzzle Selector
+// 
+// 
+// 
+// 	(c) Jeroen P. Broks, 2026
+// 
+// 		This program is free software: you can redistribute it and/or modify
+// 		it under the terms of the GNU General Public License as published by
+// 		the Free Software Foundation, either version 3 of the License, or
+// 		(at your option) any later version.
+// 
+// 		This program is distributed in the hope that it will be useful,
+// 		but WITHOUT ANY WARRANTY; without even the implied warranty of
+// 		MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// 		GNU General Public License for more details.
+// 		You should have received a copy of the GNU General Public License
+// 		along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// 
+// 	Please note that some references to data like pictures or audio, do not automatically
+// 	fall under this licenses. Mostly this is noted in the respective files.
+// 
+// Version: 26.05.16 XXIX
+// End License
+
+
+Script
+
+#use "Libs/RomanNumbers"
+
+#use "Script/Use/Anyway"
+
+
+LocExtern SitEditor "Scyndi.Globals.gstr.Situation:upper()=='EDITOR'"
+LocExtern TrashX "(Scyndi.Class.Graphics.Width-100)"
+LocExtern TrashS "45"
+
+Const Int WeeksToIndex=2
+Const Int WeekTime=604800
+
+Int Scroll = 0
+
+Plua Indexed
+
+Plua Fnt = ObtainFont("Ryanna")
+
+Class EPuz
+	Static Var List 
+	ReadOnly Int ID
+	ReadOnly String Tag
+	Constructor(_ID,bool obtain, bool _Available,String _Name="",String _Author="",String _Mission="",String _Signature="")
+		ID=_ID
+		if !obtain
+			LocExtern V "Indexed.Value"
+			Tag=sprintf("Puz%03d",_ID)
+			V(Tag,"Available",Upper(sprintf("%s",_Available)))
+			V(Tag,"Name",_Name)
+			V(Tag,"Author",_Author)
+			V(Tag,"Mission",_Mission)
+			V(Tag,"Signature",_Signature)
+		End
+	End
+	Get Bool Available; Return Upper(Indexed.Value(Tag,"Available"))=="TRUE"; End
+	Get String Name; return Indexed.Value(Tag,"Name"); End
+	Get String Author; return Indexed.Value(Tag,"Author"); End
+	Get String Mission; return Indexed.Value(Tag,"Mission"); End
+	Get String Signature; return Indexed.Value(Tag,"Signature"); End
+	
+	Static Var __StaticNumIndex(int idx)
+		List[idx] = List[idx] || new EPuz(idx,true,false)
+		Return List[idx]
+	End
+End	
+
+Group Internal 
+
+	Void Index()
+		Lua.error("Indexing? Internal Puzzles! Nah!")
+	End
+	
+	Void IndexIfNeeded()
+		Return
+	End
+	
+	Void Reload()
+	End
+End
+
+Group HomeMade 
+
+	Void Index()
+		Int Hi=0
+		EPuz.List={}
+		For i=1,999
+			If i==1 || i%9==0
+				Graphics.Cls()
+				Events.Poll()
+				SetColorHSV( (i/999) * 120,1,1)
+				Lang.Text(fnt,"PuzzleSelect","INDEXING",Graphics.W div 2, Graphics.H div 2,2,2)
+				Graphics.Flip()
+				CSayF("Indexing: %d/999",i)
+			End
+			String WantFile:=SPrintF("Packs/%s/Puzzle_%03d.jcr",gstr.PackChosen,i)
+			If SGF.FileExists(WantFile)
+				Puz.Load(gstr.PackChosen,i)
+				D:=Puz.Data.PuzData
+				EPuz.List[i]=new EPuz(i,false,Upper(D.Value("META","Available"))!="FALSE",D.Value("META","Title"),D.Value("META","AUTHOR"),D.Value("TASK","MISSION"),D.Value("META","SIGNATURE"))
+				Hi=math.max(i,Hi)
+			Else
+				EPuz.List[i]=New EPuz(i,false,false)
+			End
+		End
+		Indexed.Value("Index","Force","False")
+		Indexed.Value("Index","Time",os.time())
+		Indexed.Value("Index","ZZZ",sprintf("Last indexed on %s by %s",os.date(),User.Name))
+		Indexed.Value("Index","Highest",Hi)
+		SGF.SaveString(sprintf("Packs/%s/Index.ini",gstr.PackChosen),indexed.Source)
+	End
+	
+	Void IndexIfNeeded()
+		Lua.assert(Indexed,"No index loaded")
+		If Upper(Indexed.Value("Index","Force"))=="TRUE" || os.time()-Indexed.IntValue("Index","Time")>(WeekTime*WeeksToIndex)
+			HomeMade.Index()
+		Else
+			EPuz.List={}
+		End
+	End
+	
+	Void Reload()
+		Indexed = GINIE.LoadHome(sprintf("Packs/%s/Index.ini",gstr.PackChosen),"PackIndex")
+		HomeMade.IndexIfNeeded()
+	End
+End
+
+
+Global Void IndexIfNeeded()
+	Lua.Scyndi.Class[gstr.PackType].IndexIfNeeded()
+End
+
+Global Void Reload()
+	Lua.Scyndi.Class[gstr.PackType].Reload()
+End
+
+Global Void FMain()
+	//Basis 
+	Any.Back()	
+	Any.Logo()
+	User.ShowCurrentUser()
+	
+	// Puzzles
+	SetColor(25,25,25,127)
+	Rect(10,250,Graphics.Width-20,Graphics.Height-350)
+	SetAlpha(255)
+	SetColor(255,255,255)
+	Fnt.Dark(sprintf("- %s -",gstr.PackChosen),Graphics.Width div 2,250,2,1)
+	Hover:=nil
+	Hover4Trash:=nil
+	For i=1,Ternary(SitEditor,999,Indexed.IntValue("Index","Hi"))
+		Int Y:=((i-1)*45)-Scroll
+		Int TY:=Y+250
+		EPuz.List[i] = EPuz.List[i] || New Epuz(i,true,false)
+		Ent:=EPuz.List[i]
+		if Y>=0 && Y<Graphics.Height-350
+			if Events.MouseY>TY && Events.MouseY<TY+45 
+				If Events.MouseX<TrashX
+					Hover=Ent
+				ElIf Events.MouseX<TrashX+TrashS
+					Hover4Trash:=Ent
+				End
+			End
+			If !Ent.Available
+				If Hover==Ent && (SitEditor)
+					SetColorHSV(360-(os.time()%360),1,0.5)
+				Else
+					SetColor(127,127,127)
+				End
+				Fnt.Dark(sprintf("%03d: %s%s",i,"-","-"),15,Y+250)
+			Else
+				If Hover==Ent
+					SetColorHSV(os.time()%360,1,1)
+				Else
+					SetColor(255,255,255)
+				End
+				Fnt.Dark(sprintf("%03d: %s",i,Ent.Name),15,Y+250)
+			End
+		End
+	End	
+	// Click
+	If Events.MouseHitLeft
+		If Hover
+			If Hover.Available
+				If SitEditor
+					Sys.LoadNewState("FLOW_EDITOR","Script/Flow/FlowEditor.lbc")
+				Else
+					Sys.Annoy("Please come back later")
+				End
+			ElIf SitEditor
+				If Events.Yes(sprintf(Lang.Str("PuzzleSelect","ConfirmCreate"),Hover.ID))
+					Puz.Data.Create()
+					Puz.Data.PuzData.Value("Meta","Available","TRUE")
+					Puz.Data.PuzData.Value("Meta","Title",sprintf("Puzzle %s",Roman(Hover.ID)))
+					Puz.Data.PuzData.Value("Meta","Author",Indexed.Value("Meta","Admin"))
+					Puz.Data.PuzData.Value("Meta","Created",os.date())
+					Puz.Data.PuzData.Value("Meta","Signature",md5(sprintf("%03d/%d",Hover.ID,os.time()))..md5(Indexed.Value("Meta","Admin"))..md5(gstr.PackChosen)..sprintf("%04x",math.random(0,65535)))
+					Puz.Data.PuzData.Value("Task","Mission","Normal")
+					Puz.Save(gstr.PackChosen,Hover.ID)
+					HomeMade.Index()
+				End
+			End
+		End
+	End
+	// Back Button
+	SetColor(255,255,255,255)
+	LB:=" |$b "..Lang.Str("Algemeen","Back")
+	if Events.MouseY>Graphics.H-30 && Events.MouseX<Fnt.Width(LB)
+		SetColorHSV(os.time()%360,1,1)
+		If Events.MouseHitLeft
+			Sys.CurrentFlow="PackSelector"
+		End
+	End
+	Fnt.Dark(LB,0,Graphics.H,0,1)
+End
