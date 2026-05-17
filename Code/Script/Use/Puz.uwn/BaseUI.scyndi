@@ -1,0 +1,46 @@
+// License:
+// 
+// BallPlay Fantasy
+// Base UI
+// 
+// 
+// 
+// 	(c) Jeroen P. Broks, 2026
+// 
+// 		This program is free software: you can redistribute it and/or modify
+// 		it under the terms of the GNU General Public License as published by
+// 		the Free Software Foundation, either version 3 of the License, or
+// 		(at your option) any later version.
+// 
+// 		This program is distributed in the hope that it will be useful,
+// 		but WITHOUT ANY WARRANTY; without even the implied warranty of
+// 		MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// 		GNU General Public License for more details.
+// 		You should have received a copy of the GNU General Public License
+// 		along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// 
+// 	Please note that some references to data like pictures or audio, do not automatically
+// 	fall under this licenses. Mostly this is noted in the respective files.
+// 
+// Version: 26.05.18 IV
+// End License
+Module BasicForTheUserInterface
+
+#use "Script/Use/Anyway"
+
+plua bpic = ObtainImage("UIBack")
+plua dfnt = ObtainFont("DOS")
+Global const Int dpy = (32*Puz.Max.H)+20
+
+Global Void BaseUI(NoFract)
+	SetColor(255,255,255,255)
+	If !NoFract
+		Puz.BPAM.Picture.Stretch(0,20,Graphics.W,dpy)		
+	End
+	bpic.Tile(0,0,Graphics.W,20)
+	dfnt.Dark(Puz.Data.Title,1,1)
+	SetColor(255,180,0)
+	dfnt.Dark(Lang.Str("Missions",Puz.Data.Mission),Graphics.W-1,1,1,0)
+	SetColor(255,255,255,255)
+	bpic.Tile(0,dpy,Graphics.W,Graphics.H-dpy)
+End
