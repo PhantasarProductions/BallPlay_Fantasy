@@ -7,13 +7,13 @@ JQL
 Platform:Linux
 Let:MUSIC=/media/$User$/Scyndi/Projects/3rd party assets/Music
 Platform:Windows
-Let:MUSIC=E:/Prijects/3rd party assets/Music
+Let:MUSIC=E:/Projects/3rd party assets/Music
 Platform:All
 
 
 Author:Eric Matyas
 Notes:For license information please read: https://soundimage.org/attribution-info/
-Raw:$MUSIC$/Eric Matyas/The-Meadow-We-Call-Home.ogg>Puzzles/Main/Song1.ogg
-Raw:$MUSIC$/Eric Matyas/Dreaming-Of-Faraway-Places.ogg>Puzzles/Main/Song2.ogg
-Raw:$MUSIC$/Eric Matyas/80s-Princess.ogg>Puzzles/Main/Song3.ogg
+Raw:$MUSIC$/Eric Matyas/The-Meadow-We-Call-Home.ogg>Puzzles/Main.bundle/Song1.ogg
+Raw:$MUSIC$/Eric Matyas/Dreaming-Of-Faraway-Places.ogg>Puzzles/Main.bundle/Song2.ogg
+Raw:$MUSIC$/Eric Matyas/80s-Princess.ogg>Puzzles/Main.bundle/Song3.ogg
 Raw:$MUSIC$/Eric Matyas/Of-Legends-And-Fables-3.ogg>Title/Title.ogg
