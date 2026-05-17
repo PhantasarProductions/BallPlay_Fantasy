@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.15 III
+// Version: 26.05.17 I
 // End License
 Module
 
@@ -41,6 +41,7 @@ Extern CSayF "Scyndi.Globals.CSayF"
 // Graphics Links
 Extern ObtainFont "Scyndi.Globals.ObtainFont"
 Extern ObtainImage "Scyndi.Globals.ObtainImage"
+Extern LoadImage "Scyndi.Globals.LoadImage"
 Extern Rect "Scyndi.Globals.Rect"
 Extern SetColor "Scyndi.Globals.SetColor"
 Extern SetAlpha "Scyndi.Globals.SetAlpha"
@@ -51,6 +52,7 @@ Extern MD5 "Scyndi.Globals.MD5"
 Extern XSplit "Scyndi.Globals.XSplit"
 Extern Prefixed "Scyndi.Globals.Prefixed"
 Extern StripAll "Scyndi.Globals.StripAll"
+Extern ExtractExt "Scyndi.Globals.ExtractExt"
 
 // Interstate Variabales
 Extern gstr "Scyndi.Globals.gStr"
