@@ -1,0 +1,19 @@
+
+
+// Background Picture And Music
+
+module
+
+
+// Plua variables cannot be called under the module's namespace and are 
+// therefore completely local inside this module 
+// (only "Global pLua" would be accessible outside the module. 
+// This way I can make the reading public, but the assigning private).
+plua _Picture
+plua _PicAct
+Get Var Picture; Return _Picture; End
+Get String PicAct; Return _PicAct; End
+
+
+Void Renew()
+End
