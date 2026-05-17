@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.17 XI
+// Version: 26.05.17 XIII
 // End License
 
 
@@ -216,6 +216,7 @@ Global Void FMain()
 				If SitEditor
 					Sys.LoadNewState("FLOW_EDITOR","Script/Flow/FlowEditor.lbc")
 					Sys.Call("FLOW_EDITOR","Puz.Load",gstr.PackChosen,Hover.ID)
+					Sys.Call("FLOW_EDITOR","Puz.BPAM.Renew")
 					Sys.CurrentFlow="EDITOR"
 				Else
 					Sys.Annoy("Please come back later")
