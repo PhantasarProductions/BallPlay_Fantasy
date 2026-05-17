@@ -1,0 +1,40 @@
+// License:
+// 
+// BallPlay Fantasy
+// Background types
+// 
+// 
+// 
+// 	(c) Jeroen P. Broks, 2026
+// 
+// 		This program is free software: you can redistribute it and/or modify
+// 		it under the terms of the GNU General Public License as published by
+// 		the Free Software Foundation, either version 3 of the License, or
+// 		(at your option) any later version.
+// 
+// 		This program is distributed in the hope that it will be useful,
+// 		but WITHOUT ANY WARRANTY; without even the implied warranty of
+// 		MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// 		GNU General Public License for more details.
+// 		You should have received a copy of the GNU General Public License
+// 		along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// 
+// 	Please note that some references to data like pictures or audio, do not automatically
+// 	fall under this licenses. Mostly this is noted in the respective files.
+// 
+// Version: 26.05.17
+// End License
+Module BackTime_ABC
+ReadOnly Global Var BackType = {}
+
+Init
+	BackType["GFX/BACKGROUNDS/RANDOM FRACTAL.BUNDLE/ICOSAHEDRON.PNG"] = "Stretch" // GFX/Backgrounds/Random Fractal.bundle/icosahedron.png 
+	BackType["GFX/BACKGROUNDS/RANDOM FRACTAL.BUNDLE/ICOSAHEDRON2.PNG"] = "Stretch" // GFX/Backgrounds/Random Fractal.bundle/icosahedron2.png 
+	BackType["GFX/BACKGROUNDS/RANDOM FRACTAL.BUNDLE/MANDELBROT1.PNG"] = "Stretch" // GFX/Backgrounds/Random Fractal.bundle/mandelbrot1.png 
+	BackType["GFX/BACKGROUNDS/RANDOM FRACTAL.BUNDLE/MANDELBROT2.PNG"] = "Stretch" // GFX/Backgrounds/Random Fractal.bundle/mandelbrot2.png 
+	BackType["GFX/BACKGROUNDS/RANDOM FRACTAL.BUNDLE/NEWTON1.PNG"] = "Stretch" // GFX/Backgrounds/Random Fractal.bundle/newton1.png 
+	BackType["GFX/BACKGROUNDS/RANDOM FRACTAL.BUNDLE/OCTO.PNG"] = "Stretch" // GFX/Backgrounds/Random Fractal.bundle/octo.png 
+	BackType["GFX/BACKGROUNDS/RANDOM FRACTAL.BUNDLE/SPIDER.PNG"] = "Stretch" // GFX/Backgrounds/Random Fractal.bundle/spider.png 
+	BackType["GFX/BACKGROUNDS/RANDOM FRACTAL.BUNDLE/YELLOW.PNG"] = "Stretch" // GFX/Backgrounds/Random Fractal.bundle/yellow.png 
+
+End
