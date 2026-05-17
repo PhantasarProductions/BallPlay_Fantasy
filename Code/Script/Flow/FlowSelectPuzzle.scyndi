@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.16 XXX
+// Version: 26.05.17 XI
 // End License
 
 
@@ -30,12 +30,14 @@ Script
 
 #use "Libs/RomanNumbers"
 
+#use "Libs/SCI/SGJCR"
+
 #use "Script/Use/Anyway"
 
 
 LocExtern SitEditor "Scyndi.Globals.gstr.Situation:upper()=='EDITOR'"
 LocExtern TrashX "(Scyndi.Class.Graphics.Width-100)"
-LocExtern TrashS "45"
+LocExtern TrashS "30"
 
 Const Int WeeksToIndex=2
 Const Int WeekTime=604800
@@ -45,6 +47,10 @@ Int Scroll = 0
 Plua Indexed
 
 Plua Fnt = ObtainFont("Ryanna")
+Plua DFnt = ObtainFont("DOS")
+Plua Trash = ObtainImage("TRASH")
+Plua Up = ObtainImage("ARROW_UP")
+Plua Down = ObtainImage("ARROW_DOWN")
 
 Class EPuz
 	Static Var List 
@@ -52,12 +58,13 @@ Class EPuz
 	ReadOnly String Tag
 	Constructor(_ID,bool obtain, bool _Available,String _Name="",String _Author="",String _Mission="",String _Signature="")
 		ID=_ID
+		Tag=sprintf("Puz%03d",_ID)
 		if obtain
 			CSayF("Obtained entry: %d",ID)
 		else
 			CSayF("Defining entry: %d",ID)
 			LocExtern V "Indexed.Value"
-			Tag=sprintf("Puz%03d",_ID)
+			//Tag=sprintf("Puz%03d",_ID)
 			V(Tag,"Available",Upper(sprintf("%s",_Available)))
 			V(Tag,"Name",_Name)
 			V(Tag,"Author",_Author)
@@ -109,7 +116,7 @@ Group HomeMade
 			If SGF.FileExists(WantFile)
 				Puz.Load(gstr.PackChosen,i)
 				D:=Puz.Data.PuzData
-				EPuz.List[i]=new EPuz(i,false,Upper(D.Value("META","Available"))!="FALSE",D.Value("META","Title"),D.Value("META","AUTHOR"),D.Value("TASK","MISSION"),D.Value("META","SIGNATURE"))
+				EPuz.List[i]=new EPuz(i,false,Upper(D.Value("META","Available"))=="TRUE",D.Value("META","Title"),D.Value("META","AUTHOR"),D.Value("TASK","MISSION"),D.Value("META","SIGNATURE"))
 				Hi=math.max(i,Hi)
 			Else
 				EPuz.List[i]=New EPuz(i,false,false)
@@ -160,17 +167,29 @@ Global Void FMain()
 	Fnt.Dark(sprintf("- %s -",gstr.PackChosen),Graphics.Width div 2,250,2,1)
 	Hover:=nil
 	Hover4Trash:=nil
+	AllowUp:=Scroll!=0
+	AllowDown:=True
 	For i=1,Ternary(SitEditor,999,Indexed.IntValue("Index","Hi"))
-		Int Y:=((i-1)*45)-Scroll
+		Int Y:=(((i-1)-Scroll)*45)
 		Int TY:=Y+250
-		EPuz.List[i] = EPuz.List[i] || New Epuz(i,true,false)
-		Ent:=EPuz.List[i]
 		if Y>=0 && Y<Graphics.Height-350
+			AllowDown=AllowDown && i!=999
+			EPuz.List[i] = EPuz.List[i] || New EPuz(i,true,false)
+			Ent:=EPuz.List[i]
 			if Events.MouseY>TY && Events.MouseY<TY+45 
 				If Events.MouseX<TrashX
 					Hover=Ent
-				ElIf Events.MouseX<TrashX+TrashS
+				ElIf Events.MouseX<TrashX+TrashS && SitEditor && Ent.Available
 					Hover4Trash:=Ent
+					SetColor(255,255,255)
+					Trash.Stretch(TrashX,TY,TrashS,TrashS)
+					If Events.MouseHitLeft && Events.Yes(sprintf(Lang.Str("PuzzleSelect","ConfirmKill"),i))
+						BO:=SGJCR.Create("SAVEPUZZLE")
+						BO.Assign(sprintf("Packs/%s/Puzzle_%03d.jcr",gstr.PackChosen,i))
+						BO.Text["Data.ini"]="[Meta]\nAvailable=False\n";
+						BO.Save()
+						HomeMade.Index()
+					End
 				End
 			End
 			If !Ent.Available
@@ -185,7 +204,7 @@ Global Void FMain()
 					SetColorHSV(os.time()%360,1,1)
 				Else
 					SetColor(255,255,255)
-				End
+				End				
 				Fnt.Dark(sprintf("%03d: %s",i,Ent.Name),15,Y+250)
 			End
 		End
@@ -215,7 +234,51 @@ Global Void FMain()
 				End
 			End
 		End
+	End	
+	// Meta
+	If Hover && Hover.Available
+		HY:=Graphics.H-100
+		String T:=Hover.Name
+		SetColor(0,180,255)
+		DFnt.Dark(T,5,HY)
+		SetColor(255,180,0)
+		DFnt.Dark(sprintf(Lang.Str("PuzzleSelect","MadeBy"),Hover.Author),10+DFnt.Width(T),HY)
+		SetColor(180,0,255)
+		DFnt.Dark(Lang.Str("Missions",Hover.Mission),Graphics.Width-20,HY,1,0)
 	End
+	// Scrolling
+	//If Events.MouseWheelY!=0; CSayF("Wheel: %d",Events.MouseWheelY); End // DEBUG
+	int ScrX:=Graphics.W-65
+	int ScrYU:=250
+	Int ScrYD:=Graphics.H-145
+	Int ScrW=45
+	If AllowUp
+		if Events.MouseWheelY>0
+			Scroll--
+		End
+		SetColor(255,255,255)
+		If Events.MouseX>ScrX && Events.MouseY>ScrYU && Events.MouseY<ScrYU+ScrW
+			SetColorHSV(os.time()%360,1,os.Time()%2)
+			If Events.MouseHitLeft
+				Scroll=math.max(0,Scroll-1)
+			End
+		End
+		Up.Stretch(ScrX,ScrYU,ScrW,ScrW)
+	End
+	If AllowDown
+		If Events.MouseWheelY<0
+			Scroll++
+		End
+		SetColor(255,255,255)
+		If Events.MouseX>ScrX && Events.MouseY>ScrYD && Events.MouseY<ScrYD+ScrW
+			SetColorHSV(os.time()%360,1,os.Time()%2)
+			If Events.MouseHitLeft
+				Scroll=math.min(999,Scroll+1)
+			End
+		End				
+		Down.Stretch(ScrX,ScrYD,ScrW,ScrW)
+	End
+	
 	// Back Button
 	SetColor(255,255,255,255)
 	LB:=" |$b "..Lang.Str("Algemeen","Back")
