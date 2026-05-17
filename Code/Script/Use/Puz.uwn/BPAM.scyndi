@@ -1,8 +1,36 @@
+// License:
+// 
+// BallPlay Fantasy
+// Background Picture And Music
+// 
+// 
+// 
+// 	(c) Jeroen P. Broks, 2026
+// 
+// 		This program is free software: you can redistribute it and/or modify
+// 		it under the terms of the GNU General Public License as published by
+// 		the Free Software Foundation, either version 3 of the License, or
+// 		(at your option) any later version.
+// 
+// 		This program is distributed in the hope that it will be useful,
+// 		but WITHOUT ANY WARRANTY; without even the implied warranty of
+// 		MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// 		GNU General Public License for more details.
+// 		You should have received a copy of the GNU General Public License
+// 		along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// 
+// 	Please note that some references to data like pictures or audio, do not automatically
+// 	fall under this licenses. Mostly this is noted in the respective files.
+// 
+// Version: 26.05.17 V
+// End License
 
 
 // Background Picture And Music
 
 module
+
+#use "Script/Use/Anyway"
 
 
 // Plua variables cannot be called under the module's namespace and are 
@@ -14,6 +42,27 @@ plua _PicAct
 Get Var Picture; Return _Picture; End
 Get String PicAct; Return _PicAct; End
 
+Void RMusic()
+	String rp:="Music/Puzzles/"..Puz.Data.Music
+	If (ExtractExt(Upper(rp),"BUNDLE"))
+		lp:=JCR6.Dir(rp)
+		rp=lp[math.random(0,len(lp)-1)]
+	End	
+	Music.Play(rp)
+End
+
+Void RPic()
+	String rp:="GFX/Backgrounds/"..Puz.Data.BackPic
+	If (ExtractExt(Upper(rp),"BUNDLE"))
+		lp:=JCR6.Dir(rp)
+		Lua.assert(len(lp)>0,"404 Backpicdir: "..rp) 
+		rp=lp[math.random(0,len(lp)-1)]
+	End	
+	_PicAct = Ternary(Puz.BackType[Upper(rp)],Puz.BackType[Upper(rp)],"Stretch")
+	_Picture = LoadImage(rp,"PuzzleBackground")
+End
 
 Void Renew()
+	RPic()
+	RMusic()
 End
