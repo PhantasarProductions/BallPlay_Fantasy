@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.17 II
+// Version: 26.05.18
 // End License
 Module LoadThePuzzle
 
@@ -40,7 +40,7 @@ Global Void Load(String Pack,Int i)
 	If Upper(Puz.Data.PuzData.Value("Meta","Available"))=="TRUE"
 		Puz.Data.PuzBank = {}
 		For L in Each(Puz.Data.Lays)
-			Puz.Data.PuzBank[L]=BO.GetBank(L,"PUZZLELAYER_"..L)
+			Puz.Data.PuzBank[Upper(L)]=BO.GetBank(L,"PUZZLELAYER_"..L)
 		End
 	Else
 		CSayF("Slot %d in %s is apparently unavailable!",i,Pack)
