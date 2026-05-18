@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.17 XIV
+// Version: 26.05.18
 // End License
 
 
@@ -215,6 +215,7 @@ Global Void FMain()
 		If Hover
 			If Hover.Available
 				If SitEditor
+					gint.PuzzleChosen = Hover.ID
 					Sys.LoadNewState("FLOW_EDITOR","Script/Flow/FlowEditor.lbc")
 					Sys.Call("FLOW_EDITOR","Puz.Load",gstr.PackChosen,Hover.ID)
 					Sys.Call("FLOW_EDITOR","Puz.BPAM.Renew")
