@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.16 II
+// Version: 26.05.18
 // End License
 Module SaveThePuzzle
 
@@ -36,6 +36,7 @@ Global Void Save(String Pack,Int i)
 	BO.Assign(sprintf("Packs/%s/Puzzle_%03d.jcr",Pack,i))
 	BO.Text["Data.ini"]=Puz.Data.PuzData.Source
 	For L in Each(Puz.Data.Lays)
+		Lua.assert(Puz.Data.PuzBank[Upper(L)],sprintf("Puzzle bank \"%s\" is nil",L))
 		BO.SetBank(Puz.Data.PuzBank[Upper(L)],L)
 	End
 	BO.Save()
