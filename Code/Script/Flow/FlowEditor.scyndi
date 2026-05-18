@@ -22,12 +22,22 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.17 I
+// Version: 26.05.18 IV
 // End License
 Script
 
 #use "Script/Use/Anyway"
 
 Global Void FMain()
-	Puz.BaseUI()
+	Puz.BaseUI.Show()
+	SetColor(127,127,127,127)
+	For i=0,Graphics.W div 32
+		c:=i*32
+		Puz.BaseUI.dFnt.Text(Puz.BaseUI.MkCol(i),c+16,20,2,0)
+	End
+	For i=0,(Puz.BaseUI.DPY-20) div 32
+		r:=(i*32)+36
+		Puz.BaseUI.dFnt.Text(Lua.tostring(i+1),2,r,0,2)
+	End
+	Puz.BaseUI.ShowMouse()
 End
