@@ -22,12 +22,13 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.17
+// Version: 26.05.18 I
 // End License
 
 Script
 
 #use "Libs/SCI/Sys"
+#use "Libs/SCI/Audio"
 #use "Libs/SCI/GINIE"
 #use "Libs/SCI/Events"
 #use "Libs/SCI/Graphics"
@@ -93,6 +94,7 @@ End
 
 void LI(String F,String T,Int Flag=0); LASS.Add(F,T,"LoadImage",Flag); End
 void LF(String F,String T); LASS.Add(F,T,LinkFont); End
+void LA(String F,String T); LASS.Add(F,T,Audio.Load); End
 
 
 // Placeholder function. Should not be used in actual development/release
@@ -107,6 +109,7 @@ Init
 	LI("GFX/Algemeen/MousePointer.png","MOUSE")
 	LI("GFX/Algemeen/Vuilnisbak.png","TRASH")
 	LI("GFX/Algemeen/UIBack.png","UIBack")
+	LI("GFX/Algemeen/Save.png","Save")
 	LI("GFX/MainMenu/Background.png","MAINBACK")
 	LI("GFX/Objects/Ball.png","BALL")
 	for a in Each{[0]="Up","Down","Left","Right"}; LI(sprintf("GFX/Arrows/%s.png",a),sprintf("ARROW_%s",a)); End
@@ -116,6 +119,7 @@ Init
 	LF("Fonts/Ryanna.jfbf","RYANNA")
 	LF("Fonts/Mini.jfbf","MINI")
 	LF("Fonts/DOS.jfbf","DOS")
+	LA("Audio/Algemeen/PuzzleSaved.ogg","PuzzleSaved")
 	LASS.Add("Global","Config","GlobConfig")
 	Lass.Add("Main Menu","Flow","ToMainMenu")
 End
