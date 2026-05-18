@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.17 I
+// Version: 26.05.18 I
 // End License
 Module
 
@@ -37,6 +37,10 @@ Extern Graphics "Scyndi.Class.Graphics"
 // Global Sys
 Extern CSay "Scyndi.Globals.CSay"
 Extern CSayF "Scyndi.Globals.CSayF"
+
+// Audio
+Extern Audio "Scyndi.Class.Audio"
+Extern ObtainAudio "Scyndi.Class.Audio.Obtain"
 
 // Graphics Links
 Extern ObtainFont "Scyndi.Globals.ObtainFont"
