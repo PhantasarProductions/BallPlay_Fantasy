@@ -22,25 +22,104 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.18 IV
+// Version: 26.05.18 XV
 // End License
-Module BasicForTheUserInterface
+
+Module 
+
+#use "Libs/xmath"
 
 #use "Script/Use/Anyway"
 
-plua bpic = ObtainImage("UIBack")
-plua dfnt = ObtainFont("DOS")
-Global const Int dpy = (32*Puz.Max.H)+20
+LocExtern SitEditor "Scyndi.Globals.gstr.Situation:upper()=='EDITOR'"
 
-Global Void BaseUI(NoFract)
+plua Indexed = GINIE.Obtain("PackIndex")
+
+plua bpic = ObtainImage("UIBack")
+ReadOnly Var dfnt = ObtainFont("DOS")
+ReadOnly Int dpy = (32*Puz.Max.H)+20
+
+Get Bool MouseInField
+	Return Events.MouseY>=20 && Events.MouseY<dpy
+End
+
+Get Int MX
+	Return Ternary(MouseInField,Events.MouseX Div 32,-1)
+End
+
+Get Int MY
+	Return Ternary(MouseInField,(Events.MouseY - 20) Div 32,-1)
+End
+
+get Int MX32
+	return MX*32
+End
+
+Get Int MY32
+	Return (MY*32)+20
+End
+
+String MKCol(Int CX)
+	if CX<0; return ""; end
+	ret := Ternary(CX>25,Chr(64+(CX div 26)),"")
+	ret += Chr(65+(CX%26))
+	return ret
+End
+
+Get String Col
+	Return MKCol(MX)
+End
+
+Get Int Row
+	Return MY+1
+End
+
+Get String Cell
+	Return sprintf("%2s%d",Col,Row)
+End
+
+Void Show(NoFract)
 	SetColor(255,255,255,255)
 	If !NoFract
 		Puz.BPAM.Picture.Stretch(0,20,Graphics.W,dpy)		
 	End
 	bpic.Tile(0,0,Graphics.W,20)
+	if Events.MouseY<20 && Events.MouseX<dfnt.Width(Puz.Data.Title)
+		SetColorHSV( (Sys.Ticks div 10) % 360,1,1)
+		SetAlpha(100)
+		Rect(0,0,dfnt.width(Puz.Data.Title)+2,20)
+		SetAlpha(255)
+		If Events.MouseHitLeft
+			Answer:=Trim(Any.TextInput("Edit","NamePuzzle",Graphics.Width div 2,dFnt,false,Puz.Data.Title))
+			If Answer!=""
+				Puz.Data.Title = Answer
+				Indexed.Value("Index","Force","TRUE")
+				SGF.SaveString(sprintf("Packs/%s/Index.ini",gstr.PackChosen),Indexed.Source)
+			End
+		End
+	End
 	dfnt.Dark(Puz.Data.Title,1,1)
 	SetColor(255,180,0)
 	dfnt.Dark(Lang.Str("Missions",Puz.Data.Mission),Graphics.W-1,1,1,0)
 	SetColor(255,255,255,255)
 	bpic.Tile(0,dpy,Graphics.W,Graphics.H-dpy)
 End
+
+Void ShowMouse()
+	If MouseInField
+		If SitEditor
+			SetColorHSV(os.time()%360,1,1)
+			SetAlpha(127)
+			Graphics.Line(MX32,    20,MX32    ,dpy)
+			Graphics.Line((MX+1)*32,20,(MX+1)*32,dpy)
+			Graphics.Line(0, MY32    ,Graphics.W, MY32)
+			Graphics.Line(0,(MY32)+32,Graphics.W, MY32+32)
+		End
+		SetAlpha(255)
+		SetColorHSV(0,0,math.abs(xmath.sin(sys.ticks)))
+		Rect(MX32,MY32,32,32,true)
+		SetColorHSV(0,0,math.abs(xmath.cos(sys.ticks)))
+		Rect(MX32+1,MY32+1,30,30,true)		
+	End
+End	
+		
