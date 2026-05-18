@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.18 III
+// Version: 26.05.19
 // End License
 
 Module TextInput_Module_ABC
@@ -44,24 +44,27 @@ Class Toets
 	ReadOnly Int PY
 	ReadOnly Int W
 	ReadOnly Bool IsChar	
+	ReadOnly Bool IsPipe
 	Static Int H = 0
 	Get Int Y
 		return 250+(PY*H)
 	End
 	Static Int CX=5
 	Static Int CY=0
-	Constructor(_A,_C,_IC)
+	Constructor(_A,_C,_IC,_IsPipe)
 		args:={["A"]=_A,["C"]=_C||_A,["IsChar"]=_IC==true}
 		For arg,key in pairs{["A"]="Add",["C"]="Caption"}
 			switch Lua.type(args[arg])
 				case "number"
 					self[key]=Chr(args[arg])
-				case "string"
-					self[key]=args[arg]
+				case "string" "boolean"
+					self[key]=args[arg]				
 				default
 					Lua.error(sprintf("Unknown key for %s -> %s(%s)",arg,key,Lua.type(arg))) 
 			End
 		End
+		IsPipe = Prefixed(Add,"|") || _IsPipe
+		IsChar =_IC==true
 		X  = CX
 		W  = HFnt.Width(Caption)+10
 		H  = math.max(H,HFnt.Height(Caption)+10)
@@ -72,7 +75,7 @@ Class Toets
 			CY++
 		End
 		PY = CY			
-		CSayF("%s -> %s ::: (%4d,%4d) %dx%d",Caption,Add,X,Y,W,H)
+		CSayF("%s -> %s ::: (%4d,%4d) %dx%d   (IsChar:%s)",Caption,Add,X,Y,W,H,IsChar)
 	End
 End
 
@@ -87,11 +90,14 @@ Init
 	For i='09';Toetsen.AddLast(New Toets(i,nil,true)); end; 
 	Toets.CX=5; 
 	Toets.CY++
-	For spc in Each{[0]="|ua","|ue","|ui","|uo","|uu","|sz"}; Toetsen.AddLast(New Toets(spc)); End
+	for lt in Each{[0]='!@#$%^&*(),.;:\/?'}; Toetsen.AddLast(New Toets(lt,lt,true,true)); End
+	Toets.CX=5; 
+	Toets.CY++
+	For spc in Each{[0]="|ua","|ue","|ui","|uo","|uu","|sz"}; Toetsen.AddLast(New Toets(spc)); End	
 	// This must be last!!!
 	Toets.CX=5
 	Toets.CY++
-	Toetsen.AddLast(New Toets(32,Lang.Str("Input","Space")),true)
+	Toetsen.AddLast(New Toets(32,Lang.Str("Input","Space"),true))
 	Toets.CX+=10
 	Toetsen.AddLast(New Toets("*8",Lang.Str("Input","BackSpace")))
 	Toets.CX=4
@@ -122,9 +128,10 @@ Global String TextInput(String LangCat,String LangKey,int MaxSiz=0,Fnt,NoPipe,st
 		Hover:=nil
 		Pressed:=False
 		For T in Toetsen.Each
-			If NoPipe && Prefixed(T.Add,"|")
+			If NoPipe && T.IsPipe 
+				//Prefixed(T.Add,"|")
 				SetColor(100,100,100)
-			ElIf Events.MouseX>T.X && Events.MouseY>T.Y && Events.MouseX<T.X+T.W && Events.MouseY<T.Y+T.H
+			ElIf Events.MouseX>T.X && Events.MouseY>T.Y && Events.MouseX<T.X+T.W && Events.MouseY<T.Y+T.H && (!Hover)
 				Hover=T
 				Graphics.Color(255,180,0) 
 				Rect(T.X,T.Y,T.W,T.H)
