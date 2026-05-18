@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.15 IV
+// Version: 26.05.18 III
 // End License
 
 Module TextInput_Module_ABC
@@ -43,14 +43,15 @@ Class Toets
 	ReadOnly Int X
 	ReadOnly Int PY
 	ReadOnly Int W
+	ReadOnly Bool IsChar	
 	Static Int H = 0
 	Get Int Y
 		return 250+(PY*H)
 	End
 	Static Int CX=5
 	Static Int CY=0
-	Constructor(_A,_C)
-		args:={["A"]=_A,["C"]=_C||_A}
+	Constructor(_A,_C,_IC)
+		args:={["A"]=_A,["C"]=_C||_A,["IsChar"]=_IC==true}
 		For arg,key in pairs{["A"]="Add",["C"]="Caption"}
 			switch Lua.type(args[arg])
 				case "number"
@@ -77,20 +78,20 @@ End
 
 Init
 	Toetsen = New TLinkedList()
-	For i='AZ';Toetsen.AddLast(New Toets(i)); end; 
+	For i='AZ';Toetsen.AddLast(New Toets(i,nil,true)); end; 
 	Toets.CX=5; 
 	Toets.CY++
-	For i='az';Toetsen.AddLast(New Toets(i)); end; 
+	For i='az';Toetsen.AddLast(New Toets(i,nil,true)); end; 
 	Toets.CX=5; 
 	Toets.CY++
-	For i='09';Toetsen.AddLast(New Toets(i)); end; 
+	For i='09';Toetsen.AddLast(New Toets(i,nil,true)); end; 
 	Toets.CX=5; 
 	Toets.CY++
 	For spc in Each{[0]="|ua","|ue","|ui","|uo","|uu","|sz"}; Toetsen.AddLast(New Toets(spc)); End
 	// This must be last!!!
 	Toets.CX=5
 	Toets.CY++
-	Toetsen.AddLast(New Toets(32,Lang.Str("Input","Space")))
+	Toetsen.AddLast(New Toets(32,Lang.Str("Input","Space")),true)
 	Toets.CX+=10
 	Toetsen.AddLast(New Toets("*8",Lang.Str("Input","BackSpace")))
 	Toets.CX=4
@@ -99,8 +100,8 @@ Init
 	Toetsen.AddLast(New Toets("*e",Lang.Str("Algemeen","Cancel")))
 End
 
-Global String TextInput(String LangCat,String LangKey,int MaxSiz=0,Fnt,NoPipe)
-	String Ret=""	
+Global String TextInput(String LangCat,String LangKey,int MaxSiz=0,Fnt,NoPipe,string DefaultText="")
+	String Ret:=DefaultText
 	MaxSiz=Ternary(MaxSiz==0,Graphics.Width-10,MaxSiz)
 	Fnt = Fnt || HFNT
 	Int TBH := Fnt.Height("The quick brown fox jumps over the lazy dog")
@@ -116,7 +117,10 @@ Global String TextInput(String LangCat,String LangKey,int MaxSiz=0,Fnt,NoPipe)
 		Graphics.Rect(TBX,TBY,TBW,TBH)
 		Graphics.Color(180,255,0)
 		Fnt.Text(sprintf("%s%s",Ret,Ternary(os.time()%2==0,"_","")),TBX,TBY)
+		Events.Poll()
+		Ch:=Events.GetChar()
 		Hover:=nil
+		Pressed:=False
 		For T in Toetsen.Each
 			If NoPipe && Prefixed(T.Add,"|")
 				SetColor(100,100,100)
@@ -130,12 +134,15 @@ Global String TextInput(String LangCat,String LangKey,int MaxSiz=0,Fnt,NoPipe)
 				Rect(T.X,T.Y,T.W,T.H)
 				Graphics.Color(255,180,0) 				
 			End
+			If Chr(Ch)==T.Add && T.IsChar 
+				Pressed=true
+				Hover=T
+			End
 			HFnt.Text(T.Caption,T.X+(T.W div 2), T.Y+(T.H div 2),2,2)
 		End
-		Events.Poll()
 		MImg.Stretch(Events.MouseX,Events.MouseY,40,40)
 		Graphics.Flip()	
-		If Hover && Events.MouseHitLeft
+		If Hover && (Events.MouseHitLeft || Pressed)
 			switch Hover.Add
 				case "*7"
 					cout("\x07")
