@@ -41,3 +41,11 @@ The game only allows pure ASCII codes, which are the values 0-127. If that's too
 If you need any characters I don't have here, please let me know. It's quite easy to add any new characters.
 
 
+# HSV not translated in Dutch and German? Why?
+Because the Dutch terms Kleurtoon(Hue), Verzadiging(Saturation) en Waarde(Value) did not make sense to me at all until I looked stuff up. 
+Of course, I ain't a professional in this field, but it appears that many Dutch users who are working a lot with graphic software just use the English term.
+In German Farbton(Hue), Sättigung(Saturation) and Helligkeit(Value) could be used, but are apparently not very common in the German community either as far as I could find out.
+I merely put those keys into the localisation files so translators in other languages have the option for themselves to translate it or not, as I can't speak for all language groups all over the world.
+It is possible you'll find other terms left in English in some translations for similar reasons. 
+
+
