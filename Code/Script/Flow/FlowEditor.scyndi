@@ -22,9 +22,11 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.19 XXXI
+// Version: 26.05.19 XXXVI
 // End License
 Script
+
+#use "Libs/XMath"
 
 #use "Script/Use/Anyway"
 
@@ -88,9 +90,24 @@ plua MetaFields
 
 
 Void TexPanel(String T)
+	LocExtern IRW "0x20"
+	For i=0,255
+		x:=i%IRW
+		y:=(i div IRW)
+		tx:=x*34
+		ty:=(y*33)+Puz.BaseUI.DPY+20
+		//CSayF("TexPanel %02x    pos(%4d,%4d); screen(%4d,%4d)",i,x,y,tx,ty)
+		SetColorHSV( (i/255)*360,1,0.5+math.abs(xmath.sin(Sys.Ticks/5))/2)
+		Rect(tx,ty,32,32)
+		SetColor(255,255,255,127)
+		dfnt.text(sprintf("%02X",i),tx+16,ty+32,2,1)
+		SetColor(255,255,255,255)
+	End
 End
+
 Void ActorPanel(String T)
 End
+
 Void MetaPanel(String T)
 	For MF in MetaFields.Each
 		if (!MF.IsReadOnly) && Events.MouseY>=MF.Y && Events.MouseY<=MF.Y+14
