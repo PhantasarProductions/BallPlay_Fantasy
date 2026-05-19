@@ -9,5 +9,4 @@ MKL_*
 Assets/*
 !Assets/Tricky
 !Assets/JQL
-
-
+*.scyndi#
