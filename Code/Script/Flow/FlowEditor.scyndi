@@ -22,15 +22,48 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.18 VII
+// Version: 26.05.19
 // End License
 Script
 
 #use "Script/Use/Anyway"
 
+LocExtern DPY "Scyndi.Globals.Puz.BaseUI.DPY"
+LocExtern DFnt "Scyndi.Globals.Puz.BaseUI.DFnt"
+
 plua SavedAud = ObtainAudio("PuzzleSaved")
 plua SaveIcon = ObtainImage("SAVE")
 Int Knipper
+
+Void TexPanel(String T)
+End
+Void ActorPanel(String T)
+End
+Void MetaPanel(String T)
+End
+
+Class EdPanel
+	ReadOnly String CaptionCat
+	ReadOnly String CaptionKey
+	ReadOnly Delegate CBF
+	ReadOnly String CBFA
+	Constructor(String CC,String CK,_F,String _A="")
+		CaptionCat=CC
+		CaptionKey=CK
+		CBF=_F
+		CBFA=_A
+	End
+End
+plua Panels
+plua ActivePanel
+Init
+	Panels = New TLinkedList()
+	For P in Each(Puz.Data.Lays)
+		Panels.AddLast(New EdPanel("Layers",P,TexPanel,P))
+	End
+	Panels.AddLast(New AdPanel("Edit","Actors",ActorPanel))
+	Panels.AddLast(New AdPanel("Edit","Metadata",MetaPanel))
+End	
 
 Global Void FMain()
 	Puz.BaseUI.Show()
@@ -45,6 +78,22 @@ Global Void FMain()
 		Puz.BaseUI.dFnt.Text(Lua.tostring(i+1),2,r,0,2)
 	End
 	SetAlpha(255)
+	
+	// Panels
+	Int X=5
+	For Pan in Panels.Each
+		String Caption:=Lang.Str(Pan.CaptionCat,Pan.CaptionKey)
+		Int W:=DFnt.Width(Caption)+8
+		Int H:=DFnt.Height(Caption)+4
+		ActivePanel = ActivePanel || Pan
+		SetColor(180,255,0,255)
+		Rect(X,DPY+2,W,H,Pan==ActivePanel)
+		If (Pan==ActivePanel)
+			Pan.CBF(Pan.CBFA)
+			SetColor(0,127,0)
+		End
+		DFnt.Text(Caption,X+(W div 2),Y+(H div 2),2,2)	
+	End
 	
 	// Save
 	If Events.MouseX>Graphics.Width-40 && Events.MouseY-40
