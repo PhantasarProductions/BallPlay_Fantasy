@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.19
+// Version: 26.05.19 I
 // End License
 Module BackTime_ABC
 ReadOnly Global Var BackType = {}
@@ -38,5 +38,7 @@ Init
 	BackType["GFX/BACKGROUNDS/RANDOM FRACTAL.BUNDLE/YELLOW.PNG"] = "Stretch" // GFX/Backgrounds/Random Fractal.bundle/yellow.png 
 	BackType["GFX/BACKGROUNDS/RANDOM FRACTAL.BUNDLE/SOMETHING.PNG"] = "Stretch" // GFX/Backgrounds/Random Fractal.bundle/something.png 
 	BackType["GFX/BACKGROUNDS/RANDOM FRACTAL.BUNDLE/MANDELMINT.PNG"] = "Stretch" // GFX/Backgrounds/Random Fractal.bundle/mandelmint.png 
+	BackType["GFX/BACKGROUNDS/RANDOM FRACTAL.BUNDLE/TILEBROT.PNG"] = "Tile" // GFX/Backgrounds/Random Fractal.bundle/TileBrot.png 
+	BackType["GFX/BACKGROUNDS/RANDOM FRACTAL.BUNDLE/PHOENIX.PNG"] = "Stretch" // GFX/Backgrounds/Random Fractal.bundle/Phoenix.png 
 
 End
