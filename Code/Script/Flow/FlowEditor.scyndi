@@ -22,25 +22,12 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.19
+// Version: 26.05.19 XXIV
 // End License
 Script
 
 #use "Script/Use/Anyway"
 
-LocExtern DPY "Scyndi.Globals.Puz.BaseUI.DPY"
-LocExtern DFnt "Scyndi.Globals.Puz.BaseUI.DFnt"
-
-plua SavedAud = ObtainAudio("PuzzleSaved")
-plua SaveIcon = ObtainImage("SAVE")
-Int Knipper
-
-Void TexPanel(String T)
-End
-Void ActorPanel(String T)
-End
-Void MetaPanel(String T)
-End
 
 Class EdPanel
 	ReadOnly String CaptionCat
@@ -49,21 +36,111 @@ Class EdPanel
 	ReadOnly String CBFA
 	Constructor(String CC,String CK,_F,String _A="")
 		CaptionCat=CC
-		CaptionKey=CK
+		CaptionKey=Ternary(Upper(CK)=="OBJECT","Objects",CK)
 		CBF=_F
 		CBFA=_A
 	End
 End
+
+Class EdMeta
+	Static Int Cnt=0
+	ReadOnly Int ID	
+	ReadOnly String Caption
+	Readonly Bool IsReadOnly
+	ReadOnly String ValCat
+	ReadOnly String ValKey
+	ReadOnly Delegate CBShowVal
+	ReadOnly Delegate CBEditVal
+	
+	Get Int Y
+		Return Puz.BaseUI.DPY+20+(ID*14)
+	End
+	
+	Get String SVal
+		If CBShowVal
+			Return CBShowVal(ValCat,ValKey)
+		Else
+			Return Puz.Data.Value(ValCat,ValKey)
+		End
+	End
+	
+	Constructor(String _Capt,String _Cat,String _Key, _SBSV, _SBEV, _IRO)
+		Cnt++
+		ID=Cnt
+		Caption=_Capt
+		IsReadOnly = _IRO!=nil && _IRO!=false
+		ValCat = _Cat
+		ValKey = _Key
+		CBShowVal=_SBSV
+		CBEditVal=_SBEV
+	End
+End
+	
+
+LocExtern DPY "Scyndi.Globals.Puz.BaseUI.DPY"
+LocExtern DFnt "Scyndi.Globals.Puz.BaseUI.DFnt"
+
+plua SavedAud = ObtainAudio("PuzzleSaved")
+plua SaveIcon = ObtainImage("SAVE")
+Int Knipper
+
+plua MetaFields
+
+
+Void TexPanel(String T)
+End
+Void ActorPanel(String T)
+End
+Void MetaPanel(String T)
+	For MF in MetaFields.Each
+		if (!MF.IsReadOnly) && Events.MouseY>=MF.Y && Events.MouseY<=MF.Y+14
+			LocExtern Hue "FLOWEDITORMETAPANELHUE"
+			Hue = ((Hue || -1) + 1) % 360
+			SetColorHSV(Hue,1,1)
+			Rect(0,MF.Y,Graphics.Width,14)
+			If Events.MouseHitLeft
+				MF.CBEditVal(MF.ValCat,MF.ValKey)
+			End
+		End
+		SetColor(255,255,255)
+		dFnt.Dark(Lang.Str("Meta",MF.Caption)..": ",250,MF.Y,1,0)
+		If MF.IsReadOnly
+			SetColorHSV(8,1,1)
+		Else
+			SetColor(255,180,0)				
+		End
+		dFnt.Dark(MF.SVal,250,MF.Y)
+	End
+End
+
 plua Panels
 plua ActivePanel
+
 Init
 	Panels = New TLinkedList()
 	For P in Each(Puz.Data.Lays)
 		Panels.AddLast(New EdPanel("Layers",P,TexPanel,P))
 	End
-	Panels.AddLast(New AdPanel("Edit","Actors",ActorPanel))
-	Panels.AddLast(New AdPanel("Edit","Metadata",MetaPanel))
+	Panels.AddLast(New EdPanel("Edit","Actors",ActorPanel))
+	Panels.AddLast(New EdPanel("Edit","Metadata",MetaPanel))
 End	
+
+Void MetaTextEdit(String C,String K)
+	Events.Annoy("Text editing meta not yet implemented")
+End
+
+String MetaTextShow(String C,String K)
+	Return Puz.Data.Value(C,K)
+End
+
+
+Init
+	MetaFields = New TLinkedList()
+	MetaFields.AddLast(new EdMeta("Title","Meta","Title", MetaTextShow, MetaTextEdit, False))
+	MetaFields.AddLast(new EdMeta("Author","Meta","Author", MetaTextShow, MetaTextEdit, False))
+	MetaFields.AddLast(new EdMeta("Signature","Meta","Signature", MetaTextShow, nil, True))
+End
+
 
 Global Void FMain()
 	Puz.BaseUI.Show()
@@ -81,22 +158,27 @@ Global Void FMain()
 	
 	// Panels
 	Int X=5
+	
 	For Pan in Panels.Each
 		String Caption:=Lang.Str(Pan.CaptionCat,Pan.CaptionKey)
 		Int W:=DFnt.Width(Caption)+8
 		Int H:=DFnt.Height(Caption)+4
 		ActivePanel = ActivePanel || Pan
 		SetColor(180,255,0,255)
-		Rect(X,DPY+2,W,H,Pan==ActivePanel)
+		Rect(X,DPY+2,W,H,Pan!=ActivePanel)
 		If (Pan==ActivePanel)
 			Pan.CBF(Pan.CBFA)
 			SetColor(0,127,0)
 		End
-		DFnt.Text(Caption,X+(W div 2),Y+(H div 2),2,2)	
+		DFnt.Text(Caption,X+(W div 2),DPY+5+(H div 2),2,2)	
+		If Events.MouseHitLeft && Events.MouseX>X && Events.MouseY>DPY+2 && Events.MouseX<X+W && Events.MouseY<DPY+2+H
+			ActivePanel=Pan
+		End	
+		X+=W+2
 	End
 	
 	// Save
-	If Events.MouseX>Graphics.Width-40 && Events.MouseY-40
+	If Events.MouseX>Graphics.Width-40 && Events.MouseY>Graphics.Height-40
 		Knipper = (Knipper+1) % 3
 		SetColorHSV(0,0,Knipper / 2)
 		
