@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.19 XXIV
+// Version: 26.05.19 XXXI
 // End License
 Script
 
@@ -99,7 +99,7 @@ Void MetaPanel(String T)
 			SetColorHSV(Hue,1,1)
 			Rect(0,MF.Y,Graphics.Width,14)
 			If Events.MouseHitLeft
-				MF.CBEditVal(MF.ValCat,MF.ValKey)
+				MF.CBEditVal(MF.ValCat,MF.ValKey,MF.Caption)
 			End
 		End
 		SetColor(255,255,255)
@@ -125,20 +125,38 @@ Init
 	Panels.AddLast(New EdPanel("Edit","Metadata",MetaPanel))
 End	
 
-Void MetaTextEdit(String C,String K)
-	Events.Annoy("Text editing meta not yet implemented")
+Void MetaTextEdit(String C,String K,String Capt)
+	Oud:=Puz.Data.Value(C,K)
+	Nieuw:=Trim(Any.TextInput("Meta",Capt,Graphics.Width div 2,dFnt,false,Oud))
+	If Nieuw!="" && Nieuw!=Oud
+		Indexed := GINIE.Obtain("PackIndex")
+		Puz.Data.Value(C,K,Nieuw)
+		Indexed.Value("Index","Force","TRUE")
+		SGF.SaveString(sprintf("Packs/%s/Index.ini",gstr.PackChosen),Indexed.Source)
+	End
+	//Events.Annoy("Text editing meta not yet implemented")
 End
 
 String MetaTextShow(String C,String K)
 	Return Puz.Data.Value(C,K)
 End
 
+String MetaChosenBack(string C,String K)
+	MCB:=Puz.Data.Value(C,K)
+	Return StripAll(MCB)..Ternary(Upper(ExtractExt(MCB))=="BUNDLE"," ("..Lang.Str("META","RANDOM")..")","")
+End
+
+Void MetaSelectBack(String C,String K)
+	Events.Annoy("Picking a file has not yet been implemented!")
+End
 
 Init
 	MetaFields = New TLinkedList()
 	MetaFields.AddLast(new EdMeta("Title","Meta","Title", MetaTextShow, MetaTextEdit, False))
 	MetaFields.AddLast(new EdMeta("Author","Meta","Author", MetaTextShow, MetaTextEdit, False))
 	MetaFields.AddLast(new EdMeta("Signature","Meta","Signature", MetaTextShow, nil, True))
+	MetaFields.AddLast(new EdMeta("Music","Background","Music", MetaChosenBack, MetaSelectBack, False))
+	MetaFields.AddLast(new EdMeta("Background","Background","Picture", MetaChosenBack, MetaSelectBack, False))
 End
 
 
