@@ -1,0 +1,151 @@
+// License:
+// 
+// BallPlay Fantasy
+// Texture manager
+// 
+// 
+// 
+// 	(c) Jeroen P. Broks, 2026
+// 
+// 		This program is free software: you can redistribute it and/or modify
+// 		it under the terms of the GNU General Public License as published by
+// 		the Free Software Foundation, either version 3 of the License, or
+// 		(at your option) any later version.
+// 
+// 		This program is distributed in the hope that it will be useful,
+// 		but WITHOUT ANY WARRANTY; without even the implied warranty of
+// 		MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// 		GNU General Public License for more details.
+// 		You should have received a copy of the GNU General Public License
+// 		along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// 
+// 	Please note that some references to data like pictures or audio, do not automatically
+// 	fall under this licenses. Mostly this is noted in the respective files.
+// 
+// Version: 26.05.20 IV
+// End License
+
+
+Module
+
+#use "Script/Use/Anyway"
+
+plua GDat = GINIE.Create("TEXTURES")
+plua PicLib = {}
+
+Get String Source
+	Return GDat.Source
+End
+
+Set String Source
+	GDat = GINIE.Create("TEXTURES")
+	GDat.Source=Value
+	Tex.Renew()
+	PicLib = {}
+End
+
+Class TextureEntry
+	ReadOnly Int Idx
+	ReadOnly String Layer
+	ReadOnly String GINIE_Tag
+	ReadOnly String PicLib_Tag
+	
+	Get Int R
+		Return GDat.IntValue(GINIE_TAG,"R") % 255
+	End
+	Get Int G
+		Return GDat.IntValue(GINIE_TAG,"G") % 255
+	End
+	Get Int B
+		Return GDat.IntValue(GINIE_TAG,"B") % 255
+	End
+	Get Int A
+		Return GDat.IntValue(GINIE_TAG,"ALPHA") % 255
+	End
+	Set Int R
+		GDat.Value(GINIE_TAG,"R",Value % 255)
+	End
+	Set Int G
+		GDat.Value(GINIE_TAG,"R",Value % 255)
+	End
+	Set Int B
+		GDat.Value(GINIE_TAG,"R",Value % 255)
+	End
+	Set Int A
+		GDat.Value(GINIE_TAG,"ALPHA",Value % 255)
+	End
+	
+	
+		
+	Get Var GetHSV
+		Return Graphics.RGB2HSV(R,G,B)
+	End
+	Void SetHSV(Number Hue,Number Saturation, Number Value)
+		R,G,B = Graphics.HSV2RGB(Hue,Saturation,Value)
+	End
+	Get String File
+		If IDX==0
+			Return ""
+		End
+		Return GDat.Value(GINIE_TAG,"File")
+	End
+	Set String File
+		If IDX!=0			
+			GDat.Value(GINIE_TAG,"File",Value)
+			PicLib[PicLib_Tag]=nil
+		End
+	End
+	Get Var Pic
+		if File==""
+			Return Nil
+		End
+		PicLib[PicLib_Tag] = PicLib[PicLib_Tag] || LoadImage(File,"TEX_"..PicLib_Tag)
+		Return PicLib[PicLib_Tag]
+	End
+	
+	Void Draw(Int X, Int Y)
+		if !Pic
+			Return
+		End
+		SetColor(R,G,B,A)
+		Pic.Stretch(X,Y,32,32)
+	End
+	
+	Constructor(String _Lay,Int i)
+		Idx=i
+		Layer=_Lay
+		GINIE_Tag  = sprintf("TEX___%s_%02x",_Lay,i)
+		PicLib_Tag = sprintf("PUZTEX___%s_%02x",_Lay,i)
+	End
+	
+End
+
+
+Class TextureLib
+	ReadOnly String Lay
+	ReadOnly Var TLArray = {}
+	
+	Var NumIndex(Int i)
+		TLArray[i] = TLArray[i] || New TextureEntry(Lay,i)
+		Return TLArray[i]
+	End	
+	
+	Constructor(String _L)
+		Lay=_L
+	End
+End
+
+plua _LayLib
+
+
+Void Renew()
+	_LayLib = {}
+	For L in Each{[0]="Floor","Wall","Decoration"}
+		_LayLib[L] = New TextureLib(L)
+	End
+End
+
+Init
+	Renew()
+End
+	
