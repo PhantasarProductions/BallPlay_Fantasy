@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.22 X
+// Version: 26.05.22 XII
 // End License
 Script
 
@@ -199,12 +199,12 @@ Void ObjectHit(String Layer, Int X, Int Y)
 	Byte PO:=Ternary(Puz.TexObject[ChosenTex].Pic, ChosenTex, 0)
 	Puz.Data.Val("Object",X,Y,PO)
 	Modified = True
-	CSayF("Object (%02d,%02d) -> %02x",X,Y,PO)
+	CSayF("Object (%02d,%02d) -> %02x (%02x)",X,Y,PO,Puz.TexObject[ChosenTex].Pic)
 End
 
 Void TexPanelDown(String Layer, Int X, Int Y)
 	If !HaveArea
-		Byte PO:=Ternary(Puz.TexObject[ChosenTex].Pic, ChosenTex, 0)
+		Byte PO:=Ternary(Puz.Tex[Layer][ChosenTex].Pic, ChosenTex, 0)
 		HaveArea = New EdArea(Layer,X,Y,PO)
 	End
 	HaveArea.BoxUpdate()
@@ -216,7 +216,7 @@ Void TexPanelUp()
 	HaveArea.BoxUpdate()
 	For y = HaveArea.SY,HaveArea.EY
 		For x = HaveArea.SX,HaveArea.EX
-			Puz.Data.Val("Object",X,Y,HaveArea.Value)
+			Puz.Data.Val(HaveArea.Layer,X,Y,HaveArea.Value)
 		End
 	End
 	HaveArea=nil
