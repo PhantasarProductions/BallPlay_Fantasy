@@ -22,11 +22,13 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.20 VI
+// Version: 26.05.22 XIV
 // End License
 
 
 Module
+
+#macro __ResetColors __R,__G,__B,__A=Nil,Nil,Nil
 
 #use "Script/Use/Anyway"
 
@@ -49,30 +51,47 @@ Class TextureEntry
 	ReadOnly String Layer
 	ReadOnly String GINIE_Tag
 	ReadOnly String PicLib_Tag
+		
+	Var __R
+	Var __G
+	Var __B
+	Var __A
 	
 	Get Int R
-		Return GDat.IntValue(GINIE_TAG,"R") % 255
+		__R = __R || GDat.IntValue(GINIE_TAG,"R")
+		Return __R
+		//% 255
 	End
 	Get Int G
-		Return GDat.IntValue(GINIE_TAG,"G") % 255
+		__G = __G || GDat.IntValue(GINIE_TAG,"G")
+		Return __G
+		//% 255
 	End
 	Get Int B
-		Return GDat.IntValue(GINIE_TAG,"B") % 255
+		__B = __B || GDat.IntValue(GINIE_TAG,"B")
+		Return __B
+		//% 255
 	End
 	Get Int A
-		Return GDat.IntValue(GINIE_TAG,"ALPHA") % 255
+		__A = __A || GDat.IntValue(GINIE_TAG,"ALPHA") 
+		//% 255
+		Return __A
 	End
 	Set Int R
 		GDat.Value(GINIE_TAG,"R",Value % 255)
+		__ResetColors
 	End
 	Set Int G
-		GDat.Value(GINIE_TAG,"R",Value % 255)
+		GDat.Value(GINIE_TAG,"G",Value % 255)
+		__ResetColors
 	End
 	Set Int B
-		GDat.Value(GINIE_TAG,"R",Value % 255)
+		GDat.Value(GINIE_TAG,"B",Value % 255)
+		__ResetColors
 	End
 	Set Int A
 		GDat.Value(GINIE_TAG,"ALPHA",Value % 255)
+		__ResetColors
 	End
 	
 	
@@ -99,7 +118,10 @@ Class TextureEntry
 		if File==""
 			Return Nil
 		End
-		PicLib[PicLib_Tag] = PicLib[PicLib_Tag] || LoadImage(File,"TEX_"..PicLib_Tag)
+		If !PicLib[PicLib_Tag]
+			CSayF("%s::%02xd Loading %s into %s",Layer,Idx,File,PicLib_Tag)
+		End
+		PicLib[PicLib_Tag] = PicLib[PicLib_Tag] || LoadImage(File,PicLib_Tag)
 		Return PicLib[PicLib_Tag]
 	End
 	
@@ -116,6 +138,11 @@ Class TextureEntry
 		Layer=_Lay
 		GINIE_Tag  = sprintf("TEX___%s_%02x",_Lay,i)
 		PicLib_Tag = sprintf("PUZTEX___%s_%02x",_Lay,i)
+		GDat.NewValue(GINIE_TAG,"R",255)
+		GDat.NewValue(GINIE_TAG,"G",255)
+		GDat.NewValue(GINIE_TAG,"B",255)
+		GDat.NewValue(GINIE_TAG,"ALPHA",255)
+		CSayF("New Entry for %s:%02x --> %s #%02x%02x%02x -- Alpha: %02x",Layer,idx,File,R,G,B,A)
 	End
 	
 End
@@ -123,14 +150,20 @@ End
 
 Class TextureLib
 	ReadOnly String Lay
-	ReadOnly Var TLArray = {}
+	ReadOnly Var TLArray 
 	
 	Var NumIndex(Int i)
+		//CSayF("HARDCORE DEBUG %s::%02X! REMOVE ME WHEN DONE!",Lay,i)
+		If !TLArray[i]
+			CSayF("Requested %s::%02x while it doesn't yet exist! Creating!",Lay,i)
+		End
 		TLArray[i] = TLArray[i] || New TextureEntry(Lay,i)
 		Return TLArray[i]
 	End	
 	
 	Constructor(String _L)
+		TLArray = {}
+		CSayF("Creating Layer: %s",_L)
 		Lay=_L
 	End
 End
@@ -140,6 +173,19 @@ plua _LayLib
 
 Void Renew()
 	_LayLib = {}
+	For i=1,15
+		int _r
+		int _g
+		int _b
+		Tag:=sprintf("TEX___Wall_%02x",i+0xf0)
+		gdat.NewValue(Tag,"File","GFX/Break/BreakAway.png")
+		_r,_g,_b = Puz.Colors[i].DumpRGB()
+		gdat.NewValue(Tag,"R",_r)
+		gdat.NewValue(Tag,"G",_g)
+		gdat.NewValue(Tag,"B",_b)
+add F		gdat.NewValue(Tag,"ALPHA",255)
+		CSayF("Break-Away %2d: #%02x%02x%02x",i + 0xf0,_r,_g,_b)
+	End
 	For L in Each{[0]="Floor","Wall","Decoration"}
 		_LayLib[L] = New TextureLib(L)
 	End
