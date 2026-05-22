@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.22 XIV
+// Version: 26.05.22 XVI
 // End License
 
 
@@ -183,7 +183,7 @@ Void Renew()
 		gdat.NewValue(Tag,"R",_r)
 		gdat.NewValue(Tag,"G",_g)
 		gdat.NewValue(Tag,"B",_b)
-add F		gdat.NewValue(Tag,"ALPHA",255)
+		gdat.NewValue(Tag,"ALPHA",255)
 		CSayF("Break-Away %2d: #%02x%02x%02x",i + 0xf0,_r,_g,_b)
 	End
 	For L in Each{[0]="Floor","Wall","Decoration"}
