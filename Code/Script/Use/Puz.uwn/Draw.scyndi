@@ -1,0 +1,91 @@
+// License:
+// 
+// BallPlay Fantasy
+// Draw the puzzle
+// 
+// 
+// 
+// 	(c) Jeroen P. Broks, 2026
+// 
+// 		This program is free software: you can redistribute it and/or modify
+// 		it under the terms of the GNU General Public License as published by
+// 		the Free Software Foundation, either version 3 of the License, or
+// 		(at your option) any later version.
+// 
+// 		This program is distributed in the hope that it will be useful,
+// 		but WITHOUT ANY WARRANTY; without even the implied warranty of
+// 		MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// 		GNU General Public License for more details.
+// 		You should have received a copy of the GNU General Public License
+// 		along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// 
+// 	Please note that some references to data like pictures or audio, do not automatically
+// 	fall under this licenses. Mostly this is noted in the respective files.
+// 
+// Version: 26.05.21 VII
+// End License
+Module
+
+#use "Script/Use/Anyway"
+
+plua DrawOrder
+// Speeds things up... a little.
+plua DTA = Puz.Data
+
+plua DH = Puz.Max.H-1
+plua DW = Puz.Max.W-1
+
+Class PDraw
+	ReadOnly Delegate Draw
+	ReadOnly String Layer
+	Constructor(D,String _L="")
+		Draw=D
+		Layer=_L
+	End
+End
+
+Void DrawPan(String Lay)
+	For Y=0,DH
+		For X=0,DW
+			V:=DTA.Val(Lay,X,Y)
+			//V:=0			
+			If V>0
+				tx:= x*32
+				ty:=(y*32)+20
+				Puz.Tex[Lay][v].Draw(tx,ty)
+			End
+		End
+	End
+End
+
+Void EditorActors()
+End
+
+Void GameActors()
+End
+
+Init
+	If Upper(gstr.Situation)=="EDITOR"
+		CSay("Setting the drawing order up for the editor")
+		DrawOrder = {}
+		DrawOrder += new PDraw(DrawPan,"Floor")
+		DrawOrder += new PDraw(DrawPan,"Wall")
+		DrawOrder += new PDraw(DrawPan,"Object")
+		DrawOrder += new PDraw(DrawPan,"Decoration")
+		DrawOrder += New PDraw(EditorActors)
+	Else
+		CSay("Setting the drawing order up for the game")
+		DrawOrder = {}
+		DrawOrder += new PDraw(DrawPan,"Floor")
+		DrawOrder += new PDraw(DrawPan,"Wall")
+		DrawOrder += new PDraw(DrawPan,"Object")
+		DrawOrder += New PDraw(GameActors)
+		DrawOrder += new PDraw(DrawPan,"Decoration")
+	End
+End
+
+Void All()
+	For DP in Each(DrawOrder)
+		DP.Draw(DP.Layer)
+	End
+End
