@@ -1,0 +1,75 @@
+// License:
+// 
+// BallPlay Fantasy
+// Object Textures
+// 
+// 
+// 
+// 	(c) Jeroen P. Broks, 2026
+// 
+// 		This program is free software: you can redistribute it and/or modify
+// 		it under the terms of the GNU General Public License as published by
+// 		the Free Software Foundation, either version 3 of the License, or
+// 		(at your option) any later version.
+// 
+// 		This program is distributed in the hope that it will be useful,
+// 		but WITHOUT ANY WARRANTY; without even the implied warranty of
+// 		MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// 		GNU General Public License for more details.
+// 		You should have received a copy of the GNU General Public License
+// 		along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// 
+// 	Please note that some references to data like pictures or audio, do not automatically
+// 	fall under this licenses. Mostly this is noted in the respective files.
+// 
+// Version: 26.05.21 V
+// End License
+
+
+Module
+
+#use "Script/Use/Anyway"
+
+Class TexO
+	ReadOnly Byte R
+	ReadOnly Byte G
+	ReadOnly Byte B
+	ReadOnly Byte A
+	ReadOnly String File
+	ReadOnly Var Pic = nil
+	
+	Constructor(infinity)
+		File,R,G,B,A = infinity
+		If File!=""
+			Pic = ObtainImage(File)
+		End
+	End
+	
+	Void Draw(int X, int Y)
+		If Pic
+			SetColor(R,G,B,A)
+			Pic.Stretch(X,Y,32,32)
+		End
+	End
+End
+
+plua TexOList
+
+Init
+	TexOList = {}
+	TexOList[0x01] = New TexO("Plate1",255,255,  0, 255)
+	TexOList[0x02] = New TexO("Plate2",255,255,  0, 255)
+	TexOList[0x03] = New TexO("Plate1",255,  0,  0, 255)
+	TexOList[0x04] = New TexO("Plate2",255,  0,  0, 255)
+	TexOList[0x05] = New TexO("Plate1",  0,255,255, 255)
+	TexOList[0x06] = New TexO("Plate2",  0,255,255, 255)
+	For i,a in ipairs{[0]="Up","Down","Left","Right"}
+		TexOList[0x10 + i] = New TexO("Arrow_"..a,0,180,255,255)
+	End
+	TexOList[0x1f] = New TexO("Metal",180,200,255,255)
+End
+
+Static Var StaticNumIndex(int idx)
+	TexOList[idx] = TexOList[idx] || New TexO("",0,0,0,0)
+	Return TexOList[idx]
+End
