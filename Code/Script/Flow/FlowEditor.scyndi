@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.22 II
+// Version: 26.05.22 X
 // End License
 Script
 
@@ -108,15 +108,15 @@ Class EdArea
 	Int EX
 	Int EY
 	Void BoxUpdate()
-		If !Puz.Data.MouseInField
+		If !Puz.BaseUI.MouseInField
 			HaveArea = nil
 		End
-		CX = Puz.Data.MX
-		CY = Puz.Data.MY
+		CX = Puz.BaseUI.MX
+		CY = Puz.BaseUI.MY
 		SX =math.min(CX,StartX)
 		SY =math.min(CY,StartY)
 		EX =math.max(CX,StartX)
-		EY =math.max(CX,StartY)
+		EY =math.max(CY,StartY)
 	End
 	Void Draw()
 		SetColorHSV(os.time()%360,1,1)
@@ -128,6 +128,7 @@ Class EdArea
 	End
 	Constructor(Infinity)
 		Layer,StartX,StartY,Value = Infinity
+		CSayF("Start Area: %s (%3d,%3d) -> %02x",Infinity)
 	End
 End	
 
@@ -210,7 +211,7 @@ Void TexPanelDown(String Layer, Int X, Int Y)
 	HaveArea.Draw()
 End
 
-Void TextPanelUp()
+Void TexPanelUp()
 	If !HaveArea; Return; End
 	HaveArea.BoxUpdate()
 	For y = HaveArea.SY,HaveArea.EY
@@ -218,6 +219,8 @@ Void TextPanelUp()
 			Puz.Data.Val("Object",X,Y,HaveArea.Value)
 		End
 	End
+	HaveArea=nil
+	Modified = True
 End
 
 #endregion
@@ -229,7 +232,7 @@ Init
 	Panels = New TLinkedList()
 	For P in Each(Puz.Data.Lays)
 		IsObject:=Upper(P)=="OBJECT"
-		Panels.AddLast(New EdPanel("Layers",P,TexPanel,P,Ternary(IsObject,nil,TexPanelDown),Ternary(IsObject,nilTexPanelUp),Ternary(IsObject,ObjectHit,nil)))
+		Panels.AddLast(New EdPanel("Layers",P,TexPanel,P,Ternary(IsObject,nil,TexPanelDown),Ternary(IsObject,nil,TexPanelUp),Ternary(IsObject,ObjectHit,nil)))
 		//CSayF("- Object Ternary: %s    (P:%s)",Ternary(Upper(P)=="OBJECT",ObjectHit,nil),Upper(P) )
 	End
 	Panels.AddLast(New EdPanel("Edit","Actors",ActorPanel))
@@ -318,7 +321,14 @@ Global Void FMain()
 			CSayF("Hit %s -> (%d,%d)",ActivePanel.Layer,Puz.BaseUI.MX,Puz.BaseUI.MY)
 			ActivePanel.IFHit(ActivePanel.Layer,Puz.BaseUI.MX,Puz.BaseUI.MY)
 		End
-		
+		If Events.MouseDown(Events.MouseLeftButton)
+			ActivePanel.IFPressed(ActivePanel.Layer,Puz.BaseUI.MX,Puz.BaseUI.MY)
+		End
+		If Events.MouseReleased(Events.MouseLeftButton)
+			ActivePanel.IFReleased()
+		End
+	Else
+		HaveArea=nil
 	End
 
 	
