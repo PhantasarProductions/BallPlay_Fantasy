@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.19
+// Version: 26.05.21 IV
 // End License
 Module
 
@@ -34,11 +34,22 @@ Module
 
 ReadOnly Var lays = {[0]="Floor", "Wall", "Decoration", "Object"}
 
-Var PuzBank
+Plua _PuzBank
+Link PuzBank = _PuzBank
 Var PuzData
 
-Get Int W; Return PuzData.IntValue("SIZE","WIDTH");   End
-Get Int H; Return PuzData.IntValue("SIZE","HEIGHT");  End
+
+plua pw
+plua ph
+
+Get Int W
+	pw = pw || PuzData.IntValue("SIZE","WIDTH")
+	Return pw   
+End
+Get Int H; 
+	ph = ph || PuzData.IntValue("SIZE","HEIGHT")
+	return ph
+End
 
 Get String BackPic; Return PuzData.NewValue("Background","Picture","Random Fractal.bundle"); End
 Get String Music; Return PuzData.NewValue("Background","Music","Main.bundle"); End
@@ -57,8 +68,10 @@ End
 Void Create(int _W=0,Int _H=0)
 	__W:=Ternary(_W>0,_W,Puz.Max.W)
 	__H:=Ternary(_H>0,_H,Puz.Max.H)
+	pw=nil
+	ph=nil
 	PuzData = GINIE.Create("PUZZLEDATA")
-	PuzBank = {}
+	_PuzBank = {}
 	PuzData.Value("META","Created",os.date())
 	PuzData.Value("SIZE","WIDTH", __W)
 	PuzData.Value("SIZE","HEIGHT",__H)
@@ -70,14 +83,14 @@ Void Create(int _W=0,Int _H=0)
 	End
 End
 
-Byte Val(String Lay,Int X,Int Y,V)
+Int Val(String Lay,Int X,Int Y,V)
 	Lay=Upper(Lay)
-	lua.assert(PuzBank[Lay],"Layer "..Lay.." does not exist!")
-	lua.assert(X>=0 && Y>=0 && X<W && Y<H,sprintf("Puzzle value out of bounds (%d,%d) %dx%d",X,Y,W,H))
-	Int A:=A+(Y*H)
+	//lua.assert(_PuzBank[Lay],"Layer "..Lay.." does not exist!")
+	//lua.assert(X>=0 && Y>=0 && X<W && Y<H,sprintf("Puzzle value out of bounds (%d,%d) %dx%d",X,Y,W,H))
+	Int A:=X+(Y*W)
 	if V
 		lua.assert(Lua.type(V)=="number" && V>=0 && V<=255,"Illegal value for puzzle!")
-		PuzBank[Lay].Poke(A,V)
+		_PuzBank[Lay].Poke(A,V)
 	End
-	Return PuzBank[Lay].Peek(A)
+	Return _PuzBank[Lay].Peek(A)
 End
