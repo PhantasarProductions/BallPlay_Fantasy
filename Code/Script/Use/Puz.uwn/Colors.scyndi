@@ -1,0 +1,94 @@
+// License:
+// 
+// BallPlay Fantasy
+// Can you paint with all the colors of the wind?
+// 
+// 
+// 
+// 	(c) Jeroen P. Broks, 2026
+// 
+// 		This program is free software: you can redistribute it and/or modify
+// 		it under the terms of the GNU General Public License as published by
+// 		the Free Software Foundation, either version 3 of the License, or
+// 		(at your option) any later version.
+// 
+// 		This program is distributed in the hope that it will be useful,
+// 		but WITHOUT ANY WARRANTY; without even the implied warranty of
+// 		MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// 		GNU General Public License for more details.
+// 		You should have received a copy of the GNU General Public License
+// 		along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// 
+// 	Please note that some references to data like pictures or audio, do not automatically
+// 	fall under this licenses. Mostly this is noted in the respective files.
+// 
+// Version: 26.05.22 V
+// End License
+Module
+
+#use "Libs/SCI/Sys"
+#use "Libs/SCI/Graphics"
+
+Class TCol
+	ReadOnly Int Red
+	ReadOnly Int Green
+	ReadOnly Int Blue
+	
+	ReadOnly Number Hue
+	ReadOnly Number Saturation
+	ReadOnly Number Value
+		
+	Void Change(Thing)
+		Thing.R = Red
+		Thing.G = Green
+		Thing.B = Blue
+	End
+	
+	Var DumpRGB()
+		Return Red,Green,Blue
+	End
+	
+	Constructor(String Tpe,Infinity)
+		Switch Upper(Tpe)
+			case "RGB"
+				Red,Green,Blue = Infinity
+				Hue,Saturation,Value = Graphics.RGB2HSV(Red,Green,Blue)
+			case "HSV"
+				Hue,Saturation,Value = Infinity
+				Red,Green,Blue = Graphics.HSV2RGB(Hue,Saturation,Value)
+			Default
+				Lua.error("Sorry! I do not know color type: "..Tpe)
+		End
+		CSayF("Created Color record %03d/%03d/%03d -> #%02x%02x%02x -> Hue %f, Sat %f, Val %f",Red,Green,Blue,Red,Green,Blue,Hue,Saturation,Value)
+	End
+End
+
+plua Reg
+
+Init
+	Reg = {}
+	Reg[ 0] = New TCol("RGB",   0,   0,   0)
+	Reg[ 1] = New TCol("RGB",   0,   0, 127)
+	Reg[ 2] = New TCol("RGB",   0, 127,   0)
+	Reg[ 3] = New TCol("RGB",   0, 127, 127)
+	Reg[ 4] = New TCol("RGB", 127,   0,   0)
+	Reg[ 5] = New TCol("RGB", 127,   0, 127)
+	Reg[ 6] = New TCol("RGB", 127,  85,   0)
+	Reg[ 7] = New TCol("RGB", 127, 127, 127)
+	
+	Reg[ 8] = New TCol("RGB",  85,  85,  85)
+	Reg[ 9] = New TCol("RGB",  85,  85, 255)
+	Reg[10] = New TCol("RGB",  85, 255,  85)
+	Reg[11] = New TCol("RGB",  85, 255, 255)
+	Reg[12] = New TCol("RGB", 255,  85,  85)
+	Reg[13] = New TCol("RGB", 255,  85, 255)
+	Reg[14] = New TCol("RGB", 255, 255,  85)
+	Reg[15] = New TCol("RGB", 255, 255, 255)
+End
+
+Var StaticNumIndex(Int i)
+	Lua.assert(Reg[i],sprintf("Color %02x(%03d) has not been defined!",i,i))
+	Return Reg[i]
+End
+	
+	
