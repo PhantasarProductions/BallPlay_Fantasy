@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.19 XXXVI
+// Version: 26.05.22 II
 // End License
 Script
 
@@ -30,17 +30,34 @@ Script
 
 #use "Script/Use/Anyway"
 
+// "Niks" means "nothing" in Dutch. And yeah, that is what this function is supposed to do.
+// Nothing at all. Why do I need it then, eh?
+plua NIKS(); End
+
+Bool Modified = False
 
 Class EdPanel
 	ReadOnly String CaptionCat
 	ReadOnly String CaptionKey
 	ReadOnly Delegate CBF
 	ReadOnly String CBFA
-	Constructor(String CC,String CK,_F,String _A="")
+	ReadOnly Bool ObjLayer
+	ReadOnly Delegate IFPressed
+	ReadOnly Delegate IFReleased
+	ReadOnly Delegate IFHit
+	String Layer
+	Constructor(String CC,String CK,_F,String _A="", IFP, IFR, IFH)
+		Layer=_A;
+		ObjLayer=Upper(CK)=="OBJECT"
 		CaptionCat=CC
-		CaptionKey=Ternary(Upper(CK)=="OBJECT","Objects",CK)
+		CaptionKey=Ternary(ObjLayer,"Objects",CK)
 		CBF=_F
 		CBFA=_A
+		// In Field Pressed, In Field Released and In Field Hit
+		IFPressed = IFP || NIKS
+		IFReleased = IFR || NIKS
+		IFHit = IFH || NIKS
+		CSayF("%s::%s %s(%s)    %s/%s/%s",CC,CK,_F,_A,IFP,IFR,IFH)
 	End
 End
 
@@ -74,10 +91,45 @@ Class EdMeta
 		ValCat = _Cat
 		ValKey = _Key
 		CBShowVal=_SBSV
-		CBEditVal=_SBEV
+		CBEditVal=_SBEV		
 	End
 End
-	
+
+Plua HaveArea
+Class EdArea
+	ReadOnly String Layer
+	ReadOnly Byte Value
+	ReadOnly Int StartX
+	ReadOnly Int StartY
+	Int CX
+	Int CY
+	Int SX
+	Int SY
+	Int EX
+	Int EY
+	Void BoxUpdate()
+		If !Puz.Data.MouseInField
+			HaveArea = nil
+		End
+		CX = Puz.Data.MX
+		CY = Puz.Data.MY
+		SX =math.min(CX,StartX)
+		SY =math.min(CY,StartY)
+		EX =math.max(CX,StartX)
+		EY =math.max(CX,StartY)
+	End
+	Void Draw()
+		SetColorHSV(os.time()%360,1,1)
+		SetAlpha(100)
+		DW:=math.max(EX-SX,1)
+		DH:=math.max(EY-SY,1)
+		Rect(SX*32,(SY*32)+20,DW*32,DH*32)
+		SetAlpha(255)
+	End
+	Constructor(Infinity)
+		Layer,StartX,StartY,Value = Infinity
+	End
+End	
 
 LocExtern DPY "Scyndi.Globals.Puz.BaseUI.DPY"
 LocExtern DFnt "Scyndi.Globals.Puz.BaseUI.DFnt"
@@ -88,6 +140,10 @@ Int Knipper
 
 plua MetaFields
 
+#region "Tex Panel Callbacks"
+
+
+Int ChosenTex = 0
 
 Void TexPanel(String T)
 	LocExtern IRW "0x20"
@@ -95,17 +151,25 @@ Void TexPanel(String T)
 		x:=i%IRW
 		y:=(i div IRW)
 		tx:=x*34
-		ty:=(y*33)+Puz.BaseUI.DPY+20
+		ty:=(y*33)+Puz.BaseUI.DPY+25
 		//CSayF("TexPanel %02x    pos(%4d,%4d); screen(%4d,%4d)",i,x,y,tx,ty)
-		SetColorHSV( (i/255)*360,1,0.5+math.abs(xmath.sin(Sys.Ticks/5))/2)
+		If i==ChosenTex
+			SetColorHSV( 360- ((i/255)*360),1,0.5+math.abs(xmath.cos(Sys.Ticks/9))/2)
+			Rect(tx-1,ty-1,34,34)
+		End
+		SetColorHSV( (i/255)*360,1,0.5+math.abs(xmath.sin(Sys.Ticks/12))/2)		
 		Rect(tx,ty,32,32)
+		Puz.Tex[T][i].Draw(tx,ty)
 		SetColor(255,255,255,127)
 		dfnt.text(sprintf("%02X",i),tx+16,ty+32,2,1)
 		SetColor(255,255,255,255)
+		If Events.MouseHitLeft && Events.MouseX>=tx && Events.MouseY>=ty && Events.MouseX<=tx+32 && Events.MouseY<=ty+32
+			ChosenTex=i
+		End
 	End
 End
 
-Void ActorPanel(String T)
+Void ActorPanel(String T)	
 End
 
 Void MetaPanel(String T)
@@ -130,13 +194,43 @@ Void MetaPanel(String T)
 	End
 End
 
+Void ObjectHit(String Layer, Int X, Int Y)
+	Byte PO:=Ternary(Puz.TexObject[ChosenTex].Pic, ChosenTex, 0)
+	Puz.Data.Val("Object",X,Y,PO)
+	Modified = True
+	CSayF("Object (%02d,%02d) -> %02x",X,Y,PO)
+End
+
+Void TexPanelDown(String Layer, Int X, Int Y)
+	If !HaveArea
+		Byte PO:=Ternary(Puz.TexObject[ChosenTex].Pic, ChosenTex, 0)
+		HaveArea = New EdArea(Layer,X,Y,PO)
+	End
+	HaveArea.BoxUpdate()
+	HaveArea.Draw()
+End
+
+Void TextPanelUp()
+	If !HaveArea; Return; End
+	HaveArea.BoxUpdate()
+	For y = HaveArea.SY,HaveArea.EY
+		For x = HaveArea.SX,HaveArea.EX
+			Puz.Data.Val("Object",X,Y,HaveArea.Value)
+		End
+	End
+End
+
+#endregion
+
 plua Panels
 plua ActivePanel
 
 Init
 	Panels = New TLinkedList()
 	For P in Each(Puz.Data.Lays)
-		Panels.AddLast(New EdPanel("Layers",P,TexPanel,P))
+		IsObject:=Upper(P)=="OBJECT"
+		Panels.AddLast(New EdPanel("Layers",P,TexPanel,P,Ternary(IsObject,nil,TexPanelDown),Ternary(IsObject,nilTexPanelUp),Ternary(IsObject,ObjectHit,nil)))
+		//CSayF("- Object Ternary: %s    (P:%s)",Ternary(Upper(P)=="OBJECT",ObjectHit,nil),Upper(P) )
 	End
 	Panels.AddLast(New EdPanel("Edit","Actors",ActorPanel))
 	Panels.AddLast(New EdPanel("Edit","Metadata",MetaPanel))
@@ -151,6 +245,7 @@ Void MetaTextEdit(String C,String K,String Capt)
 		Indexed.Value("Index","Force","TRUE")
 		SGF.SaveString(sprintf("Packs/%s/Index.ini",gstr.PackChosen),Indexed.Source)
 	End
+	Modified = True
 	//Events.Annoy("Text editing meta not yet implemented")
 End
 
@@ -179,6 +274,9 @@ End
 
 Global Void FMain()
 	Puz.BaseUI.Show()
+	// Draw the puzzle
+	Puz.Draw.All()
+	
 	// Coordinates
 	SetColor(127,127,127,127)
 	For i=0,Graphics.W div 32
@@ -190,6 +288,7 @@ Global Void FMain()
 		Puz.BaseUI.dFnt.Text(Lua.tostring(i+1),2,r,0,2)
 	End
 	SetAlpha(255)
+	
 	
 	// Panels
 	Int X=5
@@ -212,6 +311,17 @@ Global Void FMain()
 		X+=W+2
 	End
 	
+	
+	// Modify Field
+	If Puz.BaseUI.MouseInField
+		If Events.MouseHitLeft
+			CSayF("Hit %s -> (%d,%d)",ActivePanel.Layer,Puz.BaseUI.MX,Puz.BaseUI.MY)
+			ActivePanel.IFHit(ActivePanel.Layer,Puz.BaseUI.MX,Puz.BaseUI.MY)
+		End
+		
+	End
+
+	
 	// Save
 	If Events.MouseX>Graphics.Width-40 && Events.MouseY>Graphics.Height-40
 		Knipper = (Knipper+1) % 3
@@ -220,6 +330,7 @@ Global Void FMain()
 		If Events.MouseHitLeft
 			Puz.Save(gstr.PackChosen,gint.PuzzleChosen)
 			SavedAud.Play()
+			Modified = False
 		End
 	Else
 		SetColorHSV(0,0,1)
