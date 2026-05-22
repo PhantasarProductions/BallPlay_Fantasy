@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.20 IV
+// Version: 26.05.20 VI
 // End License
 
 
@@ -143,7 +143,14 @@ Void Renew()
 	For L in Each{[0]="Floor","Wall","Decoration"}
 		_LayLib[L] = New TextureLib(L)
 	End
+	_LayLib.Object = Puz.TexObject
 End
+
+Get Var Floor; Return _LayLib.Floor; End
+Get Var Wall; Return _LayLib.Wall; End
+Get Var Object; Return _LayLib.Object; End
+Get Var Decoration; Return _LayLib.Decoration; End
+
 
 Init
 	Renew()
