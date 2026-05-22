@@ -1,0 +1,43 @@
+Module TextureSelectorProcedure
+
+#use "Script/Use/Anyway"
+
+plua Running
+
+Plua TexList
+
+Class TexEntry
+	ReadOnly String File
+	ReadOnly String ShowFile
+	ReadOnly Bool Animated
+	Constructor(string F)
+		File=F
+		ShowFile = StripAll(F)
+		Animated = Upper(ExtractExt(F))=="JPBF"
+	End
+End
+	
+
+Var GetTextList()
+	Lst:=JCR6.Dir("GFX/Textures")
+	Ret:={}
+	For F in Each(Lst)
+		E:=Upper(ExtractExt(F))
+		switch E
+			Case "JPBF" "PNG" "JPG"
+				Ret += New TexEntry(F)
+				CSayF("Added Texture: %s",F)
+			Default
+				CSayF(" Tex Rejected: %s",F)
+		End
+	End
+	Return Ret
+End
+
+Global Bool TexSelect(String Lay, int Spot, StartRunning)
+	Running = Running || StartRunning
+	If Running
+		TexList = TexList || GetTextList()
+	End
+	Return Running
+End
