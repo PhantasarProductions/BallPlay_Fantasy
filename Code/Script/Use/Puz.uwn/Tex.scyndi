@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.23
+// Version: 26.05.23 I
 // End License
 
 
@@ -78,19 +78,20 @@ Class TextureEntry
 		Return __A
 	End
 	Set Int R
-		GDat.Value(GINIE_TAG,"R",Value % 255)
+		GDat.Value(GINIE_TAG,"R",Value % 256)
+		//CSay("Received for Red: %3d -> %02x",Value,GDat.IntValue(GINIE_TAG,"R"))
 		__ResetColors
 	End
 	Set Int G
-		GDat.Value(GINIE_TAG,"G",Value % 255)
+		GDat.Value(GINIE_TAG,"G",Value % 256)
 		__ResetColors
 	End
 	Set Int B
-		GDat.Value(GINIE_TAG,"B",Value % 255)
+		GDat.Value(GINIE_TAG,"B",Value % 256)
 		__ResetColors
 	End
 	Set Int A
-		GDat.Value(GINIE_TAG,"ALPHA",Value % 255)
+		GDat.Value(GINIE_TAG,"ALPHA",Value % 256)
 		__ResetColors
 	End
 	
