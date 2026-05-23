@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.22 XVI
+// Version: 26.05.23
 // End License
 
 
@@ -132,6 +132,7 @@ Class TextureEntry
 		SetColor(R,G,B,A)
 		Pic.Stretch(X,Y,32,32)
 	End
+		
 	
 	Constructor(String _Lay,Int i)
 		Idx=i
@@ -195,6 +196,7 @@ End
 Get Var Floor; Return _LayLib.Floor; End
 Get Var Wall; Return _LayLib.Wall; End
 Get Var Object; Return _LayLib.Object; End
+Get Var Objects; Return _LayLib.Object; End // Crash prevention
 Get Var Decoration; Return _LayLib.Decoration; End
 
 
