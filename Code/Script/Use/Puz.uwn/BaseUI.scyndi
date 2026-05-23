@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.18 XV
+// Version: 26.05.24
 // End License
 
 Module 
@@ -75,6 +75,7 @@ Get Int Row
 End
 
 Get String Cell
+	If MX<0; return ""; End
 	Return sprintf("%2s%d",Col,Row)
 End
 
