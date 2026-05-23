@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.23 XIII
+// Version: 26.05.24 I
 // End License
 Script
 
@@ -176,7 +176,13 @@ Void TexPanel(String T)
 	End
 End
 
+Plua ActorSetups
+Init
+	ActorSetups = {}
+End
+
 Void ActorPanel(String T)	
+	
 End
 
 Void MetaPanel(String T)
@@ -301,8 +307,9 @@ Global Void FMain()
 	For i=0,(Puz.BaseUI.DPY-20) div 32
 		r:=(i*32)+36
 		Puz.BaseUI.dFnt.Text(Lua.tostring(i+1),2,r,0,2)
-	End
-	SetAlpha(255)
+	End	
+	SetColor(255,255,255,255)
+	Puz.BaseUI.dFnt.Dark(Puz.BaseUI.Cell,Graphics.W,Puz.BaseUI.dpy,1,0)
 	
 	
 	// Panels
