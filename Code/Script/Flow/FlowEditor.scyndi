@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.23 IX
+// Version: 26.05.23 X
 // End License
 Script
 
@@ -370,9 +370,9 @@ Global Void FMain()
 					Puz.Save(gstr.PackChosen,gint.PuzzleChosen)
 					SavedAud.Play()
 					Modified = False
-				End				
-			End
-			Sys.CurrentFlow="PACKSELECTOR"
+				End
+				Sys.CurrentFlow="PACKSELECTOR"
+			End			
 		Else
 			SetColorHSV(BackHue,1,1)
 		End		
