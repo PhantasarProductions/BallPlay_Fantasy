@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.22 XII
+// Version: 26.05.23 IX
 // End License
 Script
 
@@ -137,6 +137,7 @@ LocExtern DFnt "Scyndi.Globals.Puz.BaseUI.DFnt"
 
 plua SavedAud = ObtainAudio("PuzzleSaved")
 plua SaveIcon = ObtainImage("SAVE")
+plua BackIcon = ObtainImage("ARROW_LEFT")
 Int Knipper
 
 plua MetaFields
@@ -164,8 +165,13 @@ Void TexPanel(String T)
 		SetColor(255,255,255,127)
 		dfnt.text(sprintf("%02X",i),tx+16,ty+32,2,1)
 		SetColor(255,255,255,255)
-		If Events.MouseHitLeft && Events.MouseX>=tx && Events.MouseY>=ty && Events.MouseX<=tx+32 && Events.MouseY<=ty+32
-			ChosenTex=i
+		If Events.MouseX>=tx && Events.MouseY>=ty && Events.MouseX<=tx+32 && Events.MouseY<=ty+32
+			If Events.MouseHitLeft 
+				ChosenTex=i
+			ElIf Events.MouseHitRight
+				ChosenTex=i
+				Puz.TexSelect(T,ChosenTex,True)
+			End
 		End
 	End
 End
@@ -199,7 +205,7 @@ Void ObjectHit(String Layer, Int X, Int Y)
 	Byte PO:=Ternary(Puz.TexObject[ChosenTex].Pic, ChosenTex, 0)
 	Puz.Data.Val("Object",X,Y,PO)
 	Modified = True
-	CSayF("Object (%02d,%02d) -> %02x (%02x)",X,Y,PO,Puz.TexObject[ChosenTex].Pic)
+	//CSayF("Object (%02d,%02d) -> %02x (%02x)",X,Y,PO,PO) //Puz.TexObject[ChosenTex].Pic)
 End
 
 Void TexPanelDown(String Layer, Int X, Int Y)
@@ -276,6 +282,12 @@ End
 
 
 Global Void FMain()
+	
+	// Carry over to the texture selector if needed.
+	If ActivePanel && Puz.TexSelect(ActivePanel.CBFA,ChosenTex)
+		Return
+	End
+	
 	Puz.BaseUI.Show()
 	// Draw the puzzle
 	Puz.Draw.All()
@@ -346,6 +358,27 @@ Global Void FMain()
 		SetColorHSV(0,0,1)
 	End
 	SaveIcon.Stretch(Graphics.Width-40,Graphics.Height-40,40,40)
+	
+	// Back
+	Do
+		BackHue:=Ternary(Modified,0,120)
+		If Events.MouseX>Graphics.Width-85 && Events.MouseY>Graphics.Height-40 && Events.MouseX<Graphics.W-45
+			Knipper = (Knipper+1) % 3
+			SetColorHSV(BackHue,1,Knipper / 2)
+			If Events.MouseHitLeft
+				If Modified && Events.Yes(Replace(Lang.Str("Edit","SaveAndExit"),"<cr>","\n"))
+					Puz.Save(gstr.PackChosen,gint.PuzzleChosen)
+					SavedAud.Play()
+					Modified = False
+				End				
+			End
+			Sys.CurrentFlow="PACKSELECTOR"
+		Else
+			SetColorHSV(BackHue,1,1)
+		End		
+		BackIcon.Stretch(Graphics.Width-85,Graphics.Height-40,40,40)
+	End
+	
 	// Mouse
 	Puz.BaseUI.ShowMouse()
 End
