@@ -1,19 +1,78 @@
+// License:
+// 
+// BallPlay Fantasy
+// Texture selector
+// 
+// 
+// 
+// 	(c) Jeroen P. Broks, 2026
+// 
+// 		This program is free software: you can redistribute it and/or modify
+// 		it under the terms of the GNU General Public License as published by
+// 		the Free Software Foundation, either version 3 of the License, or
+// 		(at your option) any later version.
+// 
+// 		This program is distributed in the hope that it will be useful,
+// 		but WITHOUT ANY WARRANTY; without even the implied warranty of
+// 		MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// 		GNU General Public License for more details.
+// 		You should have received a copy of the GNU General Public License
+// 		along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// 
+// 	Please note that some references to data like pictures or audio, do not automatically
+// 	fall under this licenses. Mostly this is noted in the respective files.
+// 
+// Version: 26.05.23 XXXIV
+// End License
 Module TextureSelectorProcedure
 
+#use "Libs/xmath"
+
 #use "Script/Use/Anyway"
+
+LocExtern Me "Scyndi.Class.TextureSelectorProcedure"
 
 plua Running
 
 Plua TexList
+plua fnt = ObtainFont("Ryanna")
+
+plua icodn = ObtainImage("Arrow_Down")
+plua icoup = ObtainImage("Arrow_Up")
+
+Int Scroll = 0
+
+Int Set_Red = 255
+Int Set_Green = 255
+Int Set_Blue = 255
+Int Set_Alpha = 255 
+Int Set_Hue = 0
+Int Set_Saturation = 0
+Int Set_Value = 100
+String Set_Tex
+LocExtern Max_Red "255"
+LocExtern Max_Green "255"
+LocExtern Max_Blue "255"
+LocExtern Max_Alpha "255"
+LocExtern Max_Hue "359"
+LocExtern Max_Saturation "100"
+LocExtern Max_Value "100"
+plua See_Pic
+plua Tex_Obj
 
 Class TexEntry
 	ReadOnly String File
+	ReadOnly String UFil
 	ReadOnly String ShowFile
 	ReadOnly Bool Animated
+	Number Hue
 	Constructor(string F)
 		File=F
-		ShowFile = StripAll(F)
-		Animated = Upper(ExtractExt(F))=="JPBF"
+		UFil=Upper(F)
+		ShowFile = StripExt(F); 
+		//ShowFile=Right(ShowFile,Len(ShowFile)-Len("GFX/Textures/"))
+		ShowFile = lua.string.sub(ShowFile,Len("GFX/Textures/")+1)
+		Animated = Upper(ExtractExt(F))=="JPBF"		
 	End
 End
 	
@@ -31,13 +90,149 @@ Var GetTextList()
 				CSayF(" Tex Rejected: %s",F)
 		End
 	End
+	for i,e in iPairs(Ret)
+		e.Hue = i/len(ret) * 360
+	End
 	Return Ret
 End
 
+Void GrabData(String Lay,Int Spot)
+	plua h
+	plua s
+	plua v	
+	Tex_Obj        = Puz.Tex[Lay][Spot]
+	Set_Red        = Tex_Obj.R
+	Set_Green      = Tex_Obj.G
+	Set_Blue       = Tex_Obj.B
+	Set_Alpha      = Tex_Obj.A
+	h,s,v    = Graphics.RGB2HSV(Set_Red,Set_Green,Set_Blue)
+	Set_Hue        = math.floor(h+0.5)
+	Set_Saturation = math.floor(s*100)
+	Set_Value      = math.floor(v*100)
+	
+	CSayF("Tex Color Data: #%02x%02x%02x -> H:%3d; S:%6.2f; V: %6.2f; Alpha: %02x",Set_Red,Set_Green,Set_Blue,Set_Hue,s,v,Set_Alpha) 
+	
+	Set_Tex = Tex_Obj.File
+	See_Pic = Tex_Obj.Pic
+End
+
+
+Void CBRGB()
+	h:=0
+	s:=0
+	v:=0
+	h,s,v    = Graphics.RGB2HSV(Set_Red,Set_Green,Set_Blue)
+	Set_Hue        = math.floor(h+0.5)
+	Set_Saturation = math.floor(s*100)
+	Set_Value      = math.floor(v*100)	
+End
+
+Void CBHSV()
+	r:=0
+	g:=0
+	b:=0
+	r,g,b     = Graphics.HSV2RGB(Set_Hue,Set_Saturation/100,Set_Value/100)
+	Set_Red   = r
+	Set_Green = g
+	Set_Blue  = b
+End
+
+
+ReadOnly Int SlideX=(Graphics.W Div 2)+200
+ReadOnly Int SlideW=(Graphics.W Div 2)
+ReadOnly Int SlideVX=(SlideW div 2)*3
+Void Slide(Int Y,String Capt,String Set_Key,Int Max,CallBack,String Suf="")
+	SetColor(255,255,255,255)
+	Fnt.Dark(Lang.Str("Color",Capt)..":",SlideX,Y,1,0)
+	If Events.MouseY>Y && Events.MouseY<Y+45 && Events.MouseX>SlideX+40 && Events.MouseX<Graphics.W-40
+		SetColorHSV(os.time()%360,0.4,1)
+		Me["SET_"..Set_Key] = math.max(0,math.min(Max,Me["SET_"..Set_Key]-Events.MouseWheelY))
+		if CallBack && Events.MouseWheelY!=0
+			CallBack()
+		End
+	End
+	Fnt.Dark(sprintf("%d%s",Me["SET_"..Set_Key],Suf),SlideVX,Y,2,0)
+End
+
 Global Bool TexSelect(String Lay, int Spot, StartRunning)
-	Running = Running || StartRunning
+	
+	//Running = Running || StartRunning
+	If StartRunning
+		Running=Spot!=0 && Upper(Lay)!="OBJECT" && Upper(Lay)!="OBJECTS" && (!(Upper(Lay)=="WALL" && Spot>0xf0))		
+		GrabData(Lay,Spot)
+	End	
 	If Running
 		TexList = TexList || GetTextList()
+		Any.Back()
+		SetColor(255,255,255)
+		Fnt.Dark(sprintf("%s::%02d",Lay,Spot),Graphics.W,2,1,0)
+		SetColor(Set_Red,Set_Green,Set_Blue,Set_Alpha)
+		If See_Pic;See_Pic.Stretch( ((Graphics.W div 4) * 3)-32,50,64,64); End
+		// Sliders RGB
+		Slide(200,"Red"  ,"Red",   Max_Red,CBRGB)
+		Slide(245,"Green","Green", Max_Green,CBRGB)
+		Slide(290,"Blue", "Blue",  Max_Blue,CBRGB)
+		// Sliders HSV
+		Slide(350,"Hue",       "Hue",        Max_Hue,       CBHSV,"|oo")
+		Slide(395,"Saturation","Saturation", Max_Saturation,CBHSV,"%")
+		Slide(440,"Value",     "Value",      Max_Value,     CBHSV,"%")
+		// Slider Alpha
+		Slide(500,"Alpha","Alpha",Max_Alpha)
+		
+		AllowUp:=Scroll>0
+		AllowDn:=false
+		For i,e in iPairs(TexList)
+			Y:=(i-Scroll)*45
+			If Y>=0 && Y<Graphics.H-50
+				Val:=1
+				X:=10
+				If Events.MouseY>Y && Events.MouseY<Y+45 && Events.MouseX<Graphics.W Div 2
+					X=25
+					If Events.MouseHitLeft
+						Set_Tex=E.File
+						See_Pic=LoadImage(E.File,"TEX_SELECTOR")
+					End
+				End
+				If E.UFil==Upper(Set_Tex)
+					Val=math.abs(xmath.sin(sys.ticks/17))
+				End
+				SetColorHSV(e.Hue,1,Val)
+				Fnt.Dark(e.ShowFile,X,Y)
+				AllowDn=false
+			Else
+				AllowDn=true
+			End
+		End // Loop
+		
+		// Scroll
+		If AllowUp
+			If Events.MouseWheelY>0 && Events.MouseX<SlideX
+				Scroll--
+			End
+			If Events.MouseY<40 && Events.MouseX>SlideX-40 && Events.MouseX<SlideX
+				SetColorHSV(os.time()%360,0.9,1)
+				If Events.MouseHitLeft
+					Scroll--
+				End
+			Else
+				SetColor(255,255,255)
+			End
+			IcoUp.Stretch(SlideX-40,0,40,40)
+		End
+		If AllowDn
+			If Events.MouseWheelY<0 && Events.MouseX<SlideX
+				Scroll++
+			End
+			If Events.MouseY>Graphics.H-40 && Events.MouseX>SlideX-40 && Events.MouseX<SlideX
+				SetColorHSV(os.time()%360,0.9,1)
+				If Events.MouseHitLeft
+					Scroll++
+				End
+			Else
+				SetColor(255,255,255)
+			End
+			IcoDn.Stretch(SlideX-40,Graphics.H-40,40,40)
+		End	
 	End
 	Return Running
 End
