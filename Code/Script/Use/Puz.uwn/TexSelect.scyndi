@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.23 XXXIV
+// Version: 26.05.23 XXXVIII
 // End License
 Module TextureSelectorProcedure
 
@@ -154,6 +154,34 @@ Void Slide(Int Y,String Capt,String Set_Key,Int Max,CallBack,String Suf="")
 	Fnt.Dark(sprintf("%d%s",Me["SET_"..Set_Key],Suf),SlideVX,Y,2,0)
 End
 
+Void CBCancel()
+	Running=False
+End
+
+Void CBOk()
+	Running=False
+	Tex_Obj.R=Set_Red
+	Tex_Obj.G=Set_Green
+	Tex_Obj.B=Set_Blue
+	Tex_Obj.File=Set_Tex
+	CSayF("Tex Select! Color #%02x%02x%02x -> #%02x%02x%02x",Set_Red,Set_Green,Set_Blue,Tex_Obj.R,Tex_Obj.G,Tex_Obj.B) 
+End
+
+Void Button(String C,String K, int Y,CB)
+	String Capt:=Lang.Str(C,K)
+	SetColor(255,255,255,255)
+	If Events.MouseY>Y && Events.MouseY<Y+45 && Events.MouseX>Graphics.W-Fnt.Width(Capt)
+		h:=os.time()%360
+		SetColorHSV(h,1,1)
+		Rect(Graphics.W-Fnt.Width(Capt),Y,Graphics.W-Fnt.Width(Capt),45)
+		SetColorHSV(360-h,1,1)
+		If Events.MouseHitLeft
+			CB()
+		End
+	End
+	Fnt.Dark(Capt,Graphics.W,Y,1,0)
+End
+
 Global Bool TexSelect(String Lay, int Spot, StartRunning)
 	
 	//Running = Running || StartRunning
@@ -234,5 +262,7 @@ Global Bool TexSelect(String Lay, int Spot, StartRunning)
 			IcoDn.Stretch(SlideX-40,Graphics.H-40,40,40)
 		End	
 	End
+	Button("Algemeen","Cancel",Graphics.H-45,CBCancel)
+	Button("Algemeen","Ok",Graphics.H-90,CBOK)
 	Return Running
 End
