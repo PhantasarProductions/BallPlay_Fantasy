@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.23 X
+// Version: 26.05.23 XIII
 // End License
 Script
 
@@ -121,9 +121,9 @@ Class EdArea
 	Void Draw()
 		SetColorHSV(os.time()%360,1,1)
 		SetAlpha(100)
-		DW:=math.max(EX-SX,1)
-		DH:=math.max(EY-SY,1)
-		Rect(SX*32,(SY*32)+20,DW*32,DH*32)
+		DW:=math.max(EX-SX,0)
+		DH:=math.max(EY-SY,0)
+		Rect(SX*32,(SY*32)+20,(DW+1)*32,(DH+1)*32)
 		SetAlpha(255)
 	End
 	Constructor(Infinity)
