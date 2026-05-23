@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.21 V
+// Version: 26.05.23 III
 // End License
 
 
@@ -67,6 +67,14 @@ Init
 		TexOList[0x10 + i] = New TexO("Arrow_"..a,0,180,255,255)
 	End
 	TexOList[0x1f] = New TexO("Metal",180,200,255,255)
+	
+	For i=8,15
+		int R
+		int G
+		int B
+		R,G,B = Puz.Colors[i].DumpRGB()
+		TexOList[0xf0+i] = New TexO("Exit",R,G,B,255)
+	End
 End
 
 Static Var StaticNumIndex(int idx)
