@@ -22,9 +22,13 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.24
+// Version: 26.05.24 XXIV
 // End License
+
+
 Module
+
+#use "Script/Use/Anyway"
 
 LocExtern LE_N "1"
 LocExtern LE_S "2"
@@ -35,6 +39,45 @@ Const Int North = LE_N
 Const Int South = LE_S
 Const Int East  = LE_E
 Const Int West  = LE_W
+
+LocExtern AT_Ball "1"
+LocExtern AT_Ghost "2"
+LocExtern AT_Robot "3"
+LocExtern AT_Girl "4"
+LocExtern AT_Witch "5"
+
+Const Int Ball = AT_Ball
+Const Int Ghost = AT_Ghost
+Const Int Robot = AT_Robot
+Const Int Girl = AT_Girl
+Const Int Witch = AT_Witch
+
+// This makes sure that if the numbers ever change (which is unlikely, but still, the table adapts itself)
+plua _Names={[AT_Ball]="Ball",[AT_Ghost]="Ghost", [AT_Robot]="Robot", [AT_GIRL]="Girl", [AT_Witch]="Witch"}
+QuickMeta QMNames
+	newindex
+		lua.error("READONLY!")
+	end
+	index
+		Return _Names[Key] || "Unknown"
+	End
+End
+Get Var Names
+	Return QMNames
+End
+
+
+Get Var EachName
+	i:=AT_Ball
+	ddef ret
+		j:=i
+		i++
+		if !_names[j]; return nil,nil; End
+		return j,_names[j]
+	end
+	Return ret
+End
+
 
 
 // Base class
@@ -55,6 +98,9 @@ Class Actor
 	// Witch only
 	ReadOnly Int ToX
 	ReadOnly Int ToY
+		
+	// Balls and ghosts
+	ReadOnly Int Col // Color
 	
 End
 
@@ -92,7 +138,98 @@ Var Spot(Int X,Int Y,Knd,Dta)
 		ActorStartList[X] = ActorStartList[X] || {}
 		ActorStartList[X][Y] = ActorStartList[X][Y] || {}
 		ActorStartList[X][Y] += New ActorStart(Knd,Dta)
+		CSayF("Actor created on (%d,%d) -> %s (items: %d)",X,Y,Knd,len(ActorStartList[X][Y]))
 	End
 	If (!ActorStartList[X]); return nil; End
 	Return ActorStartList[X][Y]
 End
+
+
+
+Int Count(Int X,Int Y)
+	If (!ActorStartList) || (!ActorStartList[X]) || (!ActorStartList[X][Y])
+		return 0
+	End
+	Return Len(ActorStartList[X][Y])
+End
+
+Var Last(Int X,Int Y)
+	c:=Count(X,Y)
+	If c<=0; Return Nil; End
+	Return Spot(X,Y)[c-1]
+End
+
+
+Get String Src
+	String Ret=sprintf("# Actor start data\n# Generated: %s\n\n",os.date())
+	ActorStartList = ActorStartList || {}
+	For X,XL in Pairs(ActorStartList)
+		ret+=sprintf("\nX:%d\n",X)
+		For Y,XYL in Pairs(XL)
+			ret+=sprintf("Y:%d\n",Y)
+			For A In Each(XYL)
+				ret+=sprintf("CREATE:%s\n",A.Kind)
+				For AK,AV in sPairs(A.Data.TrueData)
+					ret+=sprintf("DATA:%s:%s:%s\n",AK,Lua.type(AV),AV)
+				End
+			End
+		End
+	End
+	Return Ret
+End
+
+Set String Src
+	StartReset()
+	Int X=-1
+	Int Y=-1
+	locExtern tn "tonumber"
+	locExtern ass "assert"
+	Lines:=XSplit("# Nullline\n"..Value,"\n")
+	Act:=nil
+	For LineNum,_Line in iPairs(Lines)
+		String Line:=Trim(_Line)
+		String etag:=sprintf("Actor data error: %%s in line %d -> %s",LineNum,Line)
+		If !(Line=="" || Prefixed(Line,"#"))
+			Chopped := XSplit(Line,":")
+			Switch Upper(Chopped[0])
+				Case "X"
+					ass(Len(Chopped)>=2,sprintf(etag,"X requires data"))
+					X=tn(Chopped[1]) || -1
+					ass(X>=0,"Invalid data for X")
+				Case "Y"
+					ass(Len(Chopped)>=2,sprintf(etag,"Y requires data"))
+					Y=tn(Chopped[1]) || -1
+					ass(Y>=0,"Invalid data for Y")
+				Case "CREATE"
+					ass(Len(Chopped)>=2,sprintf(etag,"CREATE requires data"))
+					ak:=tn(Chopped[1])
+					ass(ak,"Invalid kind: "..Chopped[1])
+					ass(x>=0 && y>=0,sprintf(etag,sprintf("Create requires full proper coordinates. (%d,%d)",X,Y)))
+					Spot(x,y,ak,{})
+					Act=Last(x,y)
+				Case "DATA"
+					ass(Len(Chopped)>=4,sprintf(etag,"DATA requires more data"))
+					ass(Act,sprintf(etag,"DATA requires actor"))
+					key:=Chopped[1]
+					typ:=Chopped[2]
+					val:=Chopped[3]
+					switch lower(typ)
+						case "string"
+							Act.Data[key] = val
+						case "number" "num" "int"
+							Act.Data[key] = tn(val) || Lua.error(sprintf(etag,"Invalid numberic value for "..key.." -> "..val))
+						case "boolean" "bool"
+							Act.Data[key] = Upper(Trim(Val))=="TRUE"
+						case "nil"
+							Act.Data[key] = nil
+						case "table" "function" "userdata"
+							Lua.error(sprintf(etag,"It is not possible to store a "..typ.." into an actor file! What the fuck were you trying to do?"))
+						default
+							Lua.error(sprintf(etag,"Unknown type: "..typ))
+					end
+				Default
+					lua.error(sprintf(etag,sprintf("Command %s not understood",Chopped[0])))
+			End // Switch command
+		End // If actual command
+	End // For Lines
+End // Set property
