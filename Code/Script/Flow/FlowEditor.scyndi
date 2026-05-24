@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.24 II
+// Version: 26.05.24 XIX
 // End License
 Script
 
@@ -176,14 +176,59 @@ Void TexPanel(String T)
 	End
 End
 
+
+#region Actors
 Plua ActorSetups
+Int AX=-1
+Int AY=-1
+Int AScroll=0
+Int AI=-1 // AI is Actor Index. Not Artificial Intelligence. At least not in this particular case!
 Init
 	ActorSetups = {}
 End
 
-Void ActorPanel(String T)	
-	
+Void ActorPanel(String T)
+	If Events.MouseHitLeft && Puz.BaseUI.MouseInField
+		AX=Puz.BaseUI.MX
+		AY=Puz.BaseUI.MY
+		AScroll=0
+	End
+	If AX<0 || AY<0
+		Return
+	End
+	SetColorHSV( (os.time() div 2) % 360 , 1, 1)
+	SetAlpha( (os.time() % 2) * 100)
+	Rect(AX*32,(AY*32)+20,32,32)
+	SetColor(255,255,255,255)
+	dFnt.Dark(sprintf("%s%d",Puz.BaseUI.MkCol(AX),AY+1),Graphics.W-100,DPY+20,1,0)
+	if Events.MouseY>DPY+25 && Events.MouseY<DPY+35 && Events.MouseX<dfnt.Width(Lang.str("Actors","Create"))
+		SetColorHSV(os.time()%360,1,1)
+		If Events.MouseHitLeft
+			Puz.Actors.Spot(AX,AY,Puz.Actors.Ball,{ ["WIND"]="South", ["COLOR"]=0, ["TOX"]=1, ["TOY"]=1 })
+			Modified = True			
+		End
+	End
+	Lang.Dark(dfnt,"Actors","Create",5,DPY+25)
+	If Puz.Actors.Count(AX,AY)==0
+		Return
+	End
+	SetColor(0,0,0,100)
+	LY:=DPY+40
+	LH:=Graphics.H-(LY+5)
+	ActList := Puz.Actors.Spot(AX,AY)
+	Rect(5,LY,250,LH)
+	SetColor(255,180,0,255)
+	For i,a in ipairs(ActList)
+		WY:=i-AScroll
+		IY:=(i*10)+LY
+		SetColor(255,180,0,255)
+		//CSayF("Actor Kind %d = %s",a.Kind,Puz.Actors.Names[a.Kind])
+		//CSayF("%d: Y = %d; true Y = %d",i,WY,IY)
+		dFnt.Text(sprintf("%02d: %s",i,Lang.Str("Actors",Puz.Actors.Names[a.Kind])),5,IY)	
+	End
 End
+#endregion
+
 
 Void MetaPanel(String T)
 	For MF in MetaFields.Each
