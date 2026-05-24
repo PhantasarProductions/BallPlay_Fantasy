@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.20
+// Version: 26.05.24
 // End License
 Module LoadThePuzzle
 
@@ -38,6 +38,7 @@ Global Void Load(String Pack,Int i)
 	Puz.Data.PuzData = GINIE.Create("PuzzleData")
 	Puz.Data.PuzData.Source=BO.Text["Data.ini"]
 	Puz.Tex.Source=BO.Text["Textures.ini"]
+	Puz.Actors.Src=BO.Text["Actors"]
 	If Upper(Puz.Data.PuzData.Value("Meta","Available"))=="TRUE"
 		Puz.Data.PuzBank = {}
 		For L in Each(Puz.Data.Lays)
