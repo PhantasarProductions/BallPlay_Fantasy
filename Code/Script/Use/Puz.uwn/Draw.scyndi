@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.21 VII
+// Version: 26.05.24 IV
 // End License
 Module
 
@@ -34,6 +34,8 @@ plua DTA = Puz.Data
 
 plua DH = Puz.Max.H-1
 plua DW = Puz.Max.W-1
+
+plua DFNT = Puz.BaseUI.DFNT
 
 Class PDraw
 	ReadOnly Delegate Draw
@@ -59,6 +61,17 @@ Void DrawPan(String Lay)
 End
 
 Void EditorActors()
+	For Y=0,DH
+		For X=0,DW
+			If Puz.Actors.Count(X,Y)>0
+				tx:= x*32
+				ty:=(y*32)+20
+				SetColor(255,255,255,255)
+				Rect(tx,ty,32,32,1)
+				DFNT.Text(sprintf("A%02d",Puz.Actors.Count(X,Y)),tx,ty)				
+			End
+		End
+	End
 End
 
 Void GameActors()
