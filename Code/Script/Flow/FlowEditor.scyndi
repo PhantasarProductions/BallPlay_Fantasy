@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.24 XIX
+// Version: 26.05.24 XXV
 // End License
 Script
 
@@ -192,6 +192,7 @@ Void ActorPanel(String T)
 		AX=Puz.BaseUI.MX
 		AY=Puz.BaseUI.MY
 		AScroll=0
+		AI=-1
 	End
 	If AX<0 || AY<0
 		Return
@@ -220,11 +221,36 @@ Void ActorPanel(String T)
 	SetColor(255,180,0,255)
 	For i,a in ipairs(ActList)
 		WY:=i-AScroll
-		IY:=(i*10)+LY
+		IY:=(i*12)+LY
 		SetColor(255,180,0,255)
+		If i==AI
+			Rect(5,IY,250,12)
+			SetColor(0,0,0,255)
+		ElIf Events.MouseX<255 && Events.MouseY>IY && Events.MouseY<IY+12
+			SetColor(0,180,255)
+			If Events.MouseHitLeft
+				AI=i
+			End
+		End
 		//CSayF("Actor Kind %d = %s",a.Kind,Puz.Actors.Names[a.Kind])
 		//CSayF("%d: Y = %d; true Y = %d",i,WY,IY)
 		dFnt.Text(sprintf("%02d: %s",i,Lang.Str("Actors",Puz.Actors.Names[a.Kind])),5,IY)	
+	End
+	If AI<0; Return; End
+	Act:=ActList[AI]
+	For i,ak in Puz.Actors.EachName
+		y:=(i*12)+DPY+25
+		SetColor(127,127,127)
+		If i==act.Kind
+			SetColor(255,255,255)
+			Rect(300,y,200,12,true)
+		Elseif Events.MouseX>300 && Events.MouseX<500 && Events.MouseY>=Y && Events.MouseY<=Y+12
+			SetColor(127,180,255)
+			If Events.MouseHitLeft
+				act.Kind=i
+			End
+		End
+		dFnt.Dark(Lang.Str("Actors",ak),300,y)
 	End
 End
 #endregion
