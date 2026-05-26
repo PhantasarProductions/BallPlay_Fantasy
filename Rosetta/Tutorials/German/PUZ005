@@ -1,0 +1,13 @@
+Ausbrechpuzzles
+
+Bis jetzt hast du die B|ualle nur zum "exit" gebracht.
+Dieses Mal ist alles anders.
+
+Vielleicht siehst du das Wort "Wegbrechen" in der oberen rechten Ecke deines Spielbildschirms.
+
+Das bedeutet, dass du alle Bl|uocke in diesem Puzzle ausbrechen musst, um das Puzzle zu l|uosen.
+Die Bl|uocke brechen weg, sobald eine Kugel sie ber|uuhrt.
+
+Da es hier keinen "exit" gibt, wird die $H-Statistik nicht angezeigt.
+
+Die Zahl bei $C zeigt jetzt an, wie viele B|ualle noch vorhanden sein m|uu|ssen ($D), wenn der letzte Block weggebrochen ist.

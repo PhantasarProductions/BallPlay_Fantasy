@@ -1,0 +1,11 @@
+# Break Away Puzzles
+
+Up to now you only brought balls to the exit. 
+This time things are different.
+
+You may see the term "Break Away" in the upper right corner of your game screen.
+That means that in order to solve this puzzle you must break away all the blocks in this puzzle.
+The blocks will break as soon as a ball touches them.
+
+As there is no exit please note that the $H statistic is not displayed. 
+The number set by $C just displays how many balls must remain when the last block is removed.
