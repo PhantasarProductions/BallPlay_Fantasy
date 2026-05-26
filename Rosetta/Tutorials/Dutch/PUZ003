@@ -1,0 +1,12 @@
+# Kaartkleuren
+
+Wellicht vraag je jezelf af wat de kaartkleursymbolen betekenen en er een nummer bij staat.
+Laat me dat even haarfijn uitleggen.
+
+$H Harten is het aantal ballen dat de "exit" veilig bereikt heeft (als de missie een "exit" bevat).
+$C Klaver is het aantal ballen dat vereist is om de "exit" ($H) te behalen of nog in 't spel moeten zijn ($D) om de taak als "opgelost" te beschouwen.
+$D Ruiten is het aantal ballen actief in 't spel
+$D Schoppen is het aantal ballen dat is vernietigd
+
+Deze nummers in de gaten houden, kan heel handig zijn.
+

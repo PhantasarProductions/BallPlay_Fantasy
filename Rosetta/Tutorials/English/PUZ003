@@ -1,0 +1,11 @@
+# Card suits
+
+You may wonder what the card suit symbols in the UI mean, and why there's a number displayed with them. 
+Well let's explain them, shall we?
+
+$H Hearts is the number of balls that safely arrived at the exit (if the mission has an exit)
+$C Clubs is the number of balls required to reach the exit ($H) or to be still in play ($D) when the task has been fulfilled in order to count as solved
+$D Diamonds is the number of balls active in the field
+$S Spades is the number of balls that have been destroyed
+
+Keeping track of these numbers, may be very helpful
