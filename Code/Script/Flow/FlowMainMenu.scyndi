@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.14 IV
+// Version: 26.05.26 IX
 // End License
 Script
 
@@ -104,13 +104,29 @@ End
 Void GoEditor()
 	Situation="Editor"
 	Sys.LoadNewState("FLOW_PACKSELECTOR","Script/Flow/FlowPackSelector.lbc")
+	Sys.Call("FLOW_PACKSELECTOR","Renew")
 	Sys.CurrentFlow="PACKSELECTOR"
+End
+
+Void GoGame()	
+	_Type:=User.Data.NewValue("GOTOPUZZLE","TYPE","INTERNAL")
+	_Pack:=User.Data.NewValue("GOTOPUZZLE","PACK","BallPlay Fantasy")
+	_PNum:=User.Data.NewValue("GOTOPUZZLE","PNUM",1)
+	User.Data.NewValue("GOTOPUZZLE","1STT",os.date()) // First time. Just for the record.
+	CSayF("Go to Game: %s::%s::%03d",User.Data.Value("GoToPuzzle","Type"),User.Data.Value("GoToPuzzle","Pack"),User.Data.IntValue("GoToPuzzle","PNum"))
+	Situation="Game"
+	If Upper(_Type)=="*SELECT*" || Upper(_Pack)=="*SELECT*"
+		CSayF("Let's go to the pack selector")		
+		Sys.LoadNewState("FLOW_PACKSELECTOR","Script/Flow/FlowPackSelector.lbc")
+		Sys.Call("FLOW_PACKSELECTOR","Renew")
+		Sys.CurrentFlow="PACKSELECTOR"
+	End
 End
 
 
 Init
 	CSay("Init Menu Items")
-	NewItem("PLAYGAME") // Play The Game
+	NewItem("PLAYGAME",GoGame) // Play The Game
 	NewItem("LEVELEDITOR",GoEditor) // Puzzle Editor
 	NewItem("ACHIEVEMENTS") // Achievements
 	NewItem("CONFIGURATION",MMI_Config) // Configuration
