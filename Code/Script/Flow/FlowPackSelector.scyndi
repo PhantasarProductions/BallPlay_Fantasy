@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.16 VII
+// Version: 26.05.27 I
 // End License
 Script
 
@@ -49,7 +49,7 @@ plua PackList
 Int Scroll = 0
 const Int WH = Graphics.Height-300
 
-Void Renew()
+Global Void Renew()
 	PackList = {}
 	Switch Upper(Situation)
 		case "EDITOR"
@@ -69,6 +69,12 @@ End
 
 Void Action(P)
 	Switch P.Type
+		Case P_Internal
+			gstr.PackType="Internal"
+			gstr.PackChosen=""
+			Sys.LoadNewState("FLOW_SelectPuzzle","Script/Flow/FlowSelectPuzzle.lbc")
+			Sys.Call("FLOW_SELECTPUZZLE","Reload")
+			Sys.CurrentFlow="SELECTPUZZLE"
 		Case P_Pack
 			gstr.PackType="Homemade"
 			gstr.PackChosen=P.Name
