@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.24 XXIV
+// Version: 26.05.25 I
 // End License
 
 
@@ -33,7 +33,7 @@ Module
 LocExtern LE_N "1"
 LocExtern LE_S "2"
 LocExtern LE_E "3"
-LocExtern LE_W "W"
+LocExtern LE_W "4"
 
 Const Int North = LE_N
 Const Int South = LE_S
@@ -159,6 +159,19 @@ Var Last(Int X,Int Y)
 	Return Spot(X,Y)[c-1]
 End
 
+Get Int CountBalls
+	Int Ret=0
+	For X,XL in Pairs(ActorStartList)		
+		For Y,XYL in Pairs(XL)
+			For A In Each(XYL)
+				If A.Kind==1
+					Ret++
+				End
+			End
+		End
+	End
+	Return Ret
+End
 
 Get String Src
 	String Ret=sprintf("# Actor start data\n# Generated: %s\n\n",os.date())
