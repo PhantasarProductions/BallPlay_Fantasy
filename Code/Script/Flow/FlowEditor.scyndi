@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.24 XXV
+// Version: 26.05.26 I
 // End License
 Script
 
@@ -33,6 +33,8 @@ Script
 // "Niks" means "nothing" in Dutch. And yeah, that is what this function is supposed to do.
 // Nothing at all. Why do I need it then, eh?
 plua NIKS(); End
+
+plua RFNT = ObtainFont("Ryanna")
 
 Bool Modified = False
 
@@ -178,7 +180,10 @@ End
 
 
 #region Actors
+Plua BallsRecount
 Plua ActorSetups
+Plua WindPics = {["North"]=ObtainImage("ARROW_UP"), ["South"]=ObtainImage("ARROW_DOWN"), ["East"]=ObtainImage("ARROW_RIGHT"), ["West"]=ObtainImage("ARROW_LEFT")}
+Int CountBalls
 Int AX=-1
 Int AY=-1
 Int AScroll=0
@@ -186,6 +191,30 @@ Int AI=-1 // AI is Actor Index. Not Artificial Intelligence. At least not in thi
 Init
 	ActorSetups = {}
 End
+
+Void ActWind(Act,Int Y, Bool Enabled)
+	int X = 500
+	For WName,WImg in pairs(WindPics)
+		If !Enabled
+			SetColor(90,90,90,127)
+		Elif Act.Data.Wind==WName
+			SetColor(255,180,0,255)
+		ElIf Events.MouseY>Y && Events.MouseX>X && Events.MouseY<Y+32 && Events.MouseX<X+32
+			SetColorHSV(os.time()%360,1,1)
+			SetAlpha(255)
+			If Events.MouseHitLeft
+				Act.Data.Wind=WName
+				Modified = True
+			End
+		Else
+			SetColor(180,0,255,255)
+		End
+		WImg.Stretch(X,Y,32,32)
+		SetAlpha(255)
+		X+=40		
+	End
+End // 
+
 
 Void ActorPanel(String T)
 	If Events.MouseHitLeft && Puz.BaseUI.MouseInField
@@ -207,6 +236,7 @@ Void ActorPanel(String T)
 		If Events.MouseHitLeft
 			Puz.Actors.Spot(AX,AY,Puz.Actors.Ball,{ ["WIND"]="South", ["COLOR"]=0, ["TOX"]=1, ["TOY"]=1 })
 			Modified = True			
+			BallsRecount = True
 		End
 	End
 	Lang.Dark(dfnt,"Actors","Create",5,DPY+25)
@@ -230,6 +260,7 @@ Void ActorPanel(String T)
 			SetColor(0,180,255)
 			If Events.MouseHitLeft
 				AI=i
+				BallsRecount = True
 			End
 		End
 		//CSayF("Actor Kind %d = %s",a.Kind,Puz.Actors.Names[a.Kind])
@@ -252,9 +283,11 @@ Void ActorPanel(String T)
 		End
 		dFnt.Dark(Lang.Str("Actors",ak),300,y)
 	End
+	ActWind(Act,DPY+25,act.Kind!=Puz.Actors.Girl)
 End
 #endregion
 
+#region Other Panels
 
 Void MetaPanel(String T)
 	For MF in MetaFields.Each
@@ -305,9 +338,51 @@ Void TexPanelUp()
 	HaveArea=nil
 	Modified = True
 End
+plua pp1 = ObtainImage("PLATE1")
+plua pp2 = ObtainImage("PLATE2")
+plua pbd = ObtainImage("BULLDOZER")
+plua pbr = ObtainImage("BARRIER")
+Void Tool(Int X, Int Y,pic,String LTag,String DTag)
+	SetColor(0,180,255)
+	RFnt.Dark(Lang.Str("PlayTab",LTag)..": ",X,Y,1,0)
+	SetColor(255,Ternary(LTag=="Plate",0,255),Ternary(LTag=="Plate",0,255))
+	pic.Stretch(X,Y,25,25)
+	SetColor(255,255,255)
+	RFnt.Dark(sprintf("%02d",Puz.Data[DTag]),X+30,Y)
+	If Events.MouseX>X && Events.MouseY>Y && Events.MouseY<Y+30
+		Modified = Modified || Events.MouseWheelY!=0
+		Puz.Data[DTag] = math.max(0,math.min(Puz.Data[DTag]+Events.MouseWheelY,99))
+	End
+End
+
+Void NumberPanel()
+	Int Y:=Puz.BaseUI.DPY+25
+	Int X:=Graphics.W Div 2
+	
+	// Required
+	SetColor(0,180,255)
+	RFnt.Dark(Lang.Str("PlayTab","Required")..": ",X,Y,1,0)
+	SetColor(255,255,255)
+	RFnt.Dark(sprintf("|$C %d / |$D %d",Puz.Data.Required, CountBalls),X,Y)
+	If BallsRecount; CountBalls = Puz.Actors.CountBalls; BallsRecount=False; End
+	BallsRecount = os.time()%5==0
+	If Events.MouseX>X && Events.MouseY>Y && Events.MouseY<Y+30			
+		Puz.Data.Required = math.max(0,math.min(Puz.Data.Required+Events.MouseWheelY,Puz.Actors.CountBalls))
+		Modified = Modified || Events.MouseWheelY!=0 
+	End
+	
+	Tool(X,Y +  30,pp1,"Plate","Plate1")
+	Tool(X,Y +  60,pp2,"Plate","Plate2")
+	Tool(X,Y +  90,pbd,"Bulldozer","Bulldozer")
+	Tool(X,Y + 120,pbr,"Barrier","Barrier")	
+End
 
 #endregion
 
+
+
+
+#region Panel initiation
 plua Panels
 plua ActivePanel
 
@@ -319,8 +394,10 @@ Init
 		//CSayF("- Object Ternary: %s    (P:%s)",Ternary(Upper(P)=="OBJECT",ObjectHit,nil),Upper(P) )
 	End
 	Panels.AddLast(New EdPanel("Edit","Actors",ActorPanel))
+	Panels.AddLast(New EdPanel("Edit","Numbers",NumberPanel))
 	Panels.AddLast(New EdPanel("Edit","Metadata",MetaPanel))
 End	
+#endregion
 
 Void MetaTextEdit(String C,String K,String Capt)
 	Oud:=Puz.Data.Value(C,K)
