@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.21 IV
+// Version: 26.05.26
 // End License
 Module
 
@@ -59,6 +59,18 @@ Set String Title; PuzData.Value("META","TITLE",Value); End
 
 Get String Mission; Return PuzData.Value("Task","Mission"); End
 Set String Mission; PuzData.Value("Task","Mission",Value); End
+
+Get Int Required; Return PuzData.IntValue("Task","Required"); End
+Set Int Required; PuzData.Value("Task","Required",Value); End
+
+Get Int Plate1; Return PuzData.IntValue("Tools","Plate1"); End
+Get Int Plate2; Return PuzData.IntValue("Tools","Plate2"); End
+Get Int Bulldozer; Return PuzData.IntValue("Tools","Bulldozer"); End
+Get Int Barrier; Return PuzData.IntValue("Tools","Barrier"); End
+Set Int Plate1;  PuzData.Value("Tools","Plate1",Value); End
+Set Int Plate2;  PuzData.Value("Tools","Plate2",Value); End
+Set Int Bulldozer;  PuzData.Value("Tools","Bulldozer",Value); End
+Set Int Barrier;  PuzData.Value("Tools","Barrier",Value); End
 
 Get Delegate Value
 	Return PuzData.Value
