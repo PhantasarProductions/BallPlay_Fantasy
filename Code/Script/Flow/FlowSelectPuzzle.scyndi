@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.18
+// Version: 26.05.27 II
 // End License
 
 
@@ -85,6 +85,7 @@ Class EPuz
 	End
 End	
 
+
 Group Internal 
 
 	Void Index()
@@ -96,6 +97,8 @@ Group Internal
 	End
 	
 	Void Reload()
+		EPuz.List={}
+		Indexed = GINIE.Load("Puzzles/Index.ini","INTERNAL_PACK")
 	End
 End
 
@@ -154,6 +157,19 @@ Global Void Reload()
 	Lua.Scyndi.Class[gstr.PackType].Reload()
 End
 
+Global Void DEBUG_Puzzles()
+	Int Cnt:=0
+	For idx,EP in pairs(EPuz.List)
+		printf("\x1b[91m%03d:>\x1b[97m %s  %s\n",idx,Ternary(EP.Available,"Available  ","Unavailable"),EP.Name)
+		Cnt++
+	End
+	PrintF("Puzzles counted: \x1b[92m%d  \x1b[97mHighest: \x1b[93%d\n",Cnt,Indexed.IntValue("Index","Highest"))
+End
+Init
+	Sys.ConsoleLocal("PUZLIST","DEBUG_Puzzles")
+End
+
+
 Global Void FMain()
 	//Basis 
 	Any.Back()	
@@ -170,7 +186,7 @@ Global Void FMain()
 	Hover4Trash:=nil
 	AllowUp:=Scroll!=0
 	AllowDown:=True
-	For i=1,Ternary(SitEditor,999,Indexed.IntValue("Index","Hi"))
+	For i=1,Ternary(SitEditor,999,Indexed.IntValue("Index","Highest"))
 		Int Y:=(((i-1)-Scroll)*45)
 		Int TY:=Y+250
 		if Y>=0 && Y<Graphics.Height-350
