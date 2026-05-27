@@ -22,22 +22,23 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.15
+// Version: 26.05.27
 // End License
 Module LoadInternalPuzzle
 
 #use "Libs/SCI/Bank"
-#use "Libs/SCI/SGJCR"
+//#use "Libs/SCI/SGJCR"
 
 #use "Script/Use/Anyway"
 
 Global Void iLoad(String Pack,Int i)
 	//BO:=SGJCR.Create("SAVEPUZZLE")
 	//BO.Assign(sprintf("Packs/%s/Puzzle_%03d",Pack,i))
-	Puz.Data.PuzData = GINIE.Load(sprintf("Puzzles/%s/Puzzle_%03d/TxtData/Data",Pack,i), "PuzzleData")
+	Puz.Data.PuzData = GINIE.Load(sprintf("Puzzles/Puzzle_%03d/TxtData/Data",Pack,i), "PuzzleData")
 	Puz.Data.PuzBank = {}
 	For L in Each(Puz.Data.Lays)
-		Puz.Data.PuzBank[L]=Bank.Load(sprintf("Puzzles/%s/Puzzle_%03d/BinData/%s",Pack,i,L),"PUZZLELAYER_"..l)
+		Puz.Data.PuzBank[L]=Bank.Load(sprintf("Puzzles/Puzzle_%03d/BinData/%s",Pack,i,L),"PUZZLELAYER_"..l)
 	End
-	
+	Puz.Tex.Source=JCR6.GetString(sprintf("Puzzles/Puzzle_%03d/TxtData/Textures.ini"))
+	Puz.Actors.Src=JCR6.GetString(sprintf("Puzzles/Puzzle_%03d/TxtData/Actors"))
 End
