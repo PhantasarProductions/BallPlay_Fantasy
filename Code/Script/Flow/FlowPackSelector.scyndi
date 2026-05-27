@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.27 I
+// Version: 26.05.27 VI
 // End License
 Script
 
@@ -34,13 +34,16 @@ Script
 #macro P_Default 2
 
 Class TPack
+	ReadOnly String Pack
 	ReadOnly String Name
 	ReadOnly Int Type
 	ReadOnly Bool LangChange
-	Constructor(String N,Int T=P_Pack)
+	Constructor(String N,Int T=P_Pack,String P="")
 		Name = N
 		Type = T
 		LangChange = T != 0
+		Pack=Ternary(P=="",Name,P)
+		CSayF("Pack %s -> %s",Name,P)
 	End
 End
 
@@ -55,7 +58,7 @@ Global Void Renew()
 		case "EDITOR"
 			PackList+=new TPack("NEWPACK",P_NewPack)
 		case "GAME"
-			PackList+=new TPack("STANDARDPACK",P_Default)
+			PackList+=new TPack("STANDARDPACK",P_Default,"Default")
 	End	
 	_Files:=SGF.GetDir()
 	For _F in Each(_Files)
@@ -71,7 +74,8 @@ Void Action(P)
 	Switch P.Type
 		Case P_Internal
 			gstr.PackType="Internal"
-			gstr.PackChosen=""
+			gstr.PackChosen=P.Pack
+			CSayF("= Internal -> %s",gstr.PackChosen)
 			Sys.LoadNewState("FLOW_SelectPuzzle","Script/Flow/FlowSelectPuzzle.lbc")
 			Sys.Call("FLOW_SELECTPUZZLE","Reload")
 			Sys.CurrentFlow="SELECTPUZZLE"
