@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.27 II
+// Version: 26.05.27 VI
 // End License
 
 
@@ -98,7 +98,7 @@ Group Internal
 	
 	Void Reload()
 		EPuz.List={}
-		Indexed = GINIE.Load("Puzzles/Index.ini","INTERNAL_PACK")
+		Indexed = GINIE.Load(sprintf("Puzzles/%s/Index.ini",gstr.PackChosen),"INTERNAL_PACK")
 	End
 End
 
@@ -237,6 +237,9 @@ Global Void FMain()
 					Sys.Call("FLOW_EDITOR","Puz.BPAM.Renew")
 					Sys.CurrentFlow="EDITOR"
 				Else
+					Sys.LoadNewState("FLOW_GAME","Script/Flow/FlowGame.lbc")
+					Sys.Call("FLOW_GAME",sprintf("Puz.%s",Ternary(Upper(gStr.PackType)=="INTERNAL","iLoad","Load")),gstr.PackChosen,Hover.ID)
+					Sys.Call("FLOW_GAME","Puz.BPAM.Renew")
 					Sys.Annoy("Please come back later")
 				End
 			ElIf SitEditor
