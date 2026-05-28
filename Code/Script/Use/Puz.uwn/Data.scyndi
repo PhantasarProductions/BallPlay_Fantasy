@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.26
+// Version: 26.05.28
 // End License
 Module
 
@@ -104,5 +104,6 @@ Int Val(String Lay,Int X,Int Y,V)
 		lua.assert(Lua.type(V)=="number" && V>=0 && V<=255,"Illegal value for puzzle!")
 		_PuzBank[Lay].Poke(A,V)
 	End
+	Lua.assert(_PuzBank[Lay],"No Puzzle Bank called: "..Lay)
 	Return _PuzBank[Lay].Peek(A)
 End
