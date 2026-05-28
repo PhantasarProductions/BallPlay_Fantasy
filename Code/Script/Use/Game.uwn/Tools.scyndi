@@ -1,0 +1,88 @@
+// License:
+// 
+// BallPlay Fantasy
+// Tools
+// 
+// 
+// 
+// 	(c) Jeroen P. Broks, 2026
+// 
+// 		This program is free software: you can redistribute it and/or modify
+// 		it under the terms of the GNU General Public License as published by
+// 		the Free Software Foundation, either version 3 of the License, or
+// 		(at your option) any later version.
+// 
+// 		This program is distributed in the hope that it will be useful,
+// 		but WITHOUT ANY WARRANTY; without even the implied warranty of
+// 		MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// 		GNU General Public License for more details.
+// 		You should have received a copy of the GNU General Public License
+// 		along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// 
+// 	Please note that some references to data like pictures or audio, do not automatically
+// 	fall under this licenses. Mostly this is noted in the respective files.
+// 
+// Version: 26.05.28 VI
+// End License
+Module
+
+#use "Script/Use/Anyway"
+
+plua Fnt = ObtainFont("DOS")
+
+Var Active
+Var List
+
+Class TTool
+	ReadOnly String DatTag
+	Link Val = Puz.Data[DatTag]
+	ReadOnly Int R
+	ReadOnly Int G
+	ReadOnly Int B
+	ReadOnly Var Img
+	ReadOnly Int ID
+	Static Int Cnt = 0
+	Get Int X
+		return (Graphics.W Div 2) + (ID*70)
+	End
+	Get Int Y
+		Return Puz.BaseUI.DPY+200
+	End
+	Constructor(String DT,String IT,Int Red=255, Int Green=255, Int Blue=255)
+		ID = Cnt
+		Cnt++
+		R,G,B=Red,Green,Blue
+		DatTag=DT
+		Img = ObtainImage(IT)
+	End
+	
+	Void Draw()
+		Active = Active || self
+		If self==Active
+			SetColor(255,180,0,(os.time()%2)*255)
+			Rect(X-4,Y-4,48,48)
+		End
+		SetColor(R,G,B,Ternary(Val>0,255,75))
+		Img.Stretch(X,Y,40,40)
+		SetColor(255,255,255,255)
+		Fnt.Dark(Ternary(Val>0,sprintf("%02d",Val),""),X,Y+40,2,1)
+		If Events.MouseHitLeft && Events.MouseX>=X && Events.MouseY>=Y && Events.MouseX<=X+40 && Events.MouseY<=Y+40
+			Active = self
+		End
+	End
+	
+End
+
+Init
+	List = New TLinkedList()
+	List.AddLast(New TTool("Plate1","PLATE1",255,0,0,0))
+	List.AddLast(New TTool("Plate2","PLATE2",255,0,0,0))
+	List.AddLast(New TTool("Bulldozer","Bulldozer"))
+	List.AddLast(New TTool("Barrier","Barrier"))
+End
+
+Void Show()
+	For TL in List.Each
+		TL.Draw()
+	End
+End
