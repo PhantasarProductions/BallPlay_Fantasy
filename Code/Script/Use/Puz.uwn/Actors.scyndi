@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.25 I
+// Version: 26.05.28 IV
 // End License
 
 
@@ -51,6 +51,8 @@ Const Int Ghost = AT_Ghost
 Const Int Robot = AT_Robot
 Const Int Girl = AT_Girl
 Const Int Witch = AT_Witch
+
+Var List
 
 // This makes sure that if the numbers ever change (which is unlikely, but still, the table adapts itself)
 plua _Names={[AT_Ball]="Ball",[AT_Ghost]="Ghost", [AT_Robot]="Robot", [AT_GIRL]="Girl", [AT_Witch]="Witch"}
@@ -82,7 +84,15 @@ End
 
 // Base class
 Class Actor
+	Static Int Cnt = 0
+	ReadOnly Int ID
+		
 	ReadOnly Int Kind
+
+	Get String IDTag
+		return sprintf("%da%09x",Kind,ID)
+	End
+		
 	Int X
 	Int Y
 	Int MvX
@@ -93,7 +103,9 @@ Class Actor
 	Get Int ShowY
 		Return Y-MvY
 	End
-	Int Wind
+	
+	String Wind
+		
 	
 	// Witch only
 	ReadOnly Int ToX
@@ -101,6 +113,18 @@ Class Actor
 		
 	// Balls and ghosts
 	ReadOnly Int Col // Color
+		
+	Constructor(Int _Kind,Int _X, Int _Y, _Wind, Int _Col, Int _ToX=0, Int _ToY=0)
+		Kind,X,Y,Wind,Col,ToX,ToY = _Kind,_X,_Y,_Wind,_Col,_ToX,_ToY
+		CSayF("Actor %s created",IDTag)
+		ID=Cnt
+		Cnt++		
+	End
+	
+	Destructor
+		CSayF("Actor %s destroyed",IDTag)
+	End
+		
 	
 End
 
@@ -246,3 +270,16 @@ Set String Src
 		End // If actual command
 	End // For Lines
 End // Set property
+
+Void Compile()
+	CSay("Compiling actors")
+	List = New TLinkedList()
+	For X,XL in Pairs(ActorStartList)		
+		For Y,XYL in Pairs(XL)
+			For A In Each(XYL)
+				List.AddLast(New Actor(A.Kind,X,Y,A.Data.Wind,A.Data.Color,A.Data.ToX,A.Data.ToY))
+			End
+		End
+	End
+	CSay("Compilation complete")
+End
