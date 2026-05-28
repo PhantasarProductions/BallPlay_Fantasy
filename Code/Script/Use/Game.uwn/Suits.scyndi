@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.28 V
+// Version: 26.05.28 VIII
 // End License
 
 Module Suits_3ef8afa81dcd5ec08c2b7eb53f5c1056
@@ -36,6 +36,10 @@ plua Nul(); return 0; End // Placeholder!
 
 plua fnt = ObtainFont("Ryanna")
 plua Lijst
+
+plua LastDiamonds = 0
+plua Telballen
+Bool ForceRecount = False
 
 Class TSuit
 	ReadOnly Delegate Allow
@@ -65,7 +69,7 @@ Class TSuit
 			Fnt.Dark(sprintf("%2d",ShowStat()),X,Puz.BaseUI.DPY+SuitSize,0,1)
 		Else
 			SetAlpha(255)
-		End
+		End		
 	End
 End
 
@@ -78,6 +82,18 @@ plua Clubs()
 	Return Puz.Data.Required
 End
 
+plua Diamonds()
+	If ForceRecount || os.time()-LastDiamonds>5
+		TelBallen=0
+		For A in Puz.Actors.List.Each
+			If A.Kind==1
+				TelBallen++
+			End
+		End
+	End
+	Return TelBallen
+End
+
 Init
 	X:=Graphics.W div 2
 	Lijst = New TLinkedList()
@@ -85,7 +101,7 @@ Init
 	X+=SuitSize
 	Lijst.AddLast(New TSuit(X,"Klaver",Clubs))
 	X+=SuitSize
-	Lijst.AddLast(New TSuit(X,"Ruiten",nil))
+	Lijst.AddLast(New TSuit(X,"Ruiten",Diamonds))
 	X+=SuitSize
 	Lijst.AddLast(New TSuit(X,"Schoppen",nil))
 End
