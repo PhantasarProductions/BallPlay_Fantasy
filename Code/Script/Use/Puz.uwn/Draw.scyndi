@@ -22,11 +22,19 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.24 IV
+// Version: 26.05.28 II
 // End License
 Module
 
 #use "Script/Use/Anyway"
+
+#Macro _AT_Ball 1
+#Macro _AT_Ghost 2
+#Macro _AT_Robot 3
+#Macro _AT_Girl 4
+#Macro _AT_Witch 5
+
+plua IBall
 
 plua DrawOrder
 // Speeds things up... a little.
@@ -75,6 +83,16 @@ Void EditorActors()
 End
 
 Void GameActors()
+	For Act,Lnk in Puz.Actors.List.Each
+		Switch Act.Kind
+			Case _AT_Ball
+				Puz.Colors.Quick(Ternary(Act.Col==0,15,Act.Col+8))
+				iBall = iBall || ObtainImage("Ball")
+				iBall.Stretch(act.ShowX,Act.ShowY,32,32)
+			Default
+				Lua.error(sprintf("Unknown actor type %d! Cannot draw!",Act.Kind))
+		End
+	End
 End
 
 Init
