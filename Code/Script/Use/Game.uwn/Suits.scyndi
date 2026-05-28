@@ -1,0 +1,98 @@
+// License:
+// 
+// BallPlay Fantasy
+// Card Suits
+// 
+// 
+// 
+// 	(c) Jeroen P. Broks, 2026
+// 
+// 		This program is free software: you can redistribute it and/or modify
+// 		it under the terms of the GNU General Public License as published by
+// 		the Free Software Foundation, either version 3 of the License, or
+// 		(at your option) any later version.
+// 
+// 		This program is distributed in the hope that it will be useful,
+// 		but WITHOUT ANY WARRANTY; without even the implied warranty of
+// 		MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// 		GNU General Public License for more details.
+// 		You should have received a copy of the GNU General Public License
+// 		along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// 
+// 	Please note that some references to data like pictures or audio, do not automatically
+// 	fall under this licenses. Mostly this is noted in the respective files.
+// 
+// Version: 26.05.28 III
+// End License
+
+Module Suits_3ef8afa81dcd5ec08c2b7eb53f5c1056
+
+#use "Script/Use/Anyway"
+
+LocExtern SuitSize "125"
+
+plua Always(); Return True; End
+plua Nul(); return 0; End // Placeholder!
+
+plua fnt = ObtainFont("Ryanna")
+plua Lijst
+
+Class TSuit
+	ReadOnly Delegate Allow
+	ReadOnly Int X
+	ReadOnly Delegate ShowStat
+	ReadOnly String Name
+	ReadOnly Var Img
+		
+	Constructor(Infinity)
+		X,Name,ShowStat,Allow = Infinity
+		Img=ObtainImage(sprintf("KLEUR_%s",Name))
+		CSayF("Created suit: %s",Name)
+		CSayF(" Allow: %s; ShowStat: %s",Allow,ShowStat)
+		Allow = Allow || Always
+		ShowStat = ShowStat || Nul
+	End
+	
+	Void Draw()
+		SetColor(255,255,255)
+		If Allow
+			SetAlpha(255)
+		Else
+			SetAlpha(50)
+		End
+		Img.Stretch(X,Puz.BaseUI.DPY,SuitSize,SuitSize)
+		If Allow
+			Fnt.Dark(sprintf("%2d",ShowStat()),X,Puz.BaseUI.DPY+SuitSize,0,1)
+		Else
+			SetAlpha(255)
+		End
+	End
+End
+
+plua AllowHearts()
+	Mis:=Upper(Puz.Data.Mission)
+	return Mis=="NORMAL" || Mis=="COLORSPLIT" || Mis=="Break-Free"
+End
+
+plua Clubs()
+	Return Puz.Data.Required
+End
+
+Init
+	X:=Graphics.W div 2
+	Lijst = New TLinkedList()
+	Lijst.AddLast(New TSuit(X,"Harten",nil,AllowHearts))
+	X+=SuitSize
+	Lijst.AddLast(New TSuit(X,"Klaver",Clubs))
+	X+=SuitSize
+	Lijst.AddLast(New TSuit(X,"Ruiten",nil))
+	X+=SuitSize
+	Lijst.AddLast(New TSuit(X,"Schoppen",nil))
+End
+
+
+Global Void Suits()
+	For S in Lijst.Each
+		S.Draw()
+	End
+End
