@@ -1,0 +1,89 @@
+// License:
+// 
+// BallPlay Fantasy
+// Game Menu Class
+// 
+// 
+// 
+// 	(c) Jeroen P. Broks, 2026
+// 
+// 		This program is free software: you can redistribute it and/or modify
+// 		it under the terms of the GNU General Public License as published by
+// 		the Free Software Foundation, either version 3 of the License, or
+// 		(at your option) any later version.
+// 
+// 		This program is distributed in the hope that it will be useful,
+// 		but WITHOUT ANY WARRANTY; without even the implied warranty of
+// 		MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// 		GNU General Public License for more details.
+// 		You should have received a copy of the GNU General Public License
+// 		along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// 
+// 	Please note that some references to data like pictures or audio, do not automatically
+// 	fall under this licenses. Mostly this is noted in the respective files.
+// 
+// Version: 26.05.29 VII
+// End License
+Module
+
+#use "Script/Use/Anyway"
+
+Const Int DPY = Puz.BaseUI.DPY
+PLUA ALWAYS(); Return True; End
+PLUA WIP(); Events.Annoy("This feature is not yet implemented"); End
+Int ButtonW
+Int ButtonH
+plua Fnt=ObtainFont("RYANNA")
+
+Class TGM
+	ReadOnly String Caption
+	ReadOnly Delegate CallBack
+	ReadOnly Delegate Allow
+		
+	Constructor(Infinity)		
+		Caption,Callback,Allow = Infinity
+		Allow = Allow || ALWAYS
+		Callback = Callback || WIP
+	End
+End
+
+
+
+// This is only needed due to the usage of UWN.
+// Calling this through Game.GameMenu.Add will force this module to be loaded.
+Var Add(Infinity)
+	Return New TGM(Infinity)
+End
+
+Void BaseItems(MenuPtr)
+	MenuPtr+=Add("OTHERPUZZLE")
+	MenuPtr+=Add("OTHERPACK")
+	MenuPtr+=Add("MAINMENU")
+End
+
+Void ShowMenu(Stg)
+	Stg = Stg || Lua.Scyndi.Globals.Stage
+	Int Y = DPY+10
+	For item In Each(stg.Menu)
+		tc:=Lang.Str("Game",Item.Caption)
+		tw:=Fnt.Width(tc)
+		th:=Fnt.Height(tc)
+		Hover:=Events.MouseX<tw+5 && Events.MouseY>y && Events.Mouse.Y<y+ButtonH
+		If Hover
+			SetColorHSV(os.time()%360,1,1)
+			Rect(5,Y,ButtonW,ButtonH)
+			SetColorHSV(os.time()%360,1,0.1)
+		Else
+			SetColor(255,255,255,255)
+			Rect(5,Y,ButtonW,ButtonH,true)
+		End
+		If   th+2<ButtonH 
+			ButtonH++
+		ElIf tw<ButtonW
+			ButtonW++
+		Else
+			Fnt.Text(tc,5,Y+1)
+		End
+		Y+=ButtonH+3
+	End
+End
