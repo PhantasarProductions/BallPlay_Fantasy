@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.29 VII
+// Version: 26.05.29 XV
 // End License
 Module
 
@@ -55,34 +55,51 @@ Var Add(Infinity)
 	Return New TGM(Infinity)
 End
 
-Void BaseItems(MenuPtr)
-	MenuPtr+=Add("OTHERPUZZLE")
-	MenuPtr+=Add("OTHERPACK")
-	MenuPtr+=Add("MAINMENU")
+Plua ToMain()
+	Sys.CurrentFlow = "MAINMENU"
 End
 
-Void ShowMenu(Stg)
+Plua ToPack()
+	Sys.CurrentFlow = "PACKSELECTOR"
+End
+
+Plua ToPuzzle()
+	Sys.CurrentFlow = "SELECTPUZZLE"
+End
+
+Void BaseItems(MenuPtr)
+	MenuPtr+=Add("OTHERPUZZLE",ToPuzzle)
+	MenuPtr+=Add("OTHERPACK",ToPack)
+	MenuPtr+=Add("MAINMENU",ToMain)
+End
+
+Void Show(Stg)
 	Stg = Stg || Lua.Scyndi.Globals.Stage
 	Int Y = DPY+10
 	For item In Each(stg.Menu)
 		tc:=Lang.Str("Game",Item.Caption)
 		tw:=Fnt.Width(tc)
 		th:=Fnt.Height(tc)
-		Hover:=Events.MouseX<tw+5 && Events.MouseY>y && Events.Mouse.Y<y+ButtonH
-		If Hover
+		Hover:=Events.MouseX<tw+5 && Events.MouseY>y && Events.MouseY<y+ButtonH
+		If !Item.Allow()
+			SetColor(100,100,100,255)
+		ElIf Hover
 			SetColorHSV(os.time()%360,1,1)
 			Rect(5,Y,ButtonW,ButtonH)
 			SetColorHSV(os.time()%360,1,0.1)
+			If Events.MouseHitLeft
+				Item.CallBack()
+			End
 		Else
 			SetColor(255,255,255,255)
 			Rect(5,Y,ButtonW,ButtonH,true)
 		End
-		If   th+2<ButtonH 
+		If   th+3>ButtonH 
 			ButtonH++
-		ElIf tw<ButtonW
+		ElIf tw+4>ButtonW
 			ButtonW++
 		Else
-			Fnt.Text(tc,5,Y+1)
+			Fnt.Text(tc,7,Y+2)
 		End
 		Y+=ButtonH+3
 	End
