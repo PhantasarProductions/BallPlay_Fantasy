@@ -1,0 +1,107 @@
+// License:
+// 
+// BallPlay Fantasy
+// Tutorial Manager
+// 
+// 
+// 
+// 	(c) Jeroen P. Broks, 2026
+// 
+// 		This program is free software: you can redistribute it and/or modify
+// 		it under the terms of the GNU General Public License as published by
+// 		the Free Software Foundation, either version 3 of the License, or
+// 		(at your option) any later version.
+// 
+// 		This program is distributed in the hope that it will be useful,
+// 		but WITHOUT ANY WARRANTY; without even the implied warranty of
+// 		MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// 		GNU General Public License for more details.
+// 		You should have received a copy of the GNU General Public License
+// 		along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// 
+// 	Please note that some references to data like pictures or audio, do not automatically
+// 	fall under this licenses. Mostly this is noted in the respective files.
+// 
+// Version: 26.05.30 II
+// End License
+
+
+Module
+
+#use "Script/Use/Anyway"
+
+PLua Fnt = ObtainFont("RYANNA")
+
+Class TutorLine
+	ReadOnly Int Red    = 255
+	ReadOnly Int Green  = 255
+	ReadOnly Int Blue   = 255
+	ReadOnly Int Y
+	ReadOnly Var Font		
+	ReadOnly String Text
+	Constructor (String T,Int _Y,Int R=255,Int G=255, Int B=255,F)
+		Text = T
+		Red,Green,Blue = R,G,B
+		Font = F || Fnt
+	End
+End		
+
+
+Var CurrentStuff
+
+Void Load(String Tutor)
+	CurrentStuff = {}
+	Lines:=JCR6.GetLines(sprintf("Localisation/Tutorials/%s/%s",Lang.Chosen,Tutor))
+	Int R = 255
+	Int G = 255
+	Int B = 255
+	Int Y = 0
+	For i,L In iPairs(Lines)
+		Int Start:=0
+		LCH:=XSplit(Trim(L)," ")
+		If Len(LCH)>0
+			Switch LCH[0]
+				Case "//"
+					// Do nothing! This is a comment!
+				Case "#"
+					// Header, let's work this out!
+					R = 255
+					G = 180
+					B = 0
+					Lua.assert(Len(LCH)>1,"Empty Header")
+					Start = 1
+				Case "*"
+					// Handy for keeping color of previous setting
+					Start = 1
+				Case "@"
+					Lua.error("@ was reserved for commands. Feature not (yet?) implemented")
+					// A placeholder for a feature that's likely never meant to be, but just in case I need it, it'll be there, and this forces backward compatibility
+				Default
+					Start = 0
+					R,G,B = 255,255,255					
+			End
+			String NLine=""
+			For i=Start,Len(LCH)-1
+				Word:=LCH[i]
+				If NLine==""
+					NLine=Word
+				ElIf Fnt.Width(NLine.." "..Word)<Graphics.W-5
+					NLine+=" "..Word
+				Else
+					CurrentStuff += New TutorLine(NLine,Y,R,G,B,Fnt)
+					Y+=Fnt.Height(NLine)
+					NLine=""
+				End
+			End
+			If Trim(NLine)!=""
+				CurrentStuff += New TutorLine(NLine,Y,R,G,B,Fnt)
+				Y+=Fnt.Height(NLine)				
+			End			
+		End
+		Y+=20
+	End
+End
+
+Void Show(Int OffY=0)
+	Lua.assert(CurrentStuff,"No Tutorial Loaded! Nothing to display!")
+End
