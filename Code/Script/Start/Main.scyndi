@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.25
+// Version: 26.05.31 II
 // End License
 
 Script
@@ -31,6 +31,7 @@ Script
 #use "Libs/SCI/Audio"
 #use "Libs/SCI/GINIE"
 #use "Libs/SCI/Events"
+#use "Libs/SCI/SString"
 #use "Libs/SCI/Graphics"
 
 #use "Libs/LinkedList"
@@ -108,7 +109,8 @@ Init
 	LI("GFX/Algemeen/Logo.png","LOGO",_HotCenter) // MUST ALWAYS BE FIRST!!!
 	LI("GFX/Algemeen/MousePointer.png","MOUSE")
 	LI("GFX/Algemeen/Vuilnisbak.png","TRASH")
-	LI("GFX/Algemeen/UIBack.png","UIBack")
+	//LI("GFX/Algemeen/UIBack.png","UIBack")
+	LI("GFX/Algemeen/UIBack.bmp","UIBack")
 	LI("GFX/Algemeen/Save.png","Save")
 	LI("GFX/MainMenu/Background.png","MAINBACK")
 	LI("GFX/Objects/Ball.png","BALL")
@@ -116,6 +118,7 @@ Init
 	for i=1,2; LI(sprintf("GFX/Plates/Plate%d.png",i),sprintf("PLATE%d",i)); End
 	LI("GFX/Exit/Exit.png","EXIT")
 	for k in Each{[0]="Harten","Klaver","Ruiten","Schoppen"}; LI(sprintf("GFX/Suits/%s.png",k),sprintf("KLEUR_%s",k)); End
+	for eg in Each{[0]="Success","Fail","Gave Up"}; LI(sprintf("GFX/EndPuzzle/%s.png",eg),"ENDPUZZLE_"..Replace(eg," ","_"),_HotCenter); End
 	LI("GFX/Metal/Metal.png","METAL")
 	LI("GFX/Plates/Barrier.png","BARRIER")
 	LI("GFX/Plates/Bulldozer.png","BULLDOZER")
