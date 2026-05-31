@@ -1,7 +1,7 @@
 // License:
 // 
 // BallPlay Fantasy
-// Tutorial Link Up In-Game
+// Game Tutorial Linkup
 // 
 // 
 // 
@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.30
+// Version: 26.05.31 III
 // End License
 
 
@@ -30,12 +30,16 @@ Module
 
 #use "Script/Use/Anyway"
 
+#accept SetStage
+
 Plua _TutorFile
 Plua OldCheck=0
 Plua _Menu
 Get Var Menu; Return _Menu; End
 
 Plua SeenIt()
+	User.SeenTutorial[_TutorFile] = True
+	SetStage("Start")
 End
 
 Init
@@ -44,19 +48,29 @@ Init
 	_Menu+=GGA("OK",SeenIt)	
 End
 
+Get Bool Want
+	OldCheck=os.time()
+	Return Upper(User.Data.Value("Config","Tutorials"))=="TRUE"
+End
+
 Void Go(String TutorFile)
-	If os.time()-OldCheck<30 || Upper(User.Data.Value("Config","Tutorials"))!="TRUE" || Upper(User.Data.Value("SEEN_TUTORIALS",TutorFile))!="TRUE"
+	If os.time()-OldCheck<30 || (!Want)
+		// || Upper(User.Data.Value("SEEN_TUTORIALS",TutorFile))!="TRUE"
 		// No Tutorials if the user doesn't want them.
 		// The check is only made once per 30 seconds to prevent serious slowdowns
 		// Tutorials that were shown before also won't show
+		CSayF("Rejected: %d-%d=%d -> Tutorials=%s -> %s",os.time(),OldCheck,os.time()-OldCheck,User.Data.Value("Config","Tutorials"),Want)
 		Return
 	End
 	Any.Tutorial.Load(TutorFile)
 	_TutorFile = TutorFile
-	Game.SetStage("Tutor")
+	SetStage("Tutor")
 End	
 
 
-Void FMain()
+Void SMain()
+	SetColor(0,0,0,100)
+	Rect(0,0,Graphics.W,Puz.BaseUI.DPY)
+	SetColor(255,255,255,255)
 	Any.Tutorial.Show()
 End
