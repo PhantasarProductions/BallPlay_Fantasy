@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.23 II
+// Version: 26.05.30 II
 // End License
 Module
 
@@ -46,6 +46,7 @@ Extern ObtainAudio "Scyndi.Class.Audio.Obtain"
 Extern ObtainFont "Scyndi.Globals.ObtainFont"
 Extern ObtainImage "Scyndi.Globals.ObtainImage"
 Extern LoadImage "Scyndi.Globals.LoadImage"
+Extern LoadNewImage "Scyndi.Globals.LoadNewImage"
 Extern Rect "Scyndi.Globals.Rect"
 Extern SetColor "Scyndi.Globals.SetColor"
 Extern SetAlpha "Scyndi.Globals.SetAlpha"
@@ -58,7 +59,9 @@ Extern Replace "Scyndi.Globals.Replace"
 Extern Prefixed "Scyndi.Globals.Prefixed"
 Extern StripAll "Scyndi.Globals.StripAll"
 Extern StripExt "Scyndi.Globals.StripExt"
+Extern StripDir "Scyndi.Globals.StripDir"
 Extern ExtractExt "Scyndi.Globals.ExtractExt"
+Extern ExtractDir "Scyndi.Globals.ExtractDir"
 
 // Interstate Variabales
 Extern gstr "Scyndi.Globals.gStr"
