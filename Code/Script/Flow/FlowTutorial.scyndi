@@ -1,0 +1,143 @@
+// License:
+// 
+// BallPlay Fantasy
+// Tutorial Library (in the sense of the player visiting this library as a building full of books. Not the coding yargon).
+// 
+// 
+// 
+// 	(c) Jeroen P. Broks, 2026
+// 
+// 		This program is free software: you can redistribute it and/or modify
+// 		it under the terms of the GNU General Public License as published by
+// 		the Free Software Foundation, either version 3 of the License, or
+// 		(at your option) any later version.
+// 
+// 		This program is distributed in the hope that it will be useful,
+// 		but WITHOUT ANY WARRANTY; without even the implied warranty of
+// 		MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// 		GNU General Public License for more details.
+// 		You should have received a copy of the GNU General Public License
+// 		along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// 
+// 	Please note that some references to data like pictures or audio, do not automatically
+// 	fall under this licenses. Mostly this is noted in the respective files.
+// 
+// Version: 26.05.30 XXI
+// End License
+
+Script
+
+#use "Script/Use/Anyway"
+
+
+// Dirty Code straight from HELL! //
+// Only do this when you know     //
+// what the hell you are doing!   //
+Global Delegate FMain
+
+// Font
+plua Fnt = ObtainFont("Ryanna")
+
+// Back
+plua Back = ObtainImage("ARROW_LEFT")
+
+// Data Class
+Class ListTutor
+	Static Int Cnt = 0
+	Static Var List
+	ReadOnly Int ID
+	ReadOnly String File
+	ReadOnly String SFile
+	ReadOnly String Tutorial
+	Constructor(Infinity)
+		ID = Cnt
+		Cnt++
+		File,Tutorial = Infinity
+		SFile=StripDir(File)
+	End
+End
+
+Plua BackToList
+
+Void ShowTutor()
+	Any.Back()
+	Any.Tutorial.Show()
+	If Events.MouseHitLeft || Events.MouseHitRight
+		FMain=BackToList
+	End
+End
+
+		
+
+// Call Backs
+Void ListTutors()
+	Any.Back()	
+	Any.Logo()
+	Any.Tutorial.Mascot()
+	Int Y=200	
+	For LT in ListTutor.List.Each
+		Int X=3
+		Int H:=Fnt.Height(LT.Tutorial)
+		SetColor(255,255,255,255)
+		If Events.MouseY>Y && Events.MouseY<Y+H && Events.MouseX<Graphics.W-40
+			SetColorHSV(os.time()%360,1,1)
+			If Events.MouseHitLeft
+				FMain = ShowTutor
+				CSayF("User wants to see tutorial: %s",LT.SFile)
+				Any.Tutorial.Load(LT.SFile)
+				FMain=ShowTutor
+				Events.Poll()
+			End
+		End
+		Fnt.Dark(LT.Tutorial,X,Y)
+		Y+=H
+	End
+	If Events.MouseY>Graphics.H-40 && Events.MouseX>Graphics.W-40
+		SetColorHSV(360-(os.time()%360),1,1)
+		If Events.MouseHitLeft
+			Sys.CurrentFlow="MAINMENU"
+		End
+	Else
+		SetColor(255,255,255)
+	End
+	Back.Stretch(Graphics.W-40,Graphics.H-40,40,40)
+End
+
+
+// Index the tutorials
+Void Index()
+	ListTutor.List = New TLinkedList()
+	Lst:=ListTutor.List
+	CSayF("Looking for all tutorials for the %s language",Lang.Chosen)
+	D:=JCR6.Dir(sprintf("Localisation/Tutorials/%s",Lang.Chosen))
+	For TF in Each(D)
+		DL:=JCR6.GetLines(TF)
+		i:=0
+		Capt:=nil
+		While i<Len(DL) && (!Capt)
+			L:=Trim(DL[i])
+			if Prefixed(L,"#") 
+				Capt = Right(L,Len(L)-1)
+			End
+			i++
+		End
+		Capt = Capt || sprintf("NOHEAD: %s",StripAll(TF))
+		Lst.AddLast(New ListTutor(TF,Capt))
+	End	 
+End
+
+
+
+// Reset
+Global Void Reset()
+	FMain = ListTutors
+	Index()
+End
+
+
+Init
+	Reset()
+	BackToList=ListTutors
+End
+
+
