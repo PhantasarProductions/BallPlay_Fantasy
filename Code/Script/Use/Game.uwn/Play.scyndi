@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.31 XXIII
+// Version: 26.05.31 XXXVII
 // End License
 Module
 
@@ -33,11 +33,15 @@ Module
 plua dFNT = ObtainFont("DOS")
 
 #region Menu
+Void PauseGame()
+	SetStage("Pause")
+End
+
 ReadOnly Var Menu
 	
 Init
 	Menu = {}
-	Menu += Game.GameMenu.Add("PAUSE")
+	Menu += Game.GameMenu.Add("PAUSE",PauseGame)
 	Menu += Game.GameMenu.Add("GIVEUP")
 End
 #endregion
@@ -121,10 +125,10 @@ int MA__MoveSpeed=2
 #Macro MA__Heks 5
 
 Bool Block(Int X,Int Y)
-	If X<0 || Y<0 || X>=Puz.Max.W || X>=Puz.Max.H
+	If X<0 || Y<0 || X>=Puz.Max.W || Y>=Puz.Max.H
 		Return True
 	End
-	If Puz.Data.Val("Wall",X,Y)
+	If Puz.Data.Val("Wall",X,Y)>0
 		Return True
 	End
 	Return False
@@ -164,68 +168,68 @@ Void MoveActors()
 				MA__MoveSpeed++
 			End
 		ElIf A.MvY<0
-			A.MvY-=MA__MoveSpeed
-			A.MvY=math.max(0,A.MvY)
+			A.MvY+=MA__MoveSpeed
+			A.MvY=math.min(0,A.MvY)
 			If DoMove
 				A.MvY=0
 				MA__MoveSpeed++
 			End
 		End	
 		If A.Kind!=MA__Girl && A.Kind!=MA__Heks
-			CSayF("Moving actor %09d to the %s",A.ID,A.Wind)
+			//CSayF("%6s:Moving actor %09d to the %s",DoMove,A.ID,A.Wind,DoMove)
 			Switch A.Wind
 				case "North"
+					//CSayF("North: %09x (%d,%d) -> (%d,%d)%s",A.ID,A.X,A.Y,A.X,A.Y-1,Block(A.X,A.Y-1))
 					If DoMove && (!Block(A.X,A.Y-1))
 						A.Y--
 						A.mvY=32
-						If Plate1(A.X,A.Y) && (A.Kind==MA__Ball || A.Kind==MA__Ghost) && (!Block(A.X,A.Y))
+						If Plate1(A.X,A.Y) && (A.Kind==MA__Ball || A.Kind==MA__Ghost) && (!Block(A.X+1,A.Y))
 							A.Wind="East"
-						ElIf Plate2(A.X,A.Y) && (A.Kind==MA__Ball || A.Kind==MA__Ghost) && (!Block(A.X,A.Y))
+						ElIf Plate2(A.X,A.Y) && (A.Kind==MA__Ball || A.Kind==MA__Ghost) && (!Block(A.X-1,A.Y))
 							A.Wind="West"
+						//End
+						ElIf (Block(A.X,A.Y-1))
+							A.Wind="South"
 						End
 					End					
-					If (Block(A.X,A.Y))
-						A.Wind="South"
-					End
 				case "South"
 					If DoMove && (!Block(A.X,A.Y+1))
 						A.Y++
 						A.mvY=-32
-						If Plate1(A.X,A.Y) && (A.Kind==MA__Ball || A.Kind==MA__Ghost) && (!Block(A.X,A.Y))
+						If Plate1(A.X,A.Y) && (A.Kind==MA__Ball || A.Kind==MA__Ghost) && (!Block(A.X-1,A.Y))
 							A.Wind="West"
-						ElIf Plate2(A.X,A.Y) && (A.Kind==MA__Ball || A.Kind==MA__Ghost) && (!Block(A.X,A.Y))
-							A.Wind="West"
+						ElIf Plate2(A.X,A.Y) && (A.Kind==MA__Ball || A.Kind==MA__Ghost) && (!Block(A.X+1,A.Y))
+							A.Wind="East"
+						ElIf (Block(A.X,A.Y+1))
+							A.Wind="North"
 						End
 					End					
-					If (Block(A.X,A.Y))
-						A.Wind="North"
-					End
 				case "East"
 					If DoMove && (!Block(A.X+1,A.Y))
 						A.X++
 						A.mvX=-32
-						If Plate1(A.X,A.Y) && (A.Kind==MA__Ball || A.Kind==MA__Ghost) && (!Block(A.X,A.Y))
+						If Plate1(A.X,A.Y) && (A.Kind==MA__Ball || A.Kind==MA__Ghost) && (!Block(A.X,A.Y-1))
 							A.Wind="North"
-						ElIf Plate2(A.X,A.Y) && (A.Kind==MA__Ball || A.Kind==MA__Ghost) && (!Block(A.X,A.Y))
+						ElIf Plate2(A.X,A.Y) && (A.Kind==MA__Ball || A.Kind==MA__Ghost) && (!Block(A.X,A.Y+1))
 							A.Wind="South"
+						ElIf (Block(A.X+1,A.Y))
+							A.Wind="West"
 						End
 					End					
-					If (Block(A.X,A.Y))
-						A.Wind="West"
-					End
 				case "West"
 					If DoMove && (!Block(A.X-1,A.Y))
 						A.X--
 						A.mvX=32
-						If Plate1(A.X,A.Y) && (A.Kind==MA__Ball || A.Kind==MA__Ghost) && (!Block(A.X,A.Y))
+						If Plate1(A.X,A.Y) && (A.Kind==MA__Ball || A.Kind==MA__Ghost) && (!Block(A.X,A.Y+1))
 							A.Wind="South"
-						ElIf Plate2(A.X,A.Y) && (A.Kind==MA__Ball || A.Kind==MA__Ghost) && (!Block(A.X,A.Y))
+						ElIf Plate2(A.X,A.Y) && (A.Kind==MA__Ball || A.Kind==MA__Ghost) && (!Block(A.X,A.Y-1))
 							A.Wind="North"
+						ElIf (Block(A.X-1,A.Y))
+							A.Wind="East"
 						End
-					End					
-					If (Block(A.X,A.Y))
-						A.Wind="East"
-					End
+					End				
+				Default
+					Lua.error("Unknown wind direction for actor:%09x! '%s'",A.ID,A.Wind)
 			End
 		End
 	End
