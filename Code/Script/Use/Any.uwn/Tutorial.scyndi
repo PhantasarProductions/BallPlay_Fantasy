@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.30 II
+// Version: 26.05.30 X
 // End License
 
 
@@ -43,11 +43,26 @@ Class TutorLine
 		Text = T
 		Red,Green,Blue = R,G,B
 		Font = F || Fnt
+		Y=_Y
+		CSayF("Tutorial Line: %s",Text)
 	End
 End		
 
+plua MascotImage
+Init
+	Img:="GFX/Algemeen/Tutorial.png"
+	If JCR6.EntryExists(IMG)
+		MascotImage = LoadNewImage(IMG,"Tutorial_Mascot")
+	End
+End
 
 Var CurrentStuff
+
+Void Mascot()
+	If MascotImage
+		MascotImage.Stretch(Graphics.W-105,5,100,100)
+	End
+End
 
 Void Load(String Tutor)
 	CurrentStuff = {}
@@ -90,7 +105,7 @@ Void Load(String Tutor)
 				Else
 					CurrentStuff += New TutorLine(NLine,Y,R,G,B,Fnt)
 					Y+=Fnt.Height(NLine)
-					NLine=""
+					NLine=Word
 				End
 			End
 			If Trim(NLine)!=""
@@ -104,4 +119,9 @@ End
 
 Void Show(Int OffY=0)
 	Lua.assert(CurrentStuff,"No Tutorial Loaded! Nothing to display!")
+	Mascot()
+	For TL in Each(CurrentStuff)
+		SetColor(TL.Red,TL.Green,TL.Blue)
+		TL.Font.Dark(TL.Text,2,TL.Y)
+	End
 End
