@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.14 XVIII
+// Version: 26.05.31
 // End License
 Module
 
@@ -150,6 +150,17 @@ Void ShowCurrentUser()
 		SetColor(255,255,255,255)
 	End
 End
+
+QuickMeta _SeenTutor
+	Index
+		Return Upper(Data.Value("Tutorials",Key))=="TRUE"
+	End
+	NewIndex
+		Data.Value("Tutorials",Key,sprintf("%s",Value))
+	End
+End
+
+Link SeenTutorial = _SeenTutor
 
 Init
 	__UserSlot = Lua.tonumber(Any.Config.NewValue("Users","Slot","-1")) || -1
