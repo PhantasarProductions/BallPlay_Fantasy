@@ -3,9 +3,9 @@
 Vielleicht fragst du dich, was die Kartenfarbensymbole in der Benutzeroberfl|uache bedeuten und warum daneben eine Zahl angezeigt wird.
 Nun, lass es uns erkl|ua|ren.
 
-$H Herzen ist die Anzahl der B|ua|lle, die sicher den Ausgang erreicht haben (wenn die Mission einen Ausgang hat)
-$C Kreuz ist die Anzahl der B|ua|lle, die den Ausgang erreichen m|uu|ssen ($H) oder noch im Spiel sein m|uu|ssen ($D), damit die Aufgabe als gel|uo|st gilt.
-$D Karo ist die Anzahl der B|ua|lle, die noch im Feld aktiv sind.
-$S Pik ist die Anzahl der B|ua|lle, die zerst|uo|rt wurden.
+|$H Herzen ist die Anzahl der B|ua|lle, die sicher den Ausgang erreicht haben (wenn die Mission einen Ausgang hat)
+|$C Kreuz ist die Anzahl der B|ua|lle, die den Ausgang erreichen m|uu|ssen (|$H) oder noch im Spiel sein m|uu|ssen (|$D), damit die Aufgabe als gel|uo|st gilt.
+|$D Karo ist die Anzahl der B|ua|lle, die noch im Feld aktiv sind.
+|$S Pik ist die Anzahl der B|ua|lle, die zerst|uo|rt wurden.
 
 Diese Zahlen im Auge zu behalten kann sehr hilfreich sein.
