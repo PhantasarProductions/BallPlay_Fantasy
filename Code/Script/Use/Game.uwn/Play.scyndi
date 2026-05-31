@@ -1,0 +1,116 @@
+// License:
+// 
+// BallPlay Fantasy
+// Play the game
+// 
+// 
+// 
+// 	(c) Jeroen P. Broks, 2026
+// 
+// 		This program is free software: you can redistribute it and/or modify
+// 		it under the terms of the GNU General Public License as published by
+// 		the Free Software Foundation, either version 3 of the License, or
+// 		(at your option) any later version.
+// 
+// 		This program is distributed in the hope that it will be useful,
+// 		but WITHOUT ANY WARRANTY; without even the implied warranty of
+// 		MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// 		GNU General Public License for more details.
+// 		You should have received a copy of the GNU General Public License
+// 		along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// 
+// 	Please note that some references to data like pictures or audio, do not automatically
+// 	fall under this licenses. Mostly this is noted in the respective files.
+// 
+// Version: 26.05.31 V
+// End License
+Module
+
+#use "Script/Use/Anyway"
+
+#accept SetStage
+
+plua dFNT = ObtainFont("DOS")
+
+#region Menu
+ReadOnly Var Menu
+	
+Init
+	Menu = {}
+	Menu += Game.GameMenu.Add("PAUSE")
+	Menu += Game.GameMenu.Add("GIVEUP")
+End
+#endregion
+
+
+#region Time
+Group _Time
+	Int Stamp
+	Int Hour
+	Int _Minute
+	Int _Second
+	Get Int Minute
+		return _Time._Minute
+	End
+	Set Int Minute
+	 	_Time._Minute=Value
+		If _Minute>=60
+			_Time._Minute-=60
+			_Time.Hour++
+		End
+	End
+	Get Int Second
+		return _Time._Second
+	End
+	Set Int Second
+		_Second=Value
+		If _Time._Second>=60
+			_Time._Second-=60
+			_Time.Minute++
+		End
+	End
+	Void Reset()
+		_Time.Hour=0
+		_Time.Minute=0
+		_Time.Second=0
+		_Time.Stamp=os.time()
+	End
+	Void Auto()
+		//CSayF("%dh%d'%d\" %d/%d -> %s",_Time.Hour,Time._Minute,Time._Second,_Time.Stamp,os.time(),_Time.Stamp!=os.time())
+		If _Time.Stamp!=os.time()
+			_Time.Second++
+			_Time.Stamp=os.time()
+		End
+	End
+	Get String Display
+		If _Time.Hour>0
+			return sprintf("%d:%02d:%02d",_Time.Hour,_Time._Minute,_Time._Second)
+		ElIf _Time._Minute>0
+			return sprintf("%4d:%02d",_Time._Minute,_Time._Second)
+		Else
+			return sprintf("%7d",_Time._Second)
+		End
+	End
+	Void Show()
+		SetColorHSV(_Time.Second*6,0.5,1)
+		DFnt.Dark(_Time.Display,math.floor(Graphics.W*0.75),3)
+	End
+		
+	// This one is only to be used for high score purposes
+	Get Int TotalSeconds
+		Return _Time._Seconds+(_Time._Minute*60)+(_Time._Hour*60*60)
+	End
+End
+
+// Make Time easily accessible through UWN
+Link Time=_Time
+#region
+
+
+
+
+Void SMain()
+	_Time.Show()
+	_Time.Auto()
+	
+End
