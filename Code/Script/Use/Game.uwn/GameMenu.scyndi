@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.29 XVI
+// Version: 26.05.31
 // End License
 Module
 
@@ -80,7 +80,7 @@ Void Show(Stg)
 		tc:=Lang.Str("Game",Item.Caption)
 		tw:=Fnt.Width(tc)
 		th:=Fnt.Height(tc)
-		Hover:=Events.MouseX<tw+5 && Events.MouseY>y && Events.MouseY<y+ButtonH
+		Hover:=Events.MouseX<ButtonW+5 && Events.MouseY>y && Events.MouseY<y+ButtonH
 		If !Item.Allow()
 			SetColor(100,100,100,255)
 		ElIf Hover
