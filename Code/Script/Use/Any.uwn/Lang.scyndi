@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.14 I
+// Version: 26.05.30 IV
 // End License
 Module
 
@@ -62,11 +62,19 @@ End
 
 Get Var LangList
 	R:={["Array"]={},["Next"]={}}
-	LL:=JCR6.Dir("Localisation")
+	LL:=JCR6.Dir("Localisation")	
 	For TL in Each(LL)
-		GL:=GINIE.LoadHome(TL,"LangList")
-		If Upper(GL.Value("AAA","INACTIVE"))!="TRUE"
-			R.Array+=Upper(StripAll(TL))
+		If (ExtractDir(Upper(TL))=="LOCALISATION")
+			CSayF("Is '%s' an active localisation?",TL)
+			GL:=GINIE.Load(TL,"LangList")
+			If Upper(GL.Value("AAA","INACTIVE"))!="TRUE" 
+				R.Array+=Upper(StripAll(TL))
+				CSayF("Accepted: %s",TL)
+			Else
+				CSayF("Rejected: %s - Inactive",TL)
+			End
+		Else
+			CSayF("Rejected: %s - Directory not right!",TL)
 		End
 	End
 	For i,v in ipairs(R.Array)
