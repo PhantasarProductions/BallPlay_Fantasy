@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.28
+// Version: 26.06.01
 // End License
 
 
@@ -237,6 +237,7 @@ Global Void FMain()
 					Sys.Call("FLOW_EDITOR","Puz.BPAM.Renew")
 					Sys.CurrentFlow="EDITOR"
 				Else
+					gint.PuzzleChosen = Hover.ID
 					Sys.LoadNewState("FLOW_GAME","Script/Flow/FlowGame.lbc")
 					Sys.Call("FLOW_GAME",sprintf("Puz.%s",Ternary(Upper(gStr.PackType)=="INTERNAL","iLoad","Load")),gstr.PackChosen,Hover.ID)
 					Sys.Call("FLOW_GAME","Puz.BPAM.Renew")
