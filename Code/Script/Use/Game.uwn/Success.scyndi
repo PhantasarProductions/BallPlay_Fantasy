@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.06.01 II
+// Version: 26.06.01 III
 // End License
 Module
 
@@ -52,7 +52,7 @@ ReadOnly Var Menu
 Init
 	GGA:=Game.GameMenu.Add
 	Menu = {}
-	Menu+=GGA("NEXT",Game.NextPuzzle,AllowNext)
+	Menu+=GGA("NEXT",NextPuzzle,AllowNext)
 	Menu+=GGA("SAME",Game.Fail.SamePuzzle)
 	Game.GameMenu.BaseItems(Menu)
 End
