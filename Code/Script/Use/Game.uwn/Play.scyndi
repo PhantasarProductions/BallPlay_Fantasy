@@ -162,6 +162,7 @@ Void GoSuccess(int Balls)
 	Game.Success.NewMostBalls=False
 	If Balls>User.Data.IntValue(Sig,"Balls")
 		Game.Success.NewMostBalls=true
+		User.Data.Value("Sig","Balls",Balls)
 	End
 	SetStage("Success")
 	AuSuc.Play()
