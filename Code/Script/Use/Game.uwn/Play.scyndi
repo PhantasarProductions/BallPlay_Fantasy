@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.06.01 XVII
+// Version: 26.06.01 XVIII
 // End License
 Module
 
@@ -152,16 +152,16 @@ Void GoSuccess(int Balls)
 	User.Data.Value(Sig,"Solved","True")
 	// Best Time
 	User.Data.NewValue(Sig,"TotalSeconds",Time.TotalSeconds+10)
-	Game.Success.BestTime=false	
+	Game.Success.NewBestTime=false	
 	If Time.TotalSeconds<User.Data.IntValue(Sig,"TotalSeconds")
-		Game.Success.BestTime=true
+		Game.Success.NewBestTime=true
 		User.Data.Value("Sig","Time",Time.Display)
 	End
 	// Best Tools
 	// Most Balls
-	Game.Success.MostBalls=False
+	Game.Success.NewMostBalls=False
 	If Balls>User.Data.IntValue(Sig,"Balls")
-		Game.Success.MostBalls=true
+		Game.Success.NewMostBalls=true
 	End
 	SetStage("Success")
 	AuSuc.Play()
