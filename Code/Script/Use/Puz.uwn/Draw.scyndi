@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.28 II
+// Version: 26.06.01 IX
 // End License
 Module
 
@@ -45,6 +45,16 @@ plua DW = Puz.Max.W-1
 
 plua DFNT = Puz.BaseUI.DFNT
 
+Class LayOptimum
+	Bool Used = False
+	Int StartX = Puz.Max.W-1
+	Int StartY = Puz.Max.H-1
+	Int EndX = 0
+	Int EndY = 0
+End
+PLUA Optimum
+
+
 Class PDraw
 	ReadOnly Delegate Draw
 	ReadOnly String Layer
@@ -55,8 +65,23 @@ Class PDraw
 End
 
 Void DrawPan(String Lay)
-	For Y=0,DH
-		For X=0,DW
+	SX:=0
+	SY:=0
+	EX:=DW
+	EY:=DH
+	If Optimum && (!Optimum[Lay].Used)
+		Return
+	Elif Optimum
+		O:=Optimum[Lay]
+		SX=O.StartX
+		SY=O.StartY
+		EX=O.EndX
+		EY=O.EndY			
+	End
+	//For Y=0,DH
+	For Y=SY,EY
+		//For X=0,DW
+		For X=SX,EX
 			V:=DTA.Val(Lay,X,Y)
 			//V:=0			
 			If V>0
@@ -119,4 +144,26 @@ Void All()
 	For DP in Each(DrawOrder)
 		DP.Draw(DP.Layer)
 	End
+End
+
+Void ScanOptimum()
+	Optimum = {}
+	CSayF("Optimizing")
+	For DP in Each{[0]="Floor","Wall","Decoration"}
+		Opt:= New LayOptimum()
+		Optimum[DP]=Opt
+		For Y=0,Puz.Max.H-1
+			For X=0,Puz.Max.W-1
+				If DTA.Val(DP,X,Y)>0
+					Opt.Used = True
+					Opt.StartX = math.min(Opt.StartX,X)
+					Opt.StartY = math.min(Opt.StartY,Y)
+					Opt.EndX   = math.max(opt.EndX  ,X)
+					Opt.EndY   = math.max(opt.EndY  ,Y)
+				End
+			End
+		End
+		CSayF("Layer %s is %s",DP,Ternary(Opt.Used,sprintf("Used (%d,%d)-(%d,%d)",Opt.StartX,Opt.StartY,OPt.EndX,Opt.EndY),"not used"))
+	End
+	Optimum.Object=Optimum.Floor
 End
