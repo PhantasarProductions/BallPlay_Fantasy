@@ -22,13 +22,20 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.31 XXXVII
+// Version: 26.06.01 XVII
 // End License
 Module
 
 #use "Script/Use/Anyway"
 
 #accept SetStage
+
+Int CBalls = 0
+Int Saved = 0
+Int Destroyed = 0
+
+plua Ping = Audio.Obtain("Ping")
+plua AuSuc = Audio.Obtain("Success")
 
 plua dFNT = ObtainFont("DOS")
 
@@ -37,12 +44,19 @@ Void PauseGame()
 	SetStage("Pause")
 End
 
+Void GiveUp()
+	If Events.Yes(Lang.Str("Game","GiveUpConfirm"))
+		Game.Fail.uBanner=True
+		SetStage("Fail")
+	End
+End
+
 ReadOnly Var Menu
 	
 Init
 	Menu = {}
 	Menu += Game.GameMenu.Add("PAUSE",PauseGame)
-	Menu += Game.GameMenu.Add("GIVEUP")
+	Menu += Game.GameMenu.Add("GIVEUP",GiveUp)
 End
 #endregion
 
@@ -102,7 +116,7 @@ Group _Time
 		
 	// This one is only to be used for high score purposes
 	Get Int TotalSeconds
-		Return _Time._Seconds+(_Time._Minute*60)+(_Time._Hour*60*60)
+		Return _Time._Second+(_Time._Minute*60)+(_Time.Hour*60*60)
 	End
 End
 
@@ -124,6 +138,67 @@ int MA__MoveSpeed=2
 #Macro MA__Girl 4
 #Macro MA__Heks 5
 
+Void SaveBall(A,L)
+	L.Unlink()
+	CSayF("Ball %09d saved!",A.ID)
+	Saved++
+	Ping.Play()
+End
+
+Void GoSuccess(int Balls)
+	CSayF("Success!")
+	Sig:=Puz.Data.Signature
+	CSayF("Success for puzzle: %s",Sig)
+	User.Data.Value(Sig,"Solved","True")
+	// Best Time
+	User.Data.NewValue(Sig,"TotalSeconds",Time.TotalSeconds+10)
+	Game.Success.BestTime=false	
+	If Time.TotalSeconds<User.Data.IntValue(Sig,"TotalSeconds")
+		Game.Success.BestTime=true
+		User.Data.Value("Sig","Time",Time.Display)
+	End
+	// Best Tools
+	// Most Balls
+	Game.Success.MostBalls=False
+	If Balls>User.Data.IntValue(Sig,"Balls")
+		Game.Success.MostBalls=true
+	End
+	SetStage("Success")
+	AuSuc.Play()
+End
+
+Void GoFail()
+	Game.Fail.uBanner=False
+	SetStage("Fail")
+End
+
+
+PLUA GoTab
+Init
+	GoTab = { [true]=GoSuccess,[false]=GoFail }
+End
+
+Void SuccessCheck()
+	R:=Puz.Data.Required
+	M:=Upper(Puz.Data.Mission)
+	Switch M
+		Case "NORMAL" "BREAKFREE" "COLORSPLIT"
+			If CBalls==0
+				//CSayF("%s GoTab - Succesful: %s",Lua.type(GoTab),Saved>=R)
+				//GT:=GoTab[Saved>=R]
+				//GT(Saved)
+				IF Saved>=R
+					GoSuccess(Saved)
+				Else
+					GoFail()
+				End
+			End
+		Default
+			Lua.error("No checks known for mission: "..M)
+	End
+End
+	
+
 Bool Block(Int X,Int Y)
 	If X<0 || Y<0 || X>=Puz.Max.W || Y>=Puz.Max.H
 		Return True
@@ -141,9 +216,12 @@ Bool Plate2(Int X,Int Y)
 	V:=Puz.Data.Val("Object",X,Y)
 	Return V==2 || V==4 || V==6
 End
+
 Void MoveActors()
 	DoMove:=MA__TimeStamp!=os.time()
 	//CSayF("%d/%d -> %s",MA__TimeStamp,os.time(),DoMove)
+	AlterMoveSpeed:=1
+	CBalls=0
 	For A,Lnk in Puz.Actors.List.Each
 		//CSayF("Checking actor %09x",A.ID)
 		If   A.MvX>0
@@ -151,28 +229,32 @@ Void MoveActors()
 			A.MvX=math.max(0,A.MvX)
 			If DoMove
 				A.MvX=0
-				MA__MoveSpeed++
+				MA__MoveSpeed+=AlterMoveSpeed
+				AlterMoveSpeed=0
 			End
 		ElIf A.MvY>0
 			A.MvY-=MA__MoveSpeed
 			A.MvY=math.max(0,A.MvY)
 			If DoMove
 				A.MvY=0
-				MA__MoveSpeed++
+				MA__MoveSpeed+=AlterMoveSpeed
+				AlterMoveSpeed=0
 			End
 		ElIf A.MvX<0
 			A.MvX+=MA__MoveSpeed
 			A.MvX=math.min(0,A.MvX)
 			If DoMove
 				A.MvX=0
-				MA__MoveSpeed++
+				MA__MoveSpeed+=AlterMoveSpeed
+				AlterMoveSpeed=0
 			End
 		ElIf A.MvY<0
 			A.MvY+=MA__MoveSpeed
 			A.MvY=math.min(0,A.MvY)
 			If DoMove
 				A.MvY=0
-				MA__MoveSpeed++
+				MA__MoveSpeed+=AlterMoveSpeed
+				AlterMoveSpeed=0
 			End
 		End	
 		If A.Kind!=MA__Girl && A.Kind!=MA__Heks
@@ -232,10 +314,24 @@ Void MoveActors()
 					Lua.error("Unknown wind direction for actor:%09x! '%s'",A.ID,A.Wind)
 			End
 		End
-	End
+		// Destruction or 
+		If A.Kind==MA__Ball
+			CBalls++
+			V:=Puz.Data.Val("Object",A.X,A.Y)
+			Switch V
+				Case 0xff
+					If A.Col==0
+						SaveBall(A,Lnk)
+					Else
+						Lua.error("Right! A colored ball could reach a regular exit! WTF went wrong here?")
+					End
+			End
+		End
+	End	
 	If DoMove
 		MA__TimeStamp=os.time()
 	End
+	SuccessCheck()
 End
 #endregion
 
