@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.31 IV
+// Version: 26.06.01 I
 // End License
 Module
 
@@ -34,7 +34,9 @@ Get Var Menu; Return _Menu; End
 
 plua StartGame()
 	Game.Play.Time.Reset()
-	SetStage("Play")
+	Game.Play.Saved = 0
+	Game.Play.Destroyed = 0
+	SetStage("Play")	
 End
 
 Init
@@ -45,6 +47,8 @@ Init
 End
 
 Void SMain()
+	Game.Play.Saved = 0
+	Game.Play.Destroyed = 0
 	Tut:=Puz.Data.Value("Distro","Tutorial")
 	//CSayF("Tutorial: %s; Seen: %s",Tut,User.SeenTutorial[Tut])
 	If Tut!="" && (!User.SeenTutorial[Tut])
