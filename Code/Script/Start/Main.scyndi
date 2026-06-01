@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.31 II
+// Version: 26.06.01 II
 // End License
 
 Script
@@ -126,6 +126,8 @@ Init
 	LF("Fonts/Mini.jfbf","MINI")
 	LF("Fonts/DOS.jfbf","DOS")
 	LA("Audio/Algemeen/PuzzleSaved.ogg","PuzzleSaved")
+	LA("Audio/Play/AS_Ping2.ogg","Ping")
+	LA("Audio/Play/Success.ogg","Success")
 	LASS.Add("Global","Config","GlobConfig")
 	Lass.Add("Main Menu","Flow","ToMainMenu")
 End
