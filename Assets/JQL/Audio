@@ -1,0 +1,14 @@
+JQL
+
+# Make sure both Linux and Windows can read it.
+# Please make sure, Windows always mounted the device I use automatically to E:, but there's no guarantee for this, so need for chance may be needed to keep in mind!
+# The '$User$' variable (case sensitive) will be transformed into your username, and please note that 'Scyndi' was the name of my work device!
+Platform:Linux
+Let:SFX=/media/$User$/Scyndi/Projects/3rd party assets/Sound Effects
+Platform:Windows
+Let:SFX=E:/Projects/3rd party assets/Sound Effects
+Platform:All
+
+Author:Varazuvi(TM)
+Notes:?
+Raw:$SFX$/Varazuvi(TM)/145438__soughtaftersounds__old-music-box-5.ogg>Play/Success.ogg
