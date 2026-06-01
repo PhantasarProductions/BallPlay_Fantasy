@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.31
+// Version: 26.06.01
 // End License
 Module
 
@@ -38,7 +38,7 @@ End
 Init
 	Menu = {}
 	Menu += Game.GameMenu.Add("CONTINUE",Continue)
-	Menu += Game.GameMenu.Add("GIVEUP")
+	Menu += Game.GameMenu.Add("GIVEUP",Game.Play.GiveUp)
 End
 
 Void SMain()
