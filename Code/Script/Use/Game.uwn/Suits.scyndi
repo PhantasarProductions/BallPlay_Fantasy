@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.28 VIII
+// Version: 26.06.01 II
 // End License
 
 Module Suits_3ef8afa81dcd5ec08c2b7eb53f5c1056
@@ -75,7 +75,11 @@ End
 
 plua AllowHearts()
 	Mis:=Upper(Puz.Data.Mission)
-	return Mis=="NORMAL" || Mis=="COLORSPLIT" || Mis=="Break-Free"
+	return Mis=="NORMAL" || Mis=="COLORSPLIT" || Mis=="BREAK-FREE"
+End
+
+plua Hearts()
+	Return Game.Play.Saved
 End
 
 plua Clubs()
@@ -94,16 +98,20 @@ plua Diamonds()
 	Return TelBallen
 End
 
+plua Spades()
+	Return Game.Play.Destroyed
+End
+
 Init
 	X:=Graphics.W div 2
 	Lijst = New TLinkedList()
-	Lijst.AddLast(New TSuit(X,"Harten",nil,AllowHearts))
+	Lijst.AddLast(New TSuit(X,"Harten",Hearts,AllowHearts))
 	X+=SuitSize
 	Lijst.AddLast(New TSuit(X,"Klaver",Clubs))
 	X+=SuitSize
 	Lijst.AddLast(New TSuit(X,"Ruiten",Diamonds))
 	X+=SuitSize
-	Lijst.AddLast(New TSuit(X,"Schoppen",nil))
+	Lijst.AddLast(New TSuit(X,"Schoppen",Spades))
 End
 
 
