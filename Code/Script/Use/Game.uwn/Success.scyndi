@@ -22,10 +22,11 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.06.01 III
+// Version: 26.06.01 VII
 // End License
 Module
 
+#use "Libs/SCI/SGFile"
 #use "Script/Use/Anyway"
 #accept SetStage
 
@@ -34,6 +35,8 @@ plua Banner = ObtainImage("ENDPUZZLE_SUCCESS")
 Bool NewBestTime
 Bool NewBestTool
 Bool NewMostBalls
+
+plua Records = {[0]={["Chk"]="BestTime",["Img"]=ObtainImage("Record_Time")},{["Chk"]="BestTool",["Img"]=ObtainImage("Record_Tools")},{["Chk"]="MostBalls",["Img"]=ObtainImage("Record_Balls")}}
 
 Void NextPuzzle()
 	gint.PuzzleChosen++
@@ -44,7 +47,16 @@ Void NextPuzzle()
 End
 
 Bool AllowNext()
-	Return False
+	Switch gstr.PackType
+		Case "Internal"
+			LFile:=sprintf("Puzzles/%s/Puzzle_%03d.jcr/TxtData/Data.ini",gstr.PackChosen,gInt.PuzzleChosen+1)
+			Return JCR6.EntryExists(LFile)
+		case "Homemade"
+			LFile:=sprintf("Packs/%s/Puzzle_%03d.jcr",gstr.PackChosen,gint.PuzzleChosen+1)
+			Return SGFile.FileExists(LFile)
+		Default
+			Return False
+	End
 End
 
 
@@ -60,4 +72,11 @@ End
 Void SMain()
 	SetColor(255,255,255,255)
 	Banner.Draw(Graphics.W div 2,Graphics.H div 3)
+	Y:=100
+	For Rec in Each(Records)
+		If Success["New"..Rec.Chk]
+			Rec.Img.Draw(5,Y)
+			Y+=Rec.Img.Height			
+		End
+	End
 End
