@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.28 VI
+// Version: 26.06.02
 // End License
 Module
 
@@ -41,6 +41,7 @@ Class TTool
 	ReadOnly Int B
 	ReadOnly Var Img
 	ReadOnly Int ID
+	ReadOnly Int Place
 	Static Int Cnt = 0
 	Get Int X
 		return (Graphics.W Div 2) + (ID*70)
@@ -48,9 +49,10 @@ Class TTool
 	Get Int Y
 		Return Puz.BaseUI.DPY+200
 	End
-	Constructor(String DT,String IT,Int Red=255, Int Green=255, Int Blue=255)
+	Constructor(Byte _Place,String DT,String IT,Int Red=255, Int Green=255, Int Blue=255)
 		ID = Cnt
 		Cnt++
+		Place=_Place
 		R,G,B=Red,Green,Blue
 		DatTag=DT
 		Img = ObtainImage(IT)
@@ -75,10 +77,10 @@ End
 
 Init
 	List = New TLinkedList()
-	List.AddLast(New TTool("Plate1","PLATE1",255,0,0,0))
-	List.AddLast(New TTool("Plate2","PLATE2",255,0,0,0))
-	List.AddLast(New TTool("Bulldozer","Bulldozer"))
-	List.AddLast(New TTool("Barrier","Barrier"))
+	List.AddLast(New TTool(0x03,"Plate1","PLATE1",255,0,0,0))
+	List.AddLast(New TTool(0x04,"Plate2","PLATE2",255,0,0,0))
+	List.AddLast(New TTool(0x00,"Bulldozer","Bulldozer"))
+	List.AddLast(New TTool(0x0f,"Barrier","Barrier"))
 End
 
 Void Show()
