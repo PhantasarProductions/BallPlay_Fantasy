@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.06.01 XVIII
+// Version: 26.06.01 XX
 // End License
 Module
 
@@ -147,7 +147,7 @@ End
 
 Void GoSuccess(int Balls)
 	CSayF("Success!")
-	Sig:=Puz.Data.Signature
+	Sig:="ZZ_Puz_"..Puz.Data.Signature
 	CSayF("Success for puzzle: %s",Sig)
 	User.Data.Value(Sig,"Solved","True")
 	// Best Time
@@ -155,14 +155,15 @@ Void GoSuccess(int Balls)
 	Game.Success.NewBestTime=false	
 	If Time.TotalSeconds<User.Data.IntValue(Sig,"TotalSeconds")
 		Game.Success.NewBestTime=true
-		User.Data.Value("Sig","Time",Time.Display)
+		User.Data.Value(Sig,"Time",Time.Display)
+		User.Data.Value(Sig,"TotalSeconds",Time.TotalSeconds)
 	End
 	// Best Tools
 	// Most Balls
 	Game.Success.NewMostBalls=False
 	If Balls>User.Data.IntValue(Sig,"Balls")
 		Game.Success.NewMostBalls=true
-		User.Data.Value("Sig","Balls",Balls)
+		User.Data.Value(Sig,"Balls",Balls)
 	End
 	SetStage("Success")
 	AuSuc.Play()
