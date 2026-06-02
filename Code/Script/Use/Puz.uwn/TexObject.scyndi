@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.23 III
+// Version: 26.06.02
 // End License
 
 
@@ -57,12 +57,13 @@ plua TexOList
 
 Init
 	TexOList = {}
-	TexOList[0x01] = New TexO("Plate1",255,255,  0, 255)
-	TexOList[0x02] = New TexO("Plate2",255,255,  0, 255)
-	TexOList[0x03] = New TexO("Plate1",255,  0,  0, 255)
-	TexOList[0x04] = New TexO("Plate2",255,  0,  0, 255)
-	TexOList[0x05] = New TexO("Plate1",  0,255,255, 255)
-	TexOList[0x06] = New TexO("Plate2",  0,255,255, 255)
+	TexOList[0x01] = New TexO("Plate1" ,255,255,  0, 255)
+	TexOList[0x02] = New TexO("Plate2" ,255,255,  0, 255)
+	TexOList[0x03] = New TexO("Plate1" ,255,  0,  0, 255)
+	TexOList[0x04] = New TexO("Plate2" ,255,  0,  0, 255)
+	TexOList[0x05] = New TexO("Plate1" ,  0,255,255, 255)
+	TexOList[0x06] = New TexO("Plate2" ,  0,255,255, 255)
+	TexOList[0x0f] = New TexO("Barrier",255,255,255, 255)
 	For i,a in ipairs{[0]="Up","Down","Left","Right"}
 		TexOList[0x10 + i] = New TexO("Arrow_"..a,0,180,255,255)
 	End
