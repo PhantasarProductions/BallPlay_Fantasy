@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.06.01
+// Version: 26.06.02 III
 // End License
 
 
@@ -78,6 +78,10 @@ Class EPuz
 	Get String Author; return Indexed.Value(Tag,"Author"); End
 	Get String Mission; return Indexed.Value(Tag,"Mission"); End
 	Get String Signature; return Indexed.Value(Tag,"Signature"); End
+	Get Bool Solved; Return Upper(User.Data.Value("ZZ_PUZ_"..Signature,"Solved"))=="TRUE"; End
+	Get String BestTime; Return User.Data.Value("ZZ_PUZ_"..Signature,"Time"); End
+	Get String MostBalls; Return User.Data.Value("ZZ_PUZ_"..Signature,"Balls"); End
+	Get String LeastTools; Return User.Data.Value("ZZ_PUZ_"..Signature,"Tools"); End
 	
 	Static Var __StaticNumIndex(int idx)
 		List[idx] = List[idx] || new EPuz(idx,true,false)
@@ -219,6 +223,8 @@ Global Void FMain()
 			Else
 				If Hover==Ent
 					SetColorHSV(os.time()%360,1,1)
+				ElIf Ent.Solved
+					SetColor(180,255,0)
 				Else
 					SetColor(255,255,255)
 				End				
@@ -271,6 +277,16 @@ Global Void FMain()
 		DFnt.Dark(sprintf(Lang.Str("PuzzleSelect","MadeBy"),Hover.Author),10+DFnt.Width(T),HY)
 		SetColor(180,0,255)
 		DFnt.Dark(Lang.Str("Missions",Hover.Mission),Graphics.Width-20,HY,1,0)
+		if Hover.Solved
+			SetColor(255,255,0)
+			DFnt.Dark(Lang.Str("Records","Balls")..":",5,HY+12)
+			DFnt.Dark(Lang.Str("Records","Time" )..":",5,HY+24)
+			DFnt.Dark(Lang.Str("Records","Tools")..":",5,HY+36)
+			SetColor(0,255,255)
+			DFnt.Dark(Hover.MostBalls ,205,HY+12)
+			DFnt.Dark(Hover.BestTime  ,205,HY+24)
+			DFnt.Dark(Hover.LeastTools,205,HY+36)
+		End
 	End
 	// Scrolling
 	//If Events.MouseWheelY!=0; CSayF("Wheel: %d",Events.MouseWheelY); End // DEBUG
