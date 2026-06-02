@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.06.01 II
+// Version: 26.06.01 III
 // End License
 
 Script
@@ -119,6 +119,9 @@ Init
 	LI("GFX/Exit/Exit.png","EXIT")
 	for k in Each{[0]="Harten","Klaver","Ruiten","Schoppen"}; LI(sprintf("GFX/Suits/%s.png",k),sprintf("KLEUR_%s",k)); End
 	for eg in Each{[0]="Success","Fail","Gave Up"}; LI(sprintf("GFX/EndPuzzle/%s.png",eg),"ENDPUZZLE_"..Replace(eg," ","_"),_HotCenter); End
+	LI("GFX/EndPuzzle/Best Time.png","Record_Time")
+	LI("GFX/EndPuzzle/Most Balls.png","Record_Balls")
+	LI("GFX/EndPuzzle/Least Tools.png","Record_Tools")
 	LI("GFX/Metal/Metal.png","METAL")
 	LI("GFX/Plates/Barrier.png","BARRIER")
 	LI("GFX/Plates/Bulldozer.png","BULLDOZER")
