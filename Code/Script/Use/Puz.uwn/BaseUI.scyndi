@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.24
+// Version: 26.06.02 V
 // End License
 
 Module 
@@ -85,7 +85,7 @@ Void Show(NoFract)
 		Puz.BPAM.Picture.Stretch(0,20,Graphics.W,dpy)		
 	End
 	bpic.Tile(0,0,Graphics.W,20)
-	if Events.MouseY<20 && Events.MouseX<dfnt.Width(Puz.Data.Title)
+	if SitEditor && Events.MouseY<20 && Events.MouseX<dfnt.Width(Puz.Data.Title)
 		SetColorHSV( (Sys.Ticks div 10) % 360,1,1)
 		SetAlpha(100)
 		Rect(0,0,dfnt.width(Puz.Data.Title)+2,20)
@@ -100,7 +100,24 @@ Void Show(NoFract)
 		End
 	End
 	dfnt.Dark(Puz.Data.Title,1,1)
-	SetColor(255,180,0)
+	MW:=dfnt.Width(Lang.Str("Missions",Puz.Data.Mission))
+	MWX:=Graphics.W-MW
+	If SitEditor && Events.MouseY<20 && Events.MouseX>MWX
+		_m:={[0]="Normal","BreakAway","BreakFree","BringHome","Collector","BreakCollect"}
+		SetColorHSV( (Sys.Ticks div 10) % 360,1,1)
+		SetAlpha(100)
+		Rect(MWX,0,MW,20)
+		If Events.MouseHitLeft
+			MN:=0
+			While upper(_m[MN])!=upper(Puz.Data.Mission)
+				MN++
+				if !_m[MN]; MN=-1; break; End
+			End
+			Puz.Data.Mission=_m[(MN+1)%len(_m)]
+			Indexed.Value("Index","Force","TRUE")
+		End
+	End
+	SetColor(255,180,0,255)
 	dfnt.Dark(Lang.Str("Missions",Puz.Data.Mission),Graphics.W-1,1,1,0)
 	SetColor(255,255,255,255)
 	bpic.Tile(0,dpy,Graphics.W,Graphics.H-dpy)
