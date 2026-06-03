@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.06.01 II
+// Version: 26.06.02 VI
 // End License
 Module
 
@@ -97,15 +97,31 @@ Void Create(int _W=0,Int _H=0)
 	End
 End
 
+plua _PuzLua 
+
+Void ResetVal()
+	_PuzLua = nil
+End
+
 Int Val(String Lay,Int X,Int Y,V)
 	Lay=Upper(Lay)
+	_PuzLua = _PuzLua || {}
+	_PuzLua[Lay] = _PuzLua[Lay] || {}
+	_PuzLua[Lay][Y] = _PuzLua[Lay][Y] || {}
+	If _PuzLua[Lay][Y][X] && !V
+		Return _PuzLua[Lay][Y][X]
+	End
 	//lua.assert(_PuzBank[Lay],"Layer "..Lay.." does not exist!")
 	//lua.assert(X>=0 && Y>=0 && X<W && Y<H,sprintf("Puzzle value out of bounds (%d,%d) %dx%d",X,Y,W,H))
 	A:=X+(Y*W)	
 	if V
 		lua.assert(Lua.type(V)=="number" && V>=0 && V<=255,"Illegal value for puzzle!")
 		_PuzBank[Lay].Poke(A,V)
+		_PuzLua[Lay][Y] = {}
 	End
 	Lua.assert(_PuzBank[Lay],"No Puzzle Bank called: "..Lay)
-	Return _PuzBank[Lay].Peek(A)
+	Lua.assert(_PuzLua[Lay],"Nil on _PuzLua."..Lay)
+	Lua.assert(_PuzLua[Lay][Y],"Nil on _PuzLua."..Lay.."::"..Y)
+	_PuzLua[Lay][Y][X] = _PuzBank[Lay].Peek(A)
+	return _PuzLua[Lay][Y][X]
 End
