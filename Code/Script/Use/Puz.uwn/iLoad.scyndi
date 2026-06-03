@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.06.02
+// Version: 26.06.03
 // End License
 Module LoadInternalPuzzle
 
@@ -40,6 +40,6 @@ Global Void iLoad(String Pack,Int i)
 	End
 	Puz.Tex.Source=JCR6.GetString(sprintf("Puzzles/%s/Puzzle_%03d.jcr/TxtData/Textures.ini",Pack,i))
 	Puz.Actors.Src=JCR6.GetString(sprintf("Puzzles/%s/Puzzle_%03d.jcr/TxtData/Actors",Pack,i))
-	Puz.Draw.ScanOptimum()
 	Puz.Data.ResetVal()
+	Puz.Draw.ScanOptimum()
 End
