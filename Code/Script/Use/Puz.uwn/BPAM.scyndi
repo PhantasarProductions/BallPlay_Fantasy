@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.17 V
+// Version: 26.06.03 II
 // End License
 
 
@@ -44,7 +44,7 @@ Get String PicAct; Return _PicAct; End
 
 Void RMusic()
 	String rp:="Music/Puzzles/"..Puz.Data.Music
-	If (ExtractExt(Upper(rp),"BUNDLE"))
+	If ExtractExt(Upper(rp))=="BUNDLE"
 		lp:=JCR6.Dir(rp)
 		rp=lp[math.random(0,len(lp)-1)]
 	End	
@@ -53,9 +53,9 @@ End
 
 Void RPic()
 	String rp:="GFX/Backgrounds/"..Puz.Data.BackPic
-	If (ExtractExt(Upper(rp),"BUNDLE"))
+	If (ExtractExt(Upper(rp))=="BUNDLE")
 		lp:=JCR6.Dir(rp)
-		Lua.assert(len(lp)>0,"404 Backpicdir: "..rp) 
+		Lua.assert(len(lp)>0,"404 BackPicDir: "..rp) 
 		rp=lp[math.random(0,len(lp)-1)]
 	End	
 	_PicAct = Ternary(Puz.BackType[Upper(rp)],Puz.BackType[Upper(rp)],"Stretch")
