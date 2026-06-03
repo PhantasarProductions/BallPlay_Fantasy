@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.06.01 II
+// Version: 26.06.02
 // End License
 
 Module Suits_3ef8afa81dcd5ec08c2b7eb53f5c1056
@@ -59,7 +59,7 @@ Class TSuit
 	
 	Void Draw()
 		SetColor(255,255,255)
-		If Allow
+		If Allow()
 			SetAlpha(255)
 		Else
 			SetAlpha(50)
@@ -75,7 +75,7 @@ End
 
 plua AllowHearts()
 	Mis:=Upper(Puz.Data.Mission)
-	return Mis=="NORMAL" || Mis=="COLORSPLIT" || Mis=="BREAK-FREE"
+	return Mis=="NORMAL" || Mis=="COLORSPLIT" || Mis=="BREAKFREE"
 End
 
 plua Hearts()
