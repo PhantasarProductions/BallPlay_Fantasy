@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.06.01 IX
+// Version: 26.06.03 XI
 // End License
 Module
 
@@ -40,17 +40,29 @@ plua DrawOrder
 // Speeds things up... a little.
 plua DTA = Puz.Data
 
+plua Hide
+
 plua DH = Puz.Max.H-1
 plua DW = Puz.Max.W-1
 
 plua DFNT = Puz.BaseUI.DFNT
 
 Class LayOptimum
+	Static Int Cnt = 0
+	ReadOnly Int ID
 	Bool Used = False
 	Int StartX = Puz.Max.W-1
 	Int StartY = Puz.Max.H-1
 	Int EndX = 0
 	Int EndY = 0
+	Constructor()
+		ID=Cnt
+		Cnt++
+		CSayF("Optimum %d created",ID)
+	End
+	Destructor
+		CSayF("Optimum %d destroyed",ID)
+	End
 End
 PLUA Optimum
 
@@ -65,6 +77,9 @@ Class PDraw
 End
 
 Void DrawPan(String Lay)
+	If Hide && Hide[Lay]
+		Return
+	End
 	SX:=0
 	SY:=0
 	EX:=DW
@@ -148,10 +163,14 @@ End
 
 Void ScanOptimum()
 	Optimum = {}
+	Hide = {}
 	CSayF("Optimizing")
 	For DP in Each{[0]="Floor","Wall","Decoration"}
+		Hide[DP]=Upper(gstr.Situation)!="EDITOR" && Upper(Puz.Data.Value("Hide",DP))=="TRUE"
+		CSayF("Hide %s -> %s",DP,Hide[DP])
 		Opt:= New LayOptimum()
 		Optimum[DP]=Opt
+		CSayF("Optimum for %s -> %d (%d,%d)(%d,%d)",dp,opt.id,opt.startx,opt.starty,opt.endx,opt.endy)
 		For Y=0,Puz.Max.H-1
 			For X=0,Puz.Max.W-1
 				If DTA.Val(DP,X,Y)>0
@@ -167,3 +186,22 @@ Void ScanOptimum()
 	End
 	Optimum.Object=Optimum.Floor
 End
+
+Global Void DBG_Optimum()
+	If !Optimum
+		print("\x1b[31mOptimum not set")
+	Else
+		printf("Optimum ref: %s\n",Optimum)
+		for ok,opt in pairs(Optimum)
+			printf("\x1b[92mOptium: %9s\t",ok)
+			printf("\x1b[93m(%2d,%2d) \x1b[94m(%2d,%2d) ",opt.StartX,opt.StartY,Opt.EndX,Opt.EndY)
+			printf("\x1b[95m%9s \x1b[96m%s\n",Ternary(Hide && Hide[ok],"Hidden","Shown"),Ternary(opt.Used,"Used","Unused"))
+		End
+	End
+End
+
+Global Void DBG_ScanOptimum()
+	print("\x1b[37mScanning Optimum")
+	ScanOptimum()
+	DBG_Optimum()
+ENd
