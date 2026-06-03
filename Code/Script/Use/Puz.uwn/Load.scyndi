@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.24
+// Version: 26.06.02
 // End License
 Module LoadThePuzzle
 
@@ -47,4 +47,5 @@ Global Void Load(String Pack,Int i)
 	Else
 		CSayF("Slot %d in %s is apparently unavailable!",i,Pack)
 	End
+	Puz.Data.ResetVal()
 End
