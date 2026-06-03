@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.06.01 III
+// Version: 26.06.02 I
 // End License
 
 Script
@@ -131,6 +131,8 @@ Init
 	LA("Audio/Algemeen/PuzzleSaved.ogg","PuzzleSaved")
 	LA("Audio/Play/AS_Ping2.ogg","Ping")
 	LA("Audio/Play/Success.ogg","Success")
+	LA("Audio/Play/Click.wav","Click")
+	LA("AUDIO/Play/breakblock.wav","Break")
 	LASS.Add("Global","Config","GlobConfig")
 	Lass.Add("Main Menu","Flow","ToMainMenu")
 End
