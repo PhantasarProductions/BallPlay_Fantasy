@@ -1,0 +1,7 @@
+# Acid
+
+So far it was not possible to get balls destroyed, so that was easy, right?
+Well, things will change there. You see that green stuff on the floor?
+That's acid. Any ball touching it will be destroyed.
+Please note, that you do need a minimum number of balls (|$C) to reach the exit.
+Be careful!
