@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.06.02
+// Version: 26.06.04 I
 // End License
 
 
@@ -57,6 +57,7 @@ plua TexOList
 
 Init
 	TexOList = {}
+	// Directions
 	TexOList[0x01] = New TexO("Plate1" ,255,255,  0, 255)
 	TexOList[0x02] = New TexO("Plate2" ,255,255,  0, 255)
 	TexOList[0x03] = New TexO("Plate1" ,255,  0,  0, 255)
@@ -69,6 +70,10 @@ Init
 	End
 	TexOList[0x1f] = New TexO("Metal",180,200,255,255)
 	
+	// Death
+	TexOList[0x20] = New TexO("Acid",255,255,255,255)
+	
+	// Exit
 	For i=8,15
 		int R
 		int G
