@@ -10,3 +10,6 @@ Assets/*
 !Assets/Tricky
 !Assets/JQL
 *.scyndi#
+
+# jEdit backups
+\#*#
