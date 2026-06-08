@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.06.07 VII
+// Version: 26.06.08 I
 // End License
 Module
 
@@ -273,6 +273,23 @@ Void Destroy(Act,Lnk)
 	End
 End	
 
+Void ArrowTurn(Act)
+	If Act.Kind==MA__Heks
+		Return
+	End
+	V:=Puz.Data.Val("Object",Act.X,Act.Y)
+	Switch V
+		Case 0x10
+			Act.Wind="North"
+		Case 0x11
+			Act.Wind="South"
+		Case 0x12
+			Act.Wind="West"
+		Case 0x13
+			Act.Wind="East"
+	End
+End
+
 Void MoveActors()
 	DoMove:=MA__TimeStamp!=os.time()
 	//CSayF("%d/%d -> %s",MA__TimeStamp,os.time(),DoMove)
@@ -377,6 +394,8 @@ Void MoveActors()
 				CBalls++
 				V:=Puz.Data.Val("Object",A.X,A.Y)
 				Switch V
+					Case 0x10 0x11 0x12 0x13
+						ArrowTurn(A)
 					Case 0x20
 						AuAcd.Play()
 						Destroy(A,Lnk)
@@ -390,6 +409,8 @@ Void MoveActors()
 			Case MA__Ghost MA__Robot
 				V:=Puz.Data.Val("Object",A.X,A.Y)
 				Switch V
+					Case 0x10 0x11 0x12 0x13
+						ArrowTurn(A)
 					Case 0x20
 						AuAcd.Play()
 						Destroy(A,Lnk)
