@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.26 I
+// Version: 26.06.06 IV
 // End License
 Script
 
@@ -215,6 +215,25 @@ Void ActWind(Act,Int Y, Bool Enabled)
 	End
 End // 
 
+plua GPic
+Void GhostColor(Act,Y)
+	GPic = GPic || {}
+	Act.Data.Color=math.max(1,math.min(Act.Data.Color,4))
+	For i=1,4
+		X:=500+( (i-1)*40)
+		GPic[i] = GPic[i] || ObtainImage(sprintf("GHOST%d",i))
+		If Act.Data.Color==i
+			SetColor(255,255,255,255)
+		Else
+			SetColor(170,170,170,255)
+		End
+		If Events.MouseHitLeft && Events.MouseX>X && Events.MouseY>Y && Events.MouseX<X+32 && Events.MouseY<Y+32
+			Act.Data.Color=i
+		End
+		GPic[i].Stretch(X,Y,32,32)		
+	End
+End
+
 
 Void ActorPanel(String T)
 	If Events.MouseHitLeft && Puz.BaseUI.MouseInField
@@ -225,7 +244,7 @@ Void ActorPanel(String T)
 	End
 	If AX<0 || AY<0
 		Return
-	End
+	End	
 	SetColorHSV( (os.time() div 2) % 360 , 1, 1)
 	SetAlpha( (os.time() % 2) * 100)
 	Rect(AX*32,(AY*32)+20,32,32)
@@ -268,6 +287,7 @@ Void ActorPanel(String T)
 		dFnt.Text(sprintf("%02d: %s",i,Lang.Str("Actors",Puz.Actors.Names[a.Kind])),5,IY)	
 	End
 	If AI<0; Return; End
+	// List actors	
 	Act:=ActList[AI]
 	For i,ak in Puz.Actors.EachName
 		y:=(i*12)+DPY+25
@@ -284,6 +304,15 @@ Void ActorPanel(String T)
 		dFnt.Dark(Lang.Str("Actors",ak),300,y)
 	End
 	ActWind(Act,DPY+25,act.Kind!=Puz.Actors.Girl)
+	Switch Act.Kind
+		// Ball
+		Case 1
+		// Ghost
+		Case 2
+			GhostColor(Act,DPY+60)
+		// Robot
+		Case 3
+	End
 End
 #endregion
 
