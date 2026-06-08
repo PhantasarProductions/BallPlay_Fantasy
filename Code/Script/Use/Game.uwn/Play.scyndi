@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.06.04
+// Version: 26.06.07 VII
 // End License
 Module
 
@@ -42,6 +42,7 @@ plua AuSuc = Audio.Obtain("Success")
 plua AuClk = Audio.Obtain("Click")
 plua AuBrk = Audio.Obtain("Break")
 plua AuAcd = Audio.Obtain("Acid")
+plua AuGhs = Audio.Obtain("GHOSTGRAB")
 
 plua dFNT = ObtainFont("DOS")
 
@@ -261,6 +262,17 @@ Bool Plate2(Int X,Int Y)
 	Return V==2 || V==4 || V==6
 End
 
+Void Destroy(Act,Lnk)
+	Lnk.UnLink()
+	Switch Act.Kind
+		case MA__Ball
+			Destroyed++
+		case MA__Girl
+			Game.Fail.uBanner=False
+			SetStage("Fail")
+	End
+End	
+
 Void MoveActors()
 	DoMove:=MA__TimeStamp!=os.time()
 	//CSayF("%d/%d -> %s",MA__TimeStamp,os.time(),DoMove)
@@ -359,17 +371,37 @@ Void MoveActors()
 			End
 		End
 		// Destruction or 
-		If A.Kind==MA__Ball
-			CBalls++
-			V:=Puz.Data.Val("Object",A.X,A.Y)
-			Switch V
-				Case 0xff
-					If A.Col==0
-						SaveBall(A,Lnk)
-					Else
-						Lua.error("Right! A colored ball could reach a regular exit! WTF went wrong here?")
+		//If A.Kind==MA__Ball
+		Switch A.Kind
+			Case MA__Ball
+				CBalls++
+				V:=Puz.Data.Val("Object",A.X,A.Y)
+				Switch V
+					Case 0x20
+						AuAcd.Play()
+						Destroy(A,Lnk)
+					Case 0xff
+						If A.Col==0
+							SaveBall(A,Lnk)
+						Else
+							Lua.error("Right! A colored ball could reach a regular exit! WTF went wrong here?")
+						End
+				End	
+			Case MA__Ghost MA__Robot
+				V:=Puz.Data.Val("Object",A.X,A.Y)
+				Switch V
+					Case 0x20
+						AuAcd.Play()
+						Destroy(A,Lnk)
+				End
+				// Destroy balls, girls and witches
+				For B,BL in Puz.Actors.List.Each
+					If (B.Kind!=MA__Ghost && B.Kind!=MA__Robot) && B.X==A.X && B.Y==A.Y
+						CSayF("%02x:%d has been destroyed by %02x:%d",B.ID,B.Kind,A.ID,A.Kind)
+						Destroy(B,BL)
+						AuGhs.Play()
 					End
-			End
+				End
 		End
 	End	
 	If DoMove
@@ -389,7 +421,7 @@ Void PlaceTools()
 			SetColorHSV(Hue,1,1/(i+1))			
 			Rect((X*32)+i,(Y*32)+i+20,32-(i*2),32-(i*2),true)
 		End
-		If Events.MouseHitLeft && Active.Val>0 && Puz.Data.Val("Object",X,Y)<0x05 && Puz.Data.Val("Floor",X,Y)>0x00 && Puz.Data.Val("Object",X,Y)!=Active.Place
+		If Events.MouseHitLeft && Active.Val>0 && Puz.Data.Val("Object",X,Y)<0x05 && Puz.Data.Val("Floor",X,Y)>0x00 && Puz.Data.Val("Object",X,Y)!=Active.Place && Puz.Data.Val("Wall",X,Y)==0
 			Puz.Data.Val("Object",x,Y,Active.Place)
 			Active.Val--
 			ToolsUsed++

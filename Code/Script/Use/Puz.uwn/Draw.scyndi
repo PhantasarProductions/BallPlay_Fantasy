@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.06.03 XI
+// Version: 26.06.06 II
 // End License
 Module
 
@@ -35,6 +35,7 @@ Module
 #Macro _AT_Witch 5
 
 plua IBall
+plua iGhost
 
 plua DrawOrder
 // Speeds things up... a little.
@@ -129,6 +130,10 @@ Void GameActors()
 				Puz.Colors.Quick(Ternary(Act.Col==0,15,Act.Col+8))
 				iBall = iBall || ObtainImage("Ball")
 				iBall.Stretch(act.ShowX,Act.ShowY,32,32)
+			Case _AT_Ghost
+				iGhost = iGhost || {}
+				iGhost[Act.Color] = iGhost[Act.Color] || ObtainImage(sprintf("GHOST%d",Act.Color))
+				iGhost[Act.Color].Stretch(act.ShowX,Act.ShowY,32,32)
 			Default
 				Lua.error(sprintf("Unknown actor type %d! Cannot draw!",Act.Kind))
 		End
@@ -140,16 +145,16 @@ Init
 		CSay("Setting the drawing order up for the editor")
 		DrawOrder = {}
 		DrawOrder += new PDraw(DrawPan,"Floor")
-		DrawOrder += new PDraw(DrawPan,"Wall")
 		DrawOrder += new PDraw(DrawPan,"Object")
+		DrawOrder += new PDraw(DrawPan,"Wall")
 		DrawOrder += new PDraw(DrawPan,"Decoration")
 		DrawOrder += New PDraw(EditorActors)
 	Else
 		CSay("Setting the drawing order up for the game")
 		DrawOrder = {}
 		DrawOrder += new PDraw(DrawPan,"Floor")
-		DrawOrder += new PDraw(DrawPan,"Wall")
 		DrawOrder += new PDraw(DrawPan,"Object")
+		DrawOrder += new PDraw(DrawPan,"Wall")
 		DrawOrder += New PDraw(GameActors)
 		DrawOrder += new PDraw(DrawPan,"Decoration")
 	End

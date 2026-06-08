@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.05.31
+// Version: 26.06.06
 // End License
 
 
@@ -113,6 +113,9 @@ Class Actor
 		
 	// Balls and ghosts
 	ReadOnly Int Col // Color
+	Get Int Color
+		Return Col
+	End
 		
 	Constructor(Int _Kind,Int _X, Int _Y, _Wind, Int _Col, Int _ToX=0, Int _ToY=0)
 		Kind,X,Y,Wind,Col,ToX,ToY = _Kind,_X,_Y,_Wind,_Col,_ToX,_ToY

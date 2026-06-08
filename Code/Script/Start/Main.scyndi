@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.06.04 I
+// Version: 26.06.07
 // End License
 
 Script
@@ -119,6 +119,7 @@ Init
 	LI("GFX/Exit/Exit.png","EXIT")
 	for k in Each{[0]="Harten","Klaver","Ruiten","Schoppen"}; LI(sprintf("GFX/Suits/%s.png",k),sprintf("KLEUR_%s",k)); End
 	for eg in Each{[0]="Success","Fail","Gave Up"}; LI(sprintf("GFX/EndPuzzle/%s.png",eg),"ENDPUZZLE_"..Replace(eg," ","_"),_HotCenter); End
+	for i=1,4; LI(sprintf("GFX/Objects/Ghost/%d.png",i),sprintf("GHOST%d",i)); End
 	LI("GFX/EndPuzzle/Best Time.png","Record_Time")
 	LI("GFX/EndPuzzle/Most Balls.png","Record_Balls")
 	LI("GFX/EndPuzzle/Least Tools.png","Record_Tools")
@@ -135,6 +136,7 @@ Init
 	LA("Audio/Play/Click.wav","Click")
 	LA("AUDIO/Play/breakblock.wav","Break")
 	LA("Audio/Play/Acid.wav","ACID")
+	LA("AUDIO/Play/ghost_grab.wav","GHOSTGRAB")
 	LASS.Add("Global","Config","GlobConfig")
 	Lass.Add("Main Menu","Flow","ToMainMenu")
 End
