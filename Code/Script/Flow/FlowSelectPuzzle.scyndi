@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.06.02 III
+// Version: 26.06.10
 // End License
 
 
@@ -208,6 +208,8 @@ Global Void FMain()
 						BO:=SGJCR.Create("SAVEPUZZLE")
 						BO.Assign(sprintf("Packs/%s/Puzzle_%03d.jcr",gstr.PackChosen,i))
 						BO.Text["Data.ini"]="[Meta]\nAvailable=False\n";
+						BO.Text["Actors"] = "# Alright move along, there's nothing to see here!"
+						BO.Text["Textures"] = "# Alright move along, there's nothing to see here!"
 						BO.Save()
 						HomeMade.Index()
 					End
