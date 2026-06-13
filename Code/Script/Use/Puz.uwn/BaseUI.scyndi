@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.06.02 V
+// Version: 26.06.13
 // End License
 
 Module 
@@ -103,7 +103,7 @@ Void Show(NoFract)
 	MW:=dfnt.Width(Lang.Str("Missions",Puz.Data.Mission))
 	MWX:=Graphics.W-MW
 	If SitEditor && Events.MouseY<20 && Events.MouseX>MWX
-		_m:={[0]="Normal","BreakAway","BreakFree","BringHome","Collector","BreakCollect"}
+		_m:={[0]="Normal","BreakAway","BreakFree","ColorSplit","BringHome","Collector","BreakCollect"}
 		SetColorHSV( (Sys.Ticks div 10) % 360,1,1)
 		SetAlpha(100)
 		Rect(MWX,0,MW,20)
