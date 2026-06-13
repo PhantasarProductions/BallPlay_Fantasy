@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.06.06 IV
+// Version: 26.06.13 VI
 // End License
 Script
 
@@ -234,6 +234,34 @@ Void GhostColor(Act,Y)
 	End
 End
 
+plua BPic
+Void BallColor(Act,Y)
+	Mis:=Upper(Puz.Data.Mission)
+	AllowColorLess:=Mis!="COLORSPLIT"
+	AllowColored:=Mis!="NORMAL" && Mis!="BREAKFREE"
+	BPic = BPic || ObtainImage("BALL")
+	//CSayF("BallColor: NoCol:%s   Col:%s",AllowColorLess,AllowColored)
+	for i = 0,6
+		If Ternary(i==0,AllowColorLess,AllowColored)
+			X:=500+( (i-1)*40)
+			If Act.Data.Color==i
+				SetColorHSV((os.time()div 2)%360,1,os.time()%2)
+				Rect(X-1,Y-1,33,33)
+			End
+			Puz.Colors.Quick(Ternary(i==0,15,i+8))
+			BPic.Stretch(X,Y,32,32)
+			If Events.MouseHitLeft && Events.MouseX>X && Events.MouseY>Y && Events.MouseX<X+32 && Events.MouseY<Y+32
+				Act.Data.Color=i
+			End
+		End
+	End
+	If !AllowColored
+		Act.Data.Color=0
+	ElIf !AllowColorLess
+		Act.Data.Color=math.max(Act.Data.Color,1)
+	End
+End
+
 
 Void ActorPanel(String T)
 	If Events.MouseHitLeft && Puz.BaseUI.MouseInField
@@ -307,9 +335,12 @@ Void ActorPanel(String T)
 	Switch Act.Kind
 		// Ball
 		Case 1
+			BallColor(Act,DPY+60)
+			
 		// Ghost
 		Case 2
 			GhostColor(Act,DPY+60)
+			
 		// Robot
 		Case 3
 	End
