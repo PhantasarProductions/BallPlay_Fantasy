@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.06.03 II
+// Version: 26.06.14 I
 // End License
 
 
@@ -61,6 +61,9 @@ Void RPic()
 	_PicAct = Ternary(Puz.BackType[Upper(rp)],Puz.BackType[Upper(rp)],"Stretch")
 	_Picture = LoadImage(rp,"PuzzleBackground")
 End
+
+
+	
 
 Void Renew()
 	RPic()
