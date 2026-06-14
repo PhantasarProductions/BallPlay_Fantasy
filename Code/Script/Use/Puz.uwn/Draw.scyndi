@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.06.06 II
+// Version: 26.06.14 IV
 // End License
 Module
 
@@ -47,6 +47,7 @@ plua DH = Puz.Max.H-1
 plua DW = Puz.Max.W-1
 
 plua DFNT = Puz.BaseUI.DFNT
+plua mfnt = ObtainFont("MINI")
 
 Class LayOptimum
 	Static Int Cnt = 0
@@ -94,6 +95,9 @@ Void DrawPan(String Lay)
 		EX=O.EndX
 		EY=O.EndY			
 	End
+	Mis:=Upper(Puz.Data.Value("Task","Mission"))
+	CBM:=User.ColorBlind
+	Obj:=Lay=="Object"		
 	//For Y=0,DH
 	For Y=SY,EY
 		//For X=0,DW
@@ -104,6 +108,10 @@ Void DrawPan(String Lay)
 				tx:= x*32
 				ty:=(y*32)+20
 				Puz.Tex[Lay][v].Draw(tx,ty)
+				If Obj && CBM && Mis=="COLORSPLIT" && V>0xf8
+					SetColor(255,255,255)
+					MFNT.Text(Chr(V-184),tx+16,ty+16,2,2)
+				End
 			End
 		End
 	End
@@ -124,13 +132,20 @@ Void EditorActors()
 End
 
 Void GameActors()
+	Mis:=Upper(Puz.Data.Value("Task","Mission"))
+	CBM:=User.ColorBlind
 	For Act,Lnk in Puz.Actors.List.Each
 		Switch Act.Kind
-			Case _AT_Ball
+			Case _AT_Ball				
 				Puz.Colors.Quick(Ternary(Act.Col==0,15,Act.Col+8))
 				iBall = iBall || ObtainImage("Ball")
 				iBall.Stretch(act.ShowX,Act.ShowY,32,32)
+				If Mis=="COLORSPLIT" && CBM
+					SetColor(255,255,255,255)
+					MFnt.Dark(Chr(Act.Col+64),act.ShowX+16,Act.ShowY+16,2,2)
+				End
 			Case _AT_Ghost
+				SetColor(255,255,255,255)
 				iGhost = iGhost || {}
 				iGhost[Act.Color] = iGhost[Act.Color] || ObtainImage(sprintf("GHOST%d",Act.Color))
 				iGhost[Act.Color].Stretch(act.ShowX,Act.ShowY,32,32)

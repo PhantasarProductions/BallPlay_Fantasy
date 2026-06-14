@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.06.13 VI
+// Version: 26.06.14 I
 // End License
 Script
 
@@ -35,6 +35,7 @@ Script
 plua NIKS(); End
 
 plua RFNT = ObtainFont("Ryanna")
+plua MFnt = ObtainFont("Mini")
 
 Bool Modified = False
 
@@ -241,6 +242,7 @@ Void BallColor(Act,Y)
 	AllowColored:=Mis!="NORMAL" && Mis!="BREAKFREE"
 	BPic = BPic || ObtainImage("BALL")
 	//CSayF("BallColor: NoCol:%s   Col:%s",AllowColorLess,AllowColored)
+	CBM:=User.ColorBlind
 	for i = 0,6
 		If Ternary(i==0,AllowColorLess,AllowColored)
 			X:=500+( (i-1)*40)
@@ -250,6 +252,10 @@ Void BallColor(Act,Y)
 			End
 			Puz.Colors.Quick(Ternary(i==0,15,i+8))
 			BPic.Stretch(X,Y,32,32)
+			If CBM && i>0
+				SetColor(255,255,255)
+				MFnt.Text(Chr(i+64),x+16,y+16,2,2)
+			End
 			If Events.MouseHitLeft && Events.MouseX>X && Events.MouseY>Y && Events.MouseX<X+32 && Events.MouseY<Y+32
 				Act.Data.Color=i
 			End
