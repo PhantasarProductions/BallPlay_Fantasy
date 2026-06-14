@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 26.06.13
+// Version: 26.06.14 I
 // End License
 
 Module 
@@ -37,6 +37,7 @@ plua Indexed = GINIE.Obtain("PackIndex")
 
 plua bpic = ObtainImage("UIBack")
 ReadOnly Var dfnt = ObtainFont("DOS")
+ReadOnly Int tdpy = (32*Puz.Max.H)
 ReadOnly Int dpy = (32*Puz.Max.H)+20
 
 Get Bool MouseInField
@@ -82,7 +83,7 @@ End
 Void Show(NoFract)
 	SetColor(255,255,255,255)
 	If !NoFract
-		Puz.BPAM.Picture.Stretch(0,20,Graphics.W,dpy)		
+		Puz.BPAM.Picture.Stretch(0,20,Graphics.W,tdpy)
 	End
 	bpic.Tile(0,0,Graphics.W,20)
 	if SitEditor && Events.MouseY<20 && Events.MouseX<dfnt.Width(Puz.Data.Title)
